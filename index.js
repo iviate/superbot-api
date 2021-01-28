@@ -295,7 +295,7 @@ myApp.post('/login', async function (request, response) {
                 (async (USERNAME, PASSWORD) => {
 
                     const browser = await puppeteer.launch({
-                        headless: false,
+                        headless: true,
                         devtools: false,
                         args: ['--no-sandbox']
                     });
@@ -376,7 +376,7 @@ myApp.post('/login', async function (request, response) {
         (async (USERNAME, PASSWORD) => {
 
             const browser = await puppeteer.launch({
-                headless: false,
+                headless: true,
                 devtools: false,
                 args: ['--no-sandbox']
             });
