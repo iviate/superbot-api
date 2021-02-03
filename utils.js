@@ -135,6 +135,7 @@ exports.getUserWallet = async function getUserWallet(cookie){
         let balanceAPI = "https://bpweb.bikimex.net/player/query/queryBalancePC"
         const ps = new URLSearchParams()
         ps.append('dm', '1')
+        ps.append('hallType', '1')
 
         const config = {
             headers: {
@@ -147,9 +148,9 @@ exports.getUserWallet = async function getUserWallet(cookie){
         
         let res = await axios.post(balanceAPI, ps, config)
     
-        // console.log(res.data)
+        console.log(res.data.status)
 
-        if(res.data.status == '200'){
+        if(res.data.status == 200){
             return res.data.balance
         }else{
             return null

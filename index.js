@@ -2919,7 +2919,7 @@ async function mainBody() {
     //     }
     // })
 
-    initiateWorker(1);
+    // initiateWorker(1);
 
     // console.log(response.data);
     // tables = response.data.tables
