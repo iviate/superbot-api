@@ -5,7 +5,7 @@ exports.reCookie = async function reCookie(username, password){
     let cookie = await (async (username, password) => {
 
         const browser = await puppeteer.launch({
-            headless: true,
+            headless: false,
             devtools: false,
             args: ['--no-sandbox']
         });
@@ -47,7 +47,7 @@ exports.reCookie = async function reCookie(username, password){
             const frame = (await page.frames())[3];
             console.log(frame['_name'])
 
-            const content = await frame.evaluate(() => document.querySelector('a[data-original-title="คาสิโนสด"]').onclick.toString())
+            const content = await frame.evaluate(() => [...document.querySelectorAll('.spMargin2')].find(element => element.textContent === 'คาสิโนสด').onclick.toString())
             // console.log(content.split('\''))
 
             var gameSelectUrl = content.split('\'')[1]
