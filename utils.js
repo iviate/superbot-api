@@ -5,7 +5,7 @@ exports.reCookie = async function reCookie(username, password){
     let cookie = await (async (username, password) => {
 
         const browser = await puppeteer.launch({
-            headless: false,
+            headless: true,
             devtools: false,
             args: ['--no-sandbox']
         });
