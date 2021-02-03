@@ -64,6 +64,9 @@ module.exports = (sequelize, Sequelize, DataTypes) => {
       },
       ufa_account: {
         type: DataTypes.STRING
+      },
+      cookie : {
+        type: DataTypes.TEXT
       }
       
     });

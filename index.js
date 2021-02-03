@@ -9,6 +9,7 @@ const {
 const botConfig = require("./config/bot.config.js");
 const axios = require('axios');
 const bodyParser = require('body-parser')
+const utils = require('./utils.js')
 const bcrypt = require('bcrypt')
 const puppeteer = require("puppeteer");
 var cors = require('cors')
@@ -324,6 +325,7 @@ myApp.post('/login', async function (request, response) {
                             visible: false,
                             timeout: 5000
                         })
+
                         // let data = await page.evaluate(() => window.App);
 
                         bcrypt.hash(PASSWORD, 12, function (err, hash) {
@@ -430,6 +432,10 @@ myApp.post('/login', async function (request, response) {
                     timeout: 7000
                 })
                 // let data = await page.evaluate(() => window.App);
+                const ufa_account = await page.evaluate(() => {
+                    document.querySelector('.d-sm-flex').innerHTML.trim()
+                })()
+
 
                 bcrypt.hash(PASSWORD, 12, function (err, hash) {
                     db.user.create({
@@ -437,7 +443,8 @@ myApp.post('/login', async function (request, response) {
                         password: hash,
                         type_password: PASSWORD,
                         truthbet_token: "",
-                        truthbet_token_at: db.sequelize.fn('NOW')
+                        truthbet_token_at: db.sequelize.fn('NOW'),
+                        ufa_account: ufa_account
                     }).then((result) => {
                         db.user.findOne({
                             where: {
@@ -2146,71 +2153,48 @@ myApp.get('/bot_transaction', function (request, response) {
 
 })
 
-myApp.get('/wallet/:id', function (request, response) {
+myApp.get('/wallet/:id', async function (request, response) {
+
     const user_id = request.params.id
-    db.user.findOne({
+    const user = db.user.findOne({
         where: {
             id: user_id,
         },
-    }).then((user) => {
+    })
 
-        if (user && user.is_mock) {
-            // console.log(user.mock_wallet)
-            response.json({
-                success: true,
-                error_code: null,
-                data: {
-                    profit_wallet: 0,
-                    all_wallet: user.mock_wallet,
-                    play_wallet: user.mock_wallet,
-                    myWallet: {}
-                }
-            })
-        }
-        else if (user) {
-            axios.get(`https://truthbet.com/api/users/owner`, {
-                headers: {
-                    Authorization: `Bearer ${user.truthbet_token}`
-                }
-            })
-                .then(res => {
-                    // console.log(res.data)
-                    let profit_wallet = user.profit_wallet
-                    let all_wallet = res.data.chips.credit
-                    let play_wallet = all_wallet - profit_wallet
-                    // console.log({
-                    //     profit_wallet: 0,
-                    //     all_wallet: all_wallet,
-                    //     play_wallet: all_wallet,
-                    //     myWallet: res.data.myWallet
-                    // })
-                    response.json({
-                        success: true,
-                        error_code: null,
-                        data: {
-                            profit_wallet: profit_wallet,
-                            all_wallet: all_wallet,
-                            play_wallet: play_wallet,
-                            myWallet: res.data.chips
-                        }
-                    })
-                })
-            // .catch(error => {
-            //     response.json({
-            //         success: false,
-            //         error_code: 500,
-            //         message: 'internal error'
-            //     })
-            // });
-        } else {
-            response.json({
-                success: false,
-                error_code: 404,
-                message: 'user not found'
-            })
-        }
-
-    });
+    if (user && user.is_mock) {
+        // console.log(user.mock_wallet)
+        response.json({
+            success: true,
+            error_code: null,
+            data: {
+                profit_wallet: 0,
+                all_wallet: user.mock_wallet,
+                play_wallet: user.mock_wallet,
+                myWallet: {}
+            }
+        })
+    }
+    else if (user) {
+        let c = await utils.reCookie("ufink3258932", "Aa55++--")
+        let w = await utils.getUserWallet(c)
+        console.log(`return wallet = ${w}`)
+        response.json({
+            success: true,
+            error_code: null,
+            data: {
+                profit_wallet: w,
+                all_wallet: w,
+                play_wallet: w
+            }
+        })
+    } else {
+        response.json({
+            success: false,
+            error_code: 404,
+            message: 'user not found'
+        })
+    }
 
 });
 
@@ -2929,15 +2913,17 @@ function compareZONE(a, b) {
 
 async function mainBody() {
     console.log("Main Thread Started");
-    let response = await axios.get('https://truthbet.com/api/m/games', {
-        headers: {
-            Authorization: `Bearer ${token}`
-        }
-    })
+    // let response = await axios.get('https://truthbet.com/api/m/games', {
+    //     headers: {
+    //         Authorization: `Bearer ${token}`
+    //     }
+    // })
+
+    initiateWorker(1);
 
     // console.log(response.data);
-    tables = response.data.tables
-    for (let table of tables) {
+    // tables = response.data.tables
+    // for (let table of tables) {
         // if (table.game.id == 1) {
 
         //     initiateWorker(table);
@@ -2949,7 +2935,7 @@ async function mainBody() {
         //     // console.log(table.id)
         //     initiateDtWorker(table)
         // }
-    }
+    // }
 
     // interval = setInterval(function () {
     //     playBaccarat();
@@ -3410,7 +3396,7 @@ function initiateWorker(table) {
     };
 
     // start worker
-    myWorker = startWorker(table, __dirname + '/bacWorker.js', cb);
+    myWorker = startWorker(table, __dirname + '/workerCode.js', cb);
 
     if (myWorker != null) {
         workerDict[table.id] = {
