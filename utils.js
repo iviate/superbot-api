@@ -47,7 +47,7 @@ exports.reCookie = async function reCookie(username, password){
             const frame = (await page.frames())[3];
             console.log(frame['_name'])
 
-            const content = await frame.evaluate(async () => await [...document.querySelectorAll('.spMargin2')][2].textContent)
+            const content = await frame.evaluate(async () => [...document.querySelectorAll('.spMargin2')][2])
             console.log(content)
 
             var gameSelectUrl = content.split('\'')[1]
