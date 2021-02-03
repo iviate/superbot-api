@@ -47,8 +47,8 @@ exports.reCookie = async function reCookie(username, password){
             const frame = (await page.frames())[3];
             console.log(frame['_name'])
 
-            const content = await frame.evaluate(async () => [...document.querySelectorAll('.spMargin2')][2].textContent)
-            console.log(content)
+            const content = await frame.evaluate(async () => await [...document.querySelectorAll('.spMargin2')].find(element => element.textContent === 'Live Casino').onclick.toString())
+            // console.log(content.split('\''))
 
             var gameSelectUrl = content.split('\'')[1]
             var param = content.split('?')[1]
