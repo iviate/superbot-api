@@ -112,7 +112,7 @@ exports.reCookie = async function reCookie(username, password){
             // console.log(plainValue)
             
         } catch (e) {
-            console.log("not found")
+            console.log(e)
         }
 
         //   response.json(data);
