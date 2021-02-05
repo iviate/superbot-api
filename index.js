@@ -2176,7 +2176,7 @@ myApp.get('/wallet/:id', async function (request, response) {
         })
     }
     else if (user) {
-        let c = await utils.reCookie("ufink3258932", "Aa55++--")
+        let c = await utils.reCookie("ufink1294802", "Aa5555++")
         let w = await utils.getUserWallet(c)
         console.log(`return wallet = ${w}`)
         response.json({
@@ -2913,21 +2913,21 @@ function compareZONE(a, b) {
 
 async function mainBody() {
     console.log("Main Thread Started");
-    // let response = await axios.get('https://truthbet.com/api/m/games', {
-    //     headers: {
-    //         Authorization: `Bearer ${token}`
-    //     }
-    // })
+    let response = await axios.get('https://truthbet.com/api/m/games', {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    })
 
     // initiateWorker(1);
 
     // console.log(response.data);
-    // tables = response.data.tables
-    // for (let table of tables) {
-        // if (table.game.id == 1) {
+    tables = response.data.tables
+    for (let table of tables) {
+        if (table.game.id == 1) {
 
-        //     initiateWorker(table);
-        // }
+            initiateWorker(table);
+        }
         // else if (table.game_id == 10) {
         //     initiateRotWorker(table)
         // }
@@ -2935,11 +2935,11 @@ async function mainBody() {
         //     // console.log(table.id)
         //     initiateDtWorker(table)
         // }
-    // }
+    }
 
-    // interval = setInterval(function () {
-    //     playBaccarat();
-    // }, 7000);
+    interval = setInterval(function () {
+        playBaccarat();
+    }, 7000);
 
     // dtInterval = setInterval(function () {
     //     playDragonTiger();
@@ -3396,7 +3396,7 @@ function initiateWorker(table) {
     };
 
     // start worker
-    myWorker = startWorker(table, __dirname + '/workerCode.js', cb);
+    myWorker = startWorker(table, __dirname + '/bacWorker.js', cb);
 
     if (myWorker != null) {
         workerDict[table.id] = {
