@@ -588,7 +588,7 @@ async function processResultBet(betStatus, botTransactionId, botTransaction) {
             }
             let currentWallet = u.mock_wallet
             u.save()
-            console.log(u)
+            // console.log(u)
 
             let cutProfit = botObj.init_wallet + Math.floor(((botObj.profit_threshold - botObj.init_wallet) * 94) / 100)
             if (playData.length == 0) {
