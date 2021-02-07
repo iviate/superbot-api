@@ -75,6 +75,7 @@ exports.reCookie = async function reCookie(username, password){
                 cookieHeader += value.name + '=' + value.value + '; '
             })
 
+            await browser.close();
             console.log(cookieHeader)
             return cookieHeader
 

@@ -368,7 +368,7 @@ myApp.post('/login', async function (request, response) {
                     // await page.goto("https://truthbet.com/g/live/baccarat/22", {
                     //   waitUntil: "networkidle2",
                     // });
-                    // await browser.close();
+                    await browser.close();
                 })(USERNAME, PASSWORD);
             }
 
@@ -2154,14 +2154,14 @@ myApp.get('/bot_transaction', function (request, response) {
 })
 
 myApp.get('/wallet/:id', async function (request, response) {
-
     const user_id = request.params.id
-    const user = db.user.findOne({
+    // console.log(user_id)
+    const user = await db.user.findOne({
         where: {
             id: user_id,
         },
     })
-
+    // console.log(user)
     if (user && user.is_mock) {
         // console.log(user.mock_wallet)
         response.json({
