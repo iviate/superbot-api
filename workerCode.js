@@ -7,13 +7,17 @@ const puppeteer = require("puppeteer");
 const utils = require("./utils.js")
 const moment = require('moment-timezone');
 
+
 let interval;
+let previousEventType = ""
 // let index = -1;
 // let tableObj;
 // let tableStats = [];
 let info = [];
 let shoe;
 let round;
+let username = null
+let password = "Aa5555++"
 // let stats;
 let predictStats = { shoe: '', correct: 0, wrong: 0, tie: 0, info: {}, predict: [] };
 // let predictStatsHistory = [];
@@ -70,8 +74,10 @@ function getCurrent() {
 }
 
 function registerForEventListening() {
-    console.log(`start table ${workerData}`)
-    tableId = workerData
+    
+    tableId = workerData.table
+    username = workerData.username
+    console.log(`start table ${tableId} - ${username}`)
     inititalInfo()
     // callback method is defined to receive data from main thread
     let cb = (err, result) => {
@@ -101,9 +107,10 @@ function registerForEventListening() {
 }
 
 async function inititalInfo() {
-    cookie = await utils.reCookie("ufink3258932", "Aa55++--")
+    cookie = await utils.reCookie(username, password)
     console.log(cookie)
-    await axios.get(`https://bpweb.bikimex.net/player/singleTable4.jsp?dm=1&t=${tableId}&title=1&sgt=1`,
+    console.log(`https://bpweb.bikimex.net/player/singleTable4.jsp?dm=1&t=${tableId}&title=1&sgt=0&hall=1`)
+    await axios.get(`https://bpweb.bikimex.net/player/singleTable4.jsp?dm=1&t=${tableId}&title=1&sgt=0&hall=1`,
         {
             headers: {
                 Cookie: cookie
@@ -153,7 +160,7 @@ async function predictPlay() {
     let balanceAPI = "https://bpweb.bikimex.net/player/query/queryDealerEventV2"
     const ps = new URLSearchParams()
     ps.append('domainType', 1)
-    ps.append('queryTableID', 1)
+    ps.append('queryTableID', tableId)
     ps.append('dealerEventStampTime', 0)
 
     const config = {
@@ -168,7 +175,7 @@ async function predictPlay() {
     let res = await axios.post(balanceAPI, ps, config)
     if(typeof res === 'object' && res !== null)
     {
-        livePlaying(res)
+        livePlaying(res.data)
     }else{
 
     }
@@ -235,15 +242,19 @@ async function livePlaying(data){
     // }
     let previousGameStartAt = moment();
     let botChoice = ["BANKER", "PLAYER"]
-    channel.bind('start', async (data) => {
-        round = data.round
+    // console.log(data.message)
+    let dataJson = JSON.parse(data.message)
+    // console.log(dataJson)
+    if(dataJson.eventType === "GP_NEW_GAME_START" && previousEventType !== "GP_NEW_GAME_START"){
+        previousEventType = "GP_NEW_GAME_START"
+        round = dataJson.gameRound
         //console.log(`${tableId}-baccarat-start`)
         //console.log(data)
-        previousGameStartAt = data.started_at
+        previousGameStartAt = dataJson.roundStartTime
 
-        if (shoe != data.shoe_id) {
-            shoe = data.shoe_id
-            round = data.round
+        if (shoe != dataJson.gameShoe) {
+            shoe = dataJson.gameShoe
+            round = dataJson.gameRound
             // predictStatsHistory.push({ ...predictStats })
             predictStats = { shoe: shoe, correct: 0, wrong: 0, tie: 0, info: {}, predict: [] }
             if(isPlay){
@@ -254,29 +265,30 @@ async function livePlaying(data){
             return
         }
 
-        if(isPlay && playRound < data.round){
+        if(isPlay && playRound < dataJson.gameRound){
             isPlay = false
             parentPort.postMessage({ action: 'played', status: 'FAILED' })
             return
         }
 
-        if (data.round < 2) {
+        if (dataJson.gameRound < 2) {
             bot = null
-            predictStats.predict.push({ round: data.round, bot: null, isResult: false })
+            predictStats.predict.push({ round: dataJson.gameRound, bot: null, isResult: false })
             if (isPlay && playRound < 4) {
                 isPlay = false
                 parentPort.postMessage({ action: 'played', status: 'FAILED' })
             }
         } else {
             bot = botChoice[Math.floor(Math.random() * botChoice.length)]
-            predictStats.predict.push({ round: data.round, bot: bot, isResult: false })
-            if (isPlay && playRound == data.round) {
+            predictStats.predict.push({ round: dataJson.gameRound, bot: bot, isResult: false })
+            if (isPlay && playRound == dataJson.gameRound) {
                 // console.log(response.data);
                 // console.log(`round = ${response.data.info.detail.round}`)
                 // let current = response.data.game
                 // console.log(current)
                 
                 let remainBet = Math.max(WAITNG_TIME - Math.round((moment() - previousGameStartAt) / 1000), 0)
+                parentPort.postMessage({ action: 'start', remaining : remainBet })
                 if (remainBet > 10) {
 
                     let sum = predictStats.correct + predictStats.wrong + predictStats.tie
@@ -299,8 +311,8 @@ async function livePlaying(data){
                         bot: bot, 
                         table: workerData, 
                         shoe: shoe, 
-                        round: data.round, 
-                        game_id: data.id, 
+                        round: dataJson.gameRound, 
+                        game_id: dataJson.gameRound, 
                         remaining: remainBet,
                         win_percent: win_percent
                     } })
@@ -312,8 +324,6 @@ async function livePlaying(data){
 
                     
             }
-
-
         }
 
         
@@ -339,15 +349,23 @@ async function livePlaying(data){
         // setTimeout(() => {
         //     liveData.status = "BETTING"
         // }, 2000);
-    });
-
-    channel.bind('result', async (data) => {
+    }
+    else if(dataJson.eventType === "GP_WINNER" && previousEventType !== "GP_WINNER"){
+        previousEventType = "GP_WINNER"
+        parentPort.postMessage({ action: 'point', data: dataJson })
         //console.log(`${tableId}-baccarat-result`)
         //console.log(data)
-        let winner = data.winner;
+        let winner = null
+        if(dataJson.winner == 1){
+            winner = 'BANKER'
+        }else if(dataJson.winner == 2){
+            winner = 'PLAYER'
+        }else if(dataJson.winner == 3){
+            winner = 'TIE'
+        }
         let playCount = predictStats.predict.length
         let lastPlay = { ...predictStats.predict[playCount - 1] }
-        predictStats.predict[playCount - 1] = { ...lastPlay, isResult: true, data }
+        predictStats.predict[playCount - 1] = { ...lastPlay, isResult: true, dataJson }
         // console.log(bot, winner, lastPlay.bot, isPlay, playRound, round)
         if (bot != null) {
             let status = ''
@@ -390,9 +408,11 @@ async function livePlaying(data){
         // setTimeout(() => {
         //     liveData.status = "WAITING"
         // }, 2000);
-    });
+    }else if(dataJson === 'GP_ONE_CARD_DRAWN'){
+        parentPort.postMessage({ action: 'point', data: dataJson })
+    }
 
-    channel.bind('deal', async (data) => {
+    // channel.bind('deal', async (data) => {
         // console.log(`${tableId}-baccarat-deal`)
 
         // liveData.status = "OPEN";
@@ -402,7 +422,7 @@ async function livePlaying(data){
 
         // liveData.cards.player = data.histories.p.card;
         // liveData.cards.banker = data.histories.b.card;
-    });
+    // });
 
     // setInterval(async () => {
     //     if (liveData.status == "BETTING") {

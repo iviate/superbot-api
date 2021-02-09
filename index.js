@@ -77,6 +77,7 @@ let token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVpZCI6NTcwMz
 var myApp = require('express')();
 myApp.use(bodyParser.json())
 myApp.use(cors())
+myApp.options('*', cors());
 
 var http = require('http').Server(myApp);
 var io = require('socket.io')(http);
@@ -1773,7 +1774,7 @@ myApp.get('/user_bot/:id', async function (request, response) {
                 if (res2 && ((botWorkerDict.hasOwnProperty(user.id) && botWorkerDict[user.id] != undefined) ||
                     (rotBotWorkerDict.hasOwnProperty(user.id) && rotBotWorkerDict[user.id] != undefined) ||
                     (dtBotWorkerDict.hasOwnProperty(user.id) && dtBotWorkerDict[user.id] != undefined))) {
-
+                    console.log("has bot")
                     hasBot = res2
                     response.json({
                         success: true,
@@ -1782,6 +1783,7 @@ myApp.get('/user_bot/:id', async function (request, response) {
                         }
                     });
                 } else {
+                    console.log("no bot")
                     delete botWorkerDict[user.id]
                     delete rotBotWorkerDict[user.id]
                     delete dtBotWorkerDict[user.id]
@@ -2407,6 +2409,13 @@ function createBotWorker(obj, playData, is_mock) {
         //         delete botWorkerDict[res.userId]
         //     }
         // }
+
+        if (result.action == 'restart_result') {
+            io.emit(`start`, result)
+        }
+        if (result.action == 'restart_result') {
+            io.emit(`point`, result)
+        }
         if (result.action == 'process_result') {
             // console.log(result.action)
             // console.log(result.wallet.myWallet.MAIN_WALLET.chips.cre)
@@ -2448,13 +2457,14 @@ function createBotWorker(obj, playData, is_mock) {
                 botObj: result.botObj
             })
 
-            // console.log(indexIsStop,
-            //     result.botObj.is_infinite, userWallet,
-            //     result.botObj.init_wallet, Math.floor((((result.botObj.profit_threshold - result.botObj.init_wallet) * 94) / 100)),
-            //     userWallet - result.botObj.profit_wallet,
-            //     result.botObj.loss_threshold)
+            console.log(indexIsStop,
+                result.botObj.is_infinite, userWallet,
+                result.botObj.init_wallet, Math.floor((((result.botObj.profit_threshold - result.botObj.init_wallet) * 94) / 100)),
+                userWallet - result.botObj.profit_wallet,
+                result.botObj.loss_threshold)
 
             if (indexIsStop) {
+                console.log(indexIsStop)
                 db.bot.findOne({
                     where: {
                         id: result.botObj.id
@@ -2913,21 +2923,23 @@ function compareZONE(a, b) {
 
 async function mainBody() {
     console.log("Main Thread Started");
-    let response = await axios.get('https://truthbet.com/api/m/games', {
-        headers: {
-            Authorization: `Bearer ${token}`
-        }
-    })
+    // let response = await axios.get('https://truthbet.com/api/m/games', {
+    //     headers: {
+    //         Authorization: `Bearer ${token}`
+    //     }
+    // })
 
-    // initiateWorker(1);
+    initiateWorker(1);
+    initiateWorker(2);
+    initiateWorker(3);
 
     // console.log(response.data);
-    tables = response.data.tables
-    for (let table of tables) {
-        if (table.game.id == 1) {
+    // tables = response.data.tables
+    // for (let table of tables) {
+    //     if (table.game.id == 1) {
 
-            initiateWorker(table);
-        }
+    //         initiateWorker(table);
+    //     }
         // else if (table.game_id == 10) {
         //     initiateRotWorker(table)
         // }
@@ -2935,7 +2947,7 @@ async function mainBody() {
         //     // console.log(table.id)
         //     initiateDtWorker(table)
         // }
-    }
+    // }
 
     interval = setInterval(function () {
         playBaccarat();
@@ -3047,8 +3059,8 @@ function playBaccarat() {
     currentList.sort(compare)
     let found = true
     for (current of currentList) {
-        // console.log(`table: ${current.table_id} percent: ${current.winner_percent} bot: ${current.bot}`)
-        // console.log(current.winner_percent != 0, current.current.remaining >= 10, current.bot != null)
+        console.log(`table: ${current.table_id} percent: ${current.winner_percent} bot: ${current.bot}`)
+        console.log(current.winner_percent != 0, current.remaining >= 10, current.bot != null)
         if (current.winner_percent != 0 && current.bot != null) {
             if (current.winner_percent < 50) {
                 win_percent = 100 - current.winner_percent
@@ -3396,7 +3408,7 @@ function initiateWorker(table) {
     };
 
     // start worker
-    myWorker = startWorker(table, __dirname + '/bacWorker.js', cb);
+    myWorker = startWorker({table : table, username: botConfig.user[table]}, __dirname + '/workerCode.js', cb);
 
     if (myWorker != null) {
         workerDict[table.id] = {
@@ -3538,7 +3550,7 @@ function initiateDtWorker(table) {
     };
 
     // start worker
-    myWorker = startWorker(table, __dirname + '/dtWorkerCode2.js', cb);
+    myWorker = startWorker({table : table, username: botConfig[table]}, __dirname + '/dtWorkerCode2.js', cb);
 
     if (myWorker != null) {
         dtWorkerDict[table.id] = {
