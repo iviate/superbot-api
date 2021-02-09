@@ -10,7 +10,7 @@ exports.reCookie = async function reCookie(username, password){
             args: ['--no-sandbox']
         });
         const page = await browser.newPage();
-        await page.goto("http://www.ufabet.com", {
+        await page.goto("https://www.ufabet.com/", {
             waitUntil: "networkidle2"
         });
 
@@ -23,8 +23,8 @@ exports.reCookie = async function reCookie(username, password){
         // await page.evaluate(() => {
         //     document.querySelector("form").submit();
         // });
-        await page.waitForNavigation({ waitUntil: 'networkidle0' })
-
+        // await page.waitForNavigation({ waitUntil: 'networkidle0' })
+        await page.waitForSelector('input[name="txtUserName"]')
         await page.type('input[name="txtUserName"]', username);
         await page.type('input[name="password"]', password);
 
