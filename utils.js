@@ -10,7 +10,7 @@ exports.reCookie = async function reCookie(username, password){
             args: ['--no-sandbox']
         });
         const page = await browser.newPage();
-        await page.goto("https://www.ufabet.com/Default8.aspx", {
+        await page.goto("http://www.ufabet.com", {
             waitUntil: "networkidle2"
         });
 
