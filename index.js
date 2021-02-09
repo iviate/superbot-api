@@ -2926,6 +2926,7 @@ async function mainBody() {
     initiateWorker(1);
     initiateWorker(2);
     initiateWorker(3);
+    initiateWorker(4);
 
     // console.log(response.data);
     // tables = response.data.tables
