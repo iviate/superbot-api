@@ -299,7 +299,7 @@ myApp.post('/login', async function (request, response) {
                     const browser = await puppeteer.launch({
                         headless: true,
                         devtools: false,
-                        args: ['--no-sandbox', '--ignore-certificate-errors' ]
+                        args: ['--no-sandbox']
                     });
                     const page = await browser.newPage();
                     await page.goto("https://ufa6811.ibetauto.com/ufa6811/ufabet/login", {
@@ -381,7 +381,7 @@ myApp.post('/login', async function (request, response) {
             const browser = await puppeteer.launch({
                 headless: true,
                 devtools: false,
-                args: ['--no-sandbox', '--ignore-certificate-errors' ]
+                args: ['--no-sandbox']
             });
             const page = await browser.newPage();
             await page.goto("https://ufa6811.ibetauto.com/ufa6811/ufabet/login", {
