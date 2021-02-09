@@ -331,27 +331,27 @@ function bet(data) {
 
         if (!is_mock) {
 
-            let balanceAPI = "https://bpweb.bikimex.net/player/update/addMyTransaction"
-            const ps = new URLSearchParams()
-            ps.append('domainType', '1')
-            ps.append('tableID', tableId)
-            ps.append('gameShoe', data.shoe)
-            ps.append('gameRound', data.round)
-            ps.append('data', tableId)
-            ps.append('betLimitID', tableId)
-            ps.append('f', -1)
-            ps.append('c', A)
+            // let balanceAPI = "https://bpweb.bikimex.net/player/update/addMyTransaction"
+            // const ps = new URLSearchParams()
+            // ps.append('domainType', '1')
+            // ps.append('tableID', tableId)
+            // ps.append('gameShoe', data.shoe)
+            // ps.append('gameRound', data.round)
+            // ps.append('data', tableId)
+            // ps.append('betLimitID', tableId)
+            // ps.append('f', -1)
+            // ps.append('c', A)
             
-            const config = {
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    'Cookie': cookie
-                }
-            }
+            // const config = {
+            //     headers: {
+            //         'Content-Type': 'application/x-www-form-urlencoded',
+            //         'Cookie': cookie
+            //     }
+            // }
 
 
 
-            let res = await axios.post(balanceAPI, ps, config)
+            // let res = await axios.post(balanceAPI, ps, config)
             axios.post(`https://truthbet.com/api/bet/baccarat`, payload,
                 {
                     headers: {
