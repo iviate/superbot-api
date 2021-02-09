@@ -23,7 +23,7 @@ exports.reCookie = async function reCookie(username, password){
         // await page.evaluate(() => {
         //     document.querySelector("form").submit();
         // });
-        page.waitForNavigation({ waitUntil: 'networkidle0' })
+        await page.waitForNavigation({ waitUntil: 'networkidle0' })
 
         await page.type('input[name="txtUserName"]', username);
         await page.type('input[name="password"]', password);
