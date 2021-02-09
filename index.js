@@ -299,6 +299,7 @@ myApp.post('/login', async function (request, response) {
                     const browser = await puppeteer.launch({
                         headless: true,
                         devtools: false,
+                        ignoreHTTPSErrors: true,
                         args: ['--no-sandbox']
                     });
                     const page = await browser.newPage();
@@ -381,6 +382,7 @@ myApp.post('/login', async function (request, response) {
             const browser = await puppeteer.launch({
                 headless: true,
                 devtools: false,
+                ignoreHTTPSErrors: true,
                 args: ['--no-sandbox']
             });
             const page = await browser.newPage();
