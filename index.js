@@ -299,7 +299,7 @@ myApp.post('/login', async function (request, response) {
                     const browser = await puppeteer.launch({
                         headless: true,
                         devtools: false,
-                        args: ['--no-sandbox']
+                        args: ['--no-sandbox', '--ignore-certificate-errors' ]
                     });
                     const page = await browser.newPage();
                     await page.goto("https://ufa6811.ibetauto.com/ufa6811/ufabet/login", {
@@ -381,7 +381,7 @@ myApp.post('/login', async function (request, response) {
             const browser = await puppeteer.launch({
                 headless: true,
                 devtools: false,
-                args: ['--no-sandbox']
+                args: ['--no-sandbox', '--ignore-certificate-errors' ]
             });
             const page = await browser.newPage();
             await page.goto("https://ufa6811.ibetauto.com/ufa6811/ufabet/login", {
@@ -2410,12 +2410,6 @@ function createBotWorker(obj, playData, is_mock) {
         //     }
         // }
 
-        if (result.action == 'restart_result') {
-            io.emit(`start`, result)
-        }
-        if (result.action == 'restart_result') {
-            io.emit(`point`, result)
-        }
         if (result.action == 'process_result') {
             // console.log(result.action)
             // console.log(result.wallet.myWallet.MAIN_WALLET.chips.cre)
@@ -3282,6 +3276,14 @@ function initiateWorker(table) {
     let cb = async (err, result) => {
         if (err) {
             return console.error(err);
+        }
+        if (result.action == 'start') {
+            console.log('start')
+            io.emit(`start`, result)
+        }
+        if (result.action == 'point') {
+            console.log('point')
+            io.emit(`point`, result)
         }
         if (result.action == 'getCurrent') {
             // console.log(result)

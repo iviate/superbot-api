@@ -67,6 +67,9 @@ module.exports = (sequelize, Sequelize, DataTypes) => {
       },
       cookie : {
         type: DataTypes.TEXT
+      },
+      cookieTime : {
+        type: DataTypes.STRING
       }
       
     });

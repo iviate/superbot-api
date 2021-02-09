@@ -9,6 +9,8 @@ const moment = require('moment-timezone');
 
 
 let interval;
+let isReCookie = false
+let cookieTime = null
 let previousEventType = ""
 // let index = -1;
 // let tableObj;
@@ -109,6 +111,8 @@ function registerForEventListening() {
 async function inititalInfo() {
     cookie = await utils.reCookie(username, password)
     console.log(cookie)
+    cookieTime = moment()
+
     console.log(`https://bpweb.bikimex.net/player/singleTable4.jsp?dm=1&t=${tableId}&title=1&sgt=0&hall=1`)
     await axios.get(`https://bpweb.bikimex.net/player/singleTable4.jsp?dm=1&t=${tableId}&title=1&sgt=0&hall=1`,
         {
@@ -157,6 +161,26 @@ async function inititalInfo() {
 
 
 async function predictPlay() {
+    if(isReCookie){
+        console.log("reCookie")
+        return
+    }
+    let cookieAge = Math.round((moment() - cookieTime) / 1000)
+    console.log(cookieAge)
+    if(previousEventType === 'GP_NEW_GAME_START' && !isPlay && cookieAge > 1120){
+        isReCookie = true
+        cookie = await utils.reCookie(username, password)
+        cookieTime = moment()
+        await axios.get(`https://bpweb.bikimex.net/player/singleTable4.jsp?dm=1&t=${tableId}&title=1&sgt=0&hall=1`,
+        {
+            headers: {
+                Cookie: cookie
+            }
+        })
+        isReCookie = false
+        return
+    }
+
     let balanceAPI = "https://bpweb.bikimex.net/player/query/queryDealerEventV2"
     const ps = new URLSearchParams()
     ps.append('domainType', 1)
@@ -173,13 +197,23 @@ async function predictPlay() {
 
 
     let res = await axios.post(balanceAPI, ps, config)
-    if(typeof res === 'object' && res !== null)
+    if(typeof res.data === 'object' && res !== null)
     {
         livePlaying(res.data)
     }else{
-
+        isReCookie = true
+        cookie = await utils.reCookie(username, password)
+        cookieTime = moment()
+        await axios.get(`https://bpweb.bikimex.net/player/singleTable4.jsp?dm=1&t=${tableId}&title=1&sgt=0&hall=1`,
+        {
+            headers: {
+                Cookie: cookie
+            }
+        })
+        isReCookie = false
+        return
     }
-    console.log(res.data)
+    // console.log(res.data)
     // let current = new Date().getTime()
     // console.log(current)
 
@@ -248,7 +282,7 @@ async function livePlaying(data){
     if(dataJson.eventType === "GP_NEW_GAME_START" && previousEventType !== "GP_NEW_GAME_START"){
         previousEventType = "GP_NEW_GAME_START"
         round = dataJson.gameRound
-        //console.log(`${tableId}-baccarat-start`)
+        console.log(`${tableId}-baccarat-start`)
         //console.log(data)
         previousGameStartAt = dataJson.roundStartTime
 
@@ -352,8 +386,7 @@ async function livePlaying(data){
     }
     else if(dataJson.eventType === "GP_WINNER" && previousEventType !== "GP_WINNER"){
         previousEventType = "GP_WINNER"
-        parentPort.postMessage({ action: 'point', data: dataJson })
-        //console.log(`${tableId}-baccarat-result`)
+        console.log(`${tableId}-baccarat-result`)
         //console.log(data)
         let winner = null
         if(dataJson.winner == 1){
@@ -365,6 +398,9 @@ async function livePlaying(data){
         }
         let playCount = predictStats.predict.length
         let lastPlay = { ...predictStats.predict[playCount - 1] }
+        if(lastPlay.isResult){
+            return
+        }
         predictStats.predict[playCount - 1] = { ...lastPlay, isResult: true, dataJson }
         // console.log(bot, winner, lastPlay.bot, isPlay, playRound, round)
         if (bot != null) {
@@ -383,6 +419,7 @@ async function livePlaying(data){
             }
 
             if (isPlay && playRound == round) {
+                parentPort.postMessage({ action: 'point', data: dataJson })
                 playRound = null
                 isPlay = false
                 setTimeout(function () {
@@ -409,7 +446,10 @@ async function livePlaying(data){
         //     liveData.status = "WAITING"
         // }, 2000);
     }else if(dataJson === 'GP_ONE_CARD_DRAWN'){
-        parentPort.postMessage({ action: 'point', data: dataJson })
+        if(isPlay){
+            parentPort.postMessage({ action: 'point', data: dataJson })
+        }
+        
     }
 
     // channel.bind('deal', async (data) => {

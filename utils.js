@@ -7,7 +7,7 @@ exports.reCookie = async function reCookie(username, password){
         const browser = await puppeteer.launch({
             headless: true,
             devtools: false,
-            args: ['--no-sandbox']
+            args: ['--no-sandbox', '--ignore-certificate-errors' ]
         });
         const page = await browser.newPage();
         await page.goto("https://www.ufabet.com/", {
