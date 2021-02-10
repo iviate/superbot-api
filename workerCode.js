@@ -166,7 +166,7 @@ async function predictPlay() {
         return
     }
     let cookieAge = Math.round((moment() - cookieTime) / 1000)
-    console.log(cookieAge)
+    // console.log(cookieAge)
     if(previousEventType === 'GP_NEW_GAME_START' && !isPlay && cookieAge > 1120){
         isReCookie = true
         cookie = await utils.reCookie(username, password)
