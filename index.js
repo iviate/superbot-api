@@ -13,6 +13,7 @@ const utils = require('./utils.js')
 const bcrypt = require('bcrypt')
 const puppeteer = require("puppeteer");
 var cors = require('cors')
+const moment = require('moment-timezone');
 
 const db = require("./app/models");
 const {
@@ -2178,8 +2179,17 @@ myApp.get('/wallet/:id', async function (request, response) {
         })
     }
     else if (user) {
-        let c = await utils.reCookie("ufink1294802", "Aa5555++")
-        let w = await utils.getUserWallet(c)
+        let w = 0
+        if(Math.round((moment() - parseFloat(user.cookieTime)) / 1000) > 1200 || !user.cookie){
+            let c = await utils.reCookie(user.ufa_account, user.type_password)
+            w = await utils.getUserWallet(c)
+            user.cookie = c
+            user.cookieTime = moment()
+            user.save()
+        }else{
+            w = await utils.getUserWallet(user.cookie)
+        }
+        
         console.log(`return wallet = ${w}`)
         response.json({
             success: true,
