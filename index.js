@@ -2416,7 +2416,7 @@ function createBotWorker(obj, playData, is_mock) {
             let userWallet = result.wallet
             let winner_result = result.botTransaction.win_result
             if (result.botTransaction.win_result != 'TIE' && 
-                result.betstr.toLowerCase() != result.botTransaction.bet.toLowerCase()) {
+                result.bet.toLowerCase() != result.botTransaction.bet.toLowerCase()) {
                 if (result.botTransaction.win_result == 'WIN') {
                     winner_result = 'LOSE'
                 } else if (result.botTransaction.win_result == 'LOSE') {
