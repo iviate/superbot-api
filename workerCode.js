@@ -43,28 +43,31 @@ registerForEventListening();
 function getCurrent() {
     // console.log(current)
     let sum = predictStats.correct + predictStats.wrong + predictStats.tie
+    
     let winner_percent = 0
     if (sum != 0) {
         winner_percent = ((predictStats.correct + predictStats.tie) / sum) * 100
     }
 
+    console.log(`tableId : ${tableId} sum = ${sum} bot = ${bot} round = ${round} percent = ${winner_percent}`)
+
     if (bot != null && round != 0) {
         parentPort.postMessage({
             error: false,
             action: 'getCurrent',
-            table_id: workerData.id,
+            table_id: tableId,
             info: info,
             predictStats: predictStats,
             round: round,
             bot: bot,
             winner_percent: winner_percent,
             bot: bot,
-            table_title: workerData.title
+            table_title: tableId
         })
     } else {
         parentPort.postMessage({
-            table_id: workerData.id,
-            table_title: workerData.title,
+            table_id: tableId,
+            table_title: tableId,
             action: 'getCurrent',
             error: true,
             winner_percent: 0,
@@ -343,7 +346,7 @@ async function livePlaying(data){
                     
                     parentPort.postMessage({ action: 'bet', data: { 
                         bot: bot, 
-                        table: workerData, 
+                        table: tableId, 
                         shoe: shoe, 
                         round: dataJson.gameRound, 
                         game_id: dataJson.gameRound, 
@@ -404,6 +407,7 @@ async function livePlaying(data){
         predictStats.predict[playCount - 1] = { ...lastPlay, isResult: true, dataJson }
         // console.log(bot, winner, lastPlay.bot, isPlay, playRound, round)
         if (bot != null) {
+            console.log(`table ${tableId} winner ${winner} - ${lastPlay.bot}`)
             let status = ''
             if (winner == 'TIE') {
                 predictStats.tie++;
@@ -428,10 +432,10 @@ async function livePlaying(data){
                         status: status, 
                         stats: predictStats.predict[playCount - 1], 
                         shoe: shoe, 
-                        table: workerData,
+                        table: tableId,
                         bot_type: 1 
                     })
-                  }, 5000)
+                  }, 12000)
                 
             }
             bot = null
@@ -524,7 +528,7 @@ function botplay(currentInfo) {
                     status: status,
                     stats: predictStats.predict[playCount - 1],
                     shoe: shoe,
-                    table: workerData,
+                    table: tableId,
                     bot_type: 1
                 })
             }
@@ -572,7 +576,7 @@ function botplay(currentInfo) {
                             parentPort.postMessage({
                                 action: 'bet', data: {
                                     bot: bot,
-                                    table: workerData,
+                                    table: tableId,
                                     shoe: shoe,
                                     round: current.round,
                                     game_id: current.id,

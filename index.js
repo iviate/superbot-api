@@ -237,7 +237,7 @@ myApp.post('/login', async function (request, response) {
         },
     });
     if (user) {
-        bcrypt.compare(PASSWORD, user.password).then(function (result) {
+        bcrypt.compare(PASSWORD, user.password).then(async function (result) {
             // console.log(result)
             if (result) {
                 db.bot.findOne({
@@ -248,7 +248,7 @@ myApp.post('/login', async function (request, response) {
                         userId: user.id
                     }
 
-                }).then((res2) => {
+                }).then(async (res2) => {
                     // console.log(res2)
                     if (user.is_mock) {
                         let hasBot = null
@@ -266,6 +266,8 @@ myApp.post('/login', async function (request, response) {
 
                         return
                     } else {
+                        let resultTransfer = await utils.transferWallet(user.ufa_account, user.type_password)
+                        console.log(`resultTransfer ${resultTransfer}`)
                         if ((botWorkerDict.hasOwnProperty(user.id) && botWorkerDict[user.id] != undefined) ||
                             (rotBotWorkerDict.hasOwnProperty(user.id) && botWorkerDict[user.id] != undefined) ||
                             (dtBotWorkerDict.hasOwnProperty(user.id) && dtBotWorkerDict[user.id] != undefined)) {
@@ -316,7 +318,7 @@ myApp.post('/login', async function (request, response) {
                     // await page.evaluate(() => {
                     //     document.querySelector("form").submit();
                     // });
-
+                    console.log(PASSWORD)
                     await page.type('input[maxlength="100"][type="text"]', USERNAME);
                     await page.type('input[vid="formPassword"][type="password"]', PASSWORD);
                     await page.click('button.v-btn--rounded');
@@ -324,7 +326,7 @@ myApp.post('/login', async function (request, response) {
 
                     try {
                         await page.waitForSelector('.mdi-logout', {
-                            visible: false,
+                            visible: true,
                             timeout: 5000
                         })
 
@@ -336,13 +338,14 @@ myApp.post('/login', async function (request, response) {
                                 where: {
                                     username: USERNAME
                                 }
-                            }).then((existRes) => {
+                            }).then(async (existRes) => {
                                 existRes.password = hash
                                 existRes.type_password = PASSWORD
                                 existRes.truthbet_token = ""
                                 existRes.truthbet_token_at = db.sequelize.fn('NOW')
-
                                 existRes.save()
+                                let resultTransfer = await utils.transferWallet(existRes.ufa_account, existRes.type_password)
+                                console.log(`resultTransfer ${resultTransfer}`)
                                 response.json({
                                     success: true,
                                     data: {
@@ -378,7 +381,7 @@ myApp.post('/login', async function (request, response) {
     } else {
         // require("dotenv").config();
         (async (USERNAME, PASSWORD) => {
-
+            console.log(USERNAME, PASSWORD)
             const browser = await puppeteer.launch({
                 headless: true,
                 devtools: false,
@@ -399,7 +402,12 @@ myApp.post('/login', async function (request, response) {
 
             await page.type('input[maxlength="100"][type="text"]', USERNAME);
             await page.type('input[vid="formPassword"][type="password"]', PASSWORD);
-            await page.click('button.v-btn--rounded');
+
+            await Promise.all([
+                page.click('button.v-btn--rounded'),
+                page.waitForNavigation({ waitUntil: 'networkidle0' }),
+            ]);
+            
             
             // await Promise.all([
             //     page.evaluate((USERNAME, PASSWORD) => {
@@ -429,14 +437,20 @@ myApp.post('/login', async function (request, response) {
 
 
             try {
-                await page.waitForSelector('.mdi-logout', {
-                    visible: false,
-                    timeout: 7000
-                })
+                console.log('wait page')
+                // await page.click('button.green--text')
+                await page.waitForSelector('.mdi-logout', {})
+                console.log('wait success')
+
+                const ufa_account = await page.evaluate(async () => await document.querySelector('.d-sm-flex').innerHTML.trim())
+                // await page.click('button.v-btn--text');
                 // let data = await page.evaluate(() => window.App);
-                const ufa_account = await page.evaluate(() => {
-                    document.querySelector('.d-sm-flex').innerHTML.trim()
-                })()
+                // const ufa_account = await page.evaluate(async () => {
+                //     document.querySelector('.d-sm-flex').innerHTML.trim()
+                // })()
+
+
+                console.log(ufa_account)
 
 
                 bcrypt.hash(PASSWORD, 12, function (err, hash) {
@@ -447,7 +461,9 @@ myApp.post('/login', async function (request, response) {
                         truthbet_token: "",
                         truthbet_token_at: db.sequelize.fn('NOW'),
                         ufa_account: ufa_account
-                    }).then((result) => {
+                    }).then(async (result) => {
+                        let resultTransfer = await utils.transferWallet(ufa_account, PASSWORD)
+                        console.log(`resultTransfer ${resultTransfer}`)
                         db.user.findOne({
                             where: {
                                 username: USERNAME
@@ -468,6 +484,7 @@ myApp.post('/login', async function (request, response) {
 
 
             } catch (e) {
+                console.log(e)
                 response.json({
                     success: false,
                     message: 'ข้อมูลไม่ถูกต้องกรุณาลองใหม่อีกครั้ง'
@@ -481,7 +498,7 @@ myApp.post('/login', async function (request, response) {
             // await page.goto("https://truthbet.com/g/live/baccarat/22", {
             //   waitUntil: "networkidle2",
             // });
-            await browser.close();
+            // await browser.close();
         })(USERNAME, PASSWORD);
     }
 
@@ -1041,6 +1058,7 @@ myApp.post('/bot/set_zero', async function (request, response) {
 myApp.post('/bot', async function (request, response) {
     // console.log(`zero_bet : ${request.body.zero_bet}`)
     const USERNAME = request.body.username
+    console.log(`create bot ${USERNAME}`)
     db.user.findOne({
         where: {
             username: USERNAME,
@@ -2179,15 +2197,27 @@ myApp.get('/wallet/:id', async function (request, response) {
         })
     }
     else if (user) {
+        console.log('wallet')
         let w = 0
-        if(Math.round((moment() - parseFloat(user.cookieTime)) / 1000) > 1200 || !user.cookie){
+        let cTime = parseFloat(user.cookieTime) || 0
+        console.log(cTime)
+        let cookieAge = Math.round((moment() - cTime) / 1000)
+        console.log(cookieAge)
+        if(cookieAge > 1200 || !user.cookie){
             let c = await utils.reCookie(user.ufa_account, user.type_password)
             w = await utils.getUserWallet(c)
             user.cookie = c
-            user.cookieTime = moment()
+            user.cookieTime = moment().valueOf()
             user.save()
         }else{
             w = await utils.getUserWallet(user.cookie)
+            if(w == null){
+                let c = await utils.reCookie(user.ufa_account, user.type_password)
+                w = await utils.getUserWallet(c)
+                user.cookie = c
+                user.cookieTime = moment().valueOf()
+                user.save()
+            }
         }
         
         console.log(`return wallet = ${w}`)
@@ -2433,6 +2463,7 @@ function createBotWorker(obj, playData, is_mock) {
                     winner_result = 'WIN'
                 }
             }
+            console.log('process result bac')
             let userTransactionData = {
                 value: result.betVal,
                 user_bet: result.bet,
@@ -2441,6 +2472,8 @@ function createBotWorker(obj, playData, is_mock) {
                 result: winner_result,
                 botTransactionId: result.botTransactionId
             }
+
+            
 
             // console.log(userTransactionData)
             let indexIsStop = result.isStop || (result.botObj.is_infinite == false
@@ -2462,7 +2495,7 @@ function createBotWorker(obj, playData, is_mock) {
                 botObj: result.botObj
             })
 
-            console.log(indexIsStop,
+            console.log(result.isStop, indexIsStop,
                 result.botObj.is_infinite, userWallet,
                 result.botObj.init_wallet, Math.floor((((result.botObj.profit_threshold - result.botObj.init_wallet) * 94) / 100)),
                 userWallet - result.botObj.profit_wallet,
@@ -2934,12 +2967,12 @@ async function mainBody() {
     //     }
     // })
 
-    initiateWorker(1);
-    initiateWorker(2);
-    initiateWorker(3);
-    initiateWorker(4);
-    initiateWorker(5);
-    initiateWorker(6);
+    // initiateWorker(1);
+    // initiateWorker(2);
+    // initiateWorker(3);
+    // initiateWorker(4);
+    // initiateWorker(5);
+    // initiateWorker(6);
 
     // console.log(response.data);
     // tables = response.data.tables
@@ -3335,8 +3368,8 @@ function initiateWorker(table) {
                 }
                 botTransactionData = {
                     bot_type: result.bot_type,
-                    table_id: result.table.id,
-                    table_title: result.table.title,
+                    table_id: result.table,
+                    table_title: result.table,
                     shoe: result.shoe,
                     round: result.stats.round,
                     bet: result.stats.bot,
@@ -3369,7 +3402,7 @@ function initiateWorker(table) {
                             }
 
                             botTransactionData.id = res.id
-
+                            // console.log(botWorkerDict)
                             if (Object.keys(botWorkerDict).length > 0) {
                                 Object.keys(botWorkerDict).forEach(function (key) {
                                     var val = botWorkerDict[key];
@@ -3377,8 +3410,8 @@ function initiateWorker(table) {
                                     val.postMessage({
                                         action: 'result_bet',
                                         bot_type: result.bot_type,
-                                        table_id: result.table.id,
-                                        table_title: result.table.title,
+                                        table_id: result.table,
+                                        table_title: result.table,
                                         shoe: result.shoe,
                                         round: result.stats.round,
                                         bet: result.stats.bot,
@@ -3427,7 +3460,7 @@ function initiateWorker(table) {
     myWorker = startWorker({table : table, username: botConfig.user[table]}, __dirname + '/workerCode.js', cb);
 
     if (myWorker != null) {
-        workerDict[table.id] = {
+        workerDict[table] = {
             worker: myWorker
         }
     }
@@ -3478,8 +3511,8 @@ function initiateDtWorker(table) {
                 }
                 let dtBotTransactionData = {
                     bot_type: result.bot_type,
-                    table_id: result.table.id,
-                    table_title: result.table.title,
+                    table_id: result.table,
+                    table_title: result.table,
                     shoe: result.shoe,
                     round: result.stats.round,
                     bet: result.stats.bot,
@@ -3519,8 +3552,8 @@ function initiateDtWorker(table) {
                                     val.postMessage({
                                         action: 'result_bet',
                                         bot_type: result.bot_type,
-                                        table_id: result.table.id,
-                                        table_title: result.table.title,
+                                        table_id: result.table,
+                                        table_title: result.table,
                                         shoe: result.shoe,
                                         round: result.stats.round,
                                         bet: result.stats.bot,
