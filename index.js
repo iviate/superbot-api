@@ -2967,12 +2967,12 @@ async function mainBody() {
     //     }
     // })
 
-    // initiateWorker(1);
-    // initiateWorker(2);
-    // initiateWorker(3);
-    // initiateWorker(4);
-    // initiateWorker(5);
-    // initiateWorker(6);
+    initiateWorker(1);
+    initiateWorker(2);
+    initiateWorker(3);
+    initiateWorker(4);
+    initiateWorker(5);
+    initiateWorker(6);
 
     // console.log(response.data);
     // tables = response.data.tables
