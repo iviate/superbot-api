@@ -2973,6 +2973,8 @@ async function mainBody() {
     initiateWorker(4);
     initiateWorker(5);
     initiateWorker(6);
+    initiateDtWorker(31)
+    initiateDtWorker(32)
 
     // console.log(response.data);
     // tables = response.data.tables
@@ -3599,7 +3601,7 @@ function initiateDtWorker(table) {
     };
 
     // start worker
-    myWorker = startWorker({table : table, username: botConfig[table]}, __dirname + '/dtWorkerCode2.js', cb);
+    myWorker = startWorker({table : table, username: botConfig.user[table]}, __dirname + '/dtbot.js', cb);
 
     if (myWorker != null) {
         dtWorkerDict[table.id] = {
@@ -4099,10 +4101,10 @@ function initiateRotWorker(table) {
 function startWorker(table, path, cb) {
     // sending path and data to worker thread constructor
     // console.log(botConfig.user[table.id])
-    table.token = botConfig.user[table.id]
-    if (table.token == '') {
-        return null
-    }
+    // table.token = botConfig.user[table.id]
+    // if (table.token == '') {
+    //     return null
+    // }
     let w = new Worker(path, {
         workerData: table
     });

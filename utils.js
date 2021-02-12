@@ -115,6 +115,8 @@ exports.reCookie = async function reCookie(username, password){
             
         } catch (e) {
             console.log(e)
+            await browser.close();
+            return null
         }
 
         //   response.json(data);
@@ -290,6 +292,7 @@ exports.transferWallet = async function(username, password){
             
         } catch (e) {
             console.log(e)
+            await browser.close();
         }
 
         //   response.json(data);
