@@ -1077,7 +1077,7 @@ myApp.post('/bot', async function (request, response) {
                 loss_threshold: request.body.loss_threshold,
                 profit_percent: request.body.profit_percent,
                 loss_percent: request.body.loss_percent,
-                init_wallet: request.body.init_wallet,
+                init_wallet: parseFloat(request.body.init_wallet),
                 init_bet: request.body.init_bet,
                 bet_side: request.body.bet_side,
                 max_turn: 0,
@@ -2474,10 +2474,10 @@ function createBotWorker(obj, playData, is_mock) {
             }
 
             
-
+            let current_profit_threshold =  parseFloat(result.botObj.init_wallet) + Math.floor((((result.botObj.profit_threshold - result.botObj.init_wallet) * 94) / 100))
             // console.log(userTransactionData)
             let indexIsStop = result.isStop || (result.botObj.is_infinite == false
-                && userWallet >= parseFloat(result.botObj.init_wallet) + Math.floor((((result.botObj.profit_threshold - result.botObj.init_wallet) * 94) / 100)))
+                && userWallet >= current_profit_threshold)
             // || (userWallet - result.botObj.profit_wallet <= result.botObj.loss_threshold)
             // console.log(`isStop ${result.isStop}`)
 
@@ -2496,8 +2496,8 @@ function createBotWorker(obj, playData, is_mock) {
             })
             console.log(result.isStop, indexIsStop,
                  userWallet, 
-                 parseFloat(result.botObj.init_wallet), Math.floor((((result.botObj.profit_threshold - result.botObj.init_wallet) * 94) / 100)),
-                 parseFloat(result.botObj.init_wallet) + Math.floor((((result.botObj.profit_threshold - result.botObj.init_wallet) * 94) / 100)),
+                 typeof parseFloat(result.botObj.init_wallet), typeof Math.floor((((result.botObj.profit_threshold - result.botObj.init_wallet) * 94) / 100)),
+                 current_profit_threshold,
                 userWallet - result.botObj.profit_wallet,
                 result.botObj.loss_threshold)
 
