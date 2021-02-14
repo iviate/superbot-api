@@ -2497,6 +2497,7 @@ function createBotWorker(obj, playData, is_mock) {
             console.log(result.isStop, indexIsStop,
                  userWallet, 
                 result.botObj.init_wallet, Math.floor((((result.botObj.profit_threshold - result.botObj.init_wallet) * 94) / 100)),
+                result.botObj.init_wallet + Math.floor((((result.botObj.profit_threshold - result.botObj.init_wallet) * 94) / 100)),
                 userWallet - result.botObj.profit_wallet,
                 result.botObj.loss_threshold)
 
