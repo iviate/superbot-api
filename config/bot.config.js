@@ -7,6 +7,7 @@ module.exports = {
         5: "ufink5408737",
         6: "ufink3532930",
         31: "ufink6573252",
-        32: "ufink6082070"
+        32: "ufink6082070",
+        71: "ufink0950876"
     }
 }

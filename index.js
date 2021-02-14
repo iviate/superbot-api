@@ -2496,8 +2496,9 @@ function createBotWorker(obj, playData, is_mock) {
             })
 
             console.log(result.isStop, indexIsStop,
-                result.botObj.is_infinite, userWallet,
-                result.botObj.init_wallet, Math.floor((((result.botObj.profit_threshold - result.botObj.init_wallet) * 94) / 100)),
+                userWallet >= result.botObj.init_wallet + Math.floor((((result.botObj.profit_threshold - result.botObj.init_wallet) * 94) / 100))
+                , userWallet,
+                result.botObj.init_wallet, result.botObj.init_wallet + Math.floor((((result.botObj.profit_threshold - result.botObj.init_wallet) * 94) / 100)),
                 userWallet - result.botObj.profit_wallet,
                 result.botObj.loss_threshold)
 
@@ -2975,6 +2976,8 @@ async function mainBody() {
     initiateWorker(6);
     initiateDtWorker(31)
     initiateDtWorker(32)
+
+    // initiateRotWorker(71)
 
     // console.log(response.data);
     // tables = response.data.tables
@@ -4090,7 +4093,7 @@ function initiateRotWorker(table) {
     };
 
     // start worker
-    myWorker = startWorker(table, __dirname + '/rotWorker2.js', cb);
+    myWorker = startWorker({table : table, username: botConfig.user[table]}, __dirname + '/rotbot.js', cb);
     if (myWorker != null) {
         rotWorkerDict[table.id] = {
             worker: myWorker
