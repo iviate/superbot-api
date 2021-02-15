@@ -2812,13 +2812,16 @@ function createDtWorker(obj, playData, is_mock) {
             // console.log(result.wallet.myWallet.MAIN_WALLET.chips.cre)
             let userWallet = result.wallet
             let winner_result = result.botTransaction.win_result
-            if (result.botTransaction.win_result != 'TIE' && result.bet != result.botTransaction.bet) {
+
+            if (result.botTransaction.win_result != 'TIE' && 
+                result.bet.toLowerCase() != result.botTransaction.bet.toLowerCase()) {
                 if (result.botTransaction.win_result == 'WIN') {
                     winner_result = 'LOSE'
                 } else if (result.botTransaction.win_result == 'LOSE') {
                     winner_result = 'WIN'
                 }
             }
+
             let userTransactionData = {
                 value: result.betVal,
                 user_bet: result.bet,
@@ -2829,8 +2832,9 @@ function createDtWorker(obj, playData, is_mock) {
             }
 
             // console.log(userTransactionData)
+            let current_profit_threshold =  parseFloat(result.botObj.init_wallet) + Math.floor((((result.botObj.profit_threshold - result.botObj.init_wallet) * 94) / 100))
             let indexIsStop = result.isStop || (result.botObj.is_infinite == false
-                && userWallet >= result.botObj.init_wallet + Math.floor((((result.botObj.profit_threshold - result.botObj.init_wallet) * 94) / 100)))
+                && userWallet >= current_profit_threshold)
             // || (userWallet - result.botObj.profit_wallet <= result.botObj.loss_threshold)
             // console.log(`isStop ${result.isStop}`)
 
@@ -3009,8 +3013,8 @@ async function mainBody() {
     initiateWorker(4);
     initiateWorker(5);
     initiateWorker(6);
-    // initiateDtWorker(31)
-    // initiateDtWorker(32)
+    initiateDtWorker(31)
+    initiateDtWorker(32)
 
     // initiateRotWorker(71)
 
@@ -3032,11 +3036,11 @@ async function mainBody() {
 
     interval = setInterval(function () {
         playBaccarat();
-    }, 7000);
+    }, 6000);
 
-    // dtInterval = setInterval(function () {
-    //     playDragonTiger();
-    // }, 5500);
+    dtInterval = setInterval(function () {
+        playDragonTiger();
+    }, 4500);
 
     // rotInterval = setInterval(function () {
     //     playRot();
@@ -3140,8 +3144,8 @@ function playBaccarat() {
     currentList.sort(compare)
     let found = true
     for (current of currentList) {
-        console.log(`table: ${current.table_id} percent: ${current.winner_percent} bot: ${current.bot}`)
-        console.log(current.winner_percent != 0, current.remaining >= 10, current.bot != null)
+        // console.log(`table: ${current.table_id} percent: ${current.winner_percent} bot: ${current.bot}`)
+        // console.log(current.winner_percent != 0, current.remaining >= 10, current.bot != null)
         if (current.winner_percent != 0 && current.bot != null) {
             if (current.winner_percent < 50) {
                 win_percent = 100 - current.winner_percent
@@ -3192,8 +3196,6 @@ function playDragonTiger() {
     let found = true
     // console.log(dtCurrentList)
     for (current of dtCurrentList) {
-        // console.log(`table: ${current.table_id} percent: ${current.winner_percent} bot: ${current.bot}`)
-        // console.log(current.winner_percent != 0, current.current.remaining >= 10, current.bot != null)
         if (current.winner_percent != 0 && current.bot != null) {
             if (current.winner_percent < 50) {
                 win_percent = 100 - current.winner_percent
@@ -3204,8 +3206,9 @@ function playDragonTiger() {
             if (win_percent == 100) {
                 win_percent = 92
             }
-
+            console.log(`table: ${current.table_id} percent: ${current.winner_percent} bot: ${current.bot}`)
             // console.log(`table: ${current.table_id} percent: ${win_percent} bot: ${current.bot}`)
+            // console.log(dtWorkerDict[current.table_id])
             dtIsPlay = true
             // console.log('post play')
             dtWorkerDict[current.table_id].worker.postMessage({
@@ -3516,6 +3519,14 @@ function initiateDtWorker(table) {
         if (err) {
             return console.error(err);
         }
+        if (result.action == 'start') {
+            console.log('start')
+            io.emit(`start`, result)
+        }
+        if (result.action == 'point') {
+            console.log('point')
+            io.emit(`point`, result)
+        }
         if (result.action == 'getCurrent') {
             // console.log(result)
             dtCurrentList.push(result)
@@ -3573,7 +3584,7 @@ function initiateDtWorker(table) {
                     }).then((res) => {
 
 
-                        // console.log(res)
+                        console.log(res)
                         if (res) {
 
                             if (latestBotTransactionId != res.id) {
@@ -3642,7 +3653,7 @@ function initiateDtWorker(table) {
     myWorker = startWorker({table : table, username: botConfig.user[table]}, __dirname + '/dtbot.js', cb);
 
     if (myWorker != null) {
-        dtWorkerDict[table.id] = {
+        dtWorkerDict[table] = {
             worker: myWorker
         }
     }

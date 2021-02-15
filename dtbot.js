@@ -270,7 +270,7 @@ async function livePlaying(data){
 
     // const io = global['io'];
 
-    const WAITNG_TIME = 24;
+    const WAITNG_TIME = 21;
 
     // let liveData = {
     //     status: "",
@@ -337,7 +337,7 @@ async function livePlaying(data){
                 
                 let remainBet = Math.max(WAITNG_TIME - Math.round((moment() - previousGameStartAt) / 1000), 0)
                 parentPort.postMessage({ action: 'start', remaining : remainBet })
-                if (remainBet > 10) {
+                if (remainBet > 8) {
 
                     let sum = predictStats.correct + predictStats.wrong + predictStats.tie
                     let win_percent = 0
@@ -347,8 +347,12 @@ async function livePlaying(data){
 
                     if (win_percent < 50) {
                         win_percent = 100 - win_percent
-                    } else {
+                    } else{
                         win_percent = win_percent
+                    }
+
+                    if(win_percent < 55){
+                        win_percent += 5
                     }
         
                     if( win_percent == 100){
@@ -445,7 +449,7 @@ async function livePlaying(data){
                         table: tableId,
                         bot_type: 1 
                     })
-                  }, 12000)
+                  }, 7000)
                 
             }
             bot = null

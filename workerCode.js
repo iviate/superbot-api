@@ -267,7 +267,7 @@ async function livePlaying(data) {
 
     // const io = global['io'];
 
-    const WAITNG_TIME = 24;
+    const WAITNG_TIME = 22;
 
     // let liveData = {
     //     status: "",
@@ -346,6 +346,10 @@ async function livePlaying(data) {
                         win_percent = 100 - win_percent
                     } else {
                         win_percent = win_percent
+                    }
+
+                    if(win_percent < 55){
+                        win_percent += 5
                     }
 
                     if (win_percent == 100) {
