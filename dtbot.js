@@ -112,17 +112,21 @@ function registerForEventListening() {
 }
 
 async function inititalInfo() {
-    cookie = await utils.reCookie(username, password)
-    console.log(cookie)
-    cookieTime = moment()
+    while(!cookie)
+    {
+        cookie = await utils.reCookie(username, password)
+        console.log(cookie)
+        cookieTime = moment()
 
-    console.log(`https://bpweb.bikimex.net/player/singleTable4.jsp?dm=1&t=${tableId}&title=1&sgt=3&hall=1`)
-    await axios.get(`https://bpweb.bikimex.net/player/singleTable4.jsp?dm=1&t=${tableId}&title=1&sgt=3&hall=1`,
-        {
-            headers: {
-                Cookie: cookie
-            }
-        })
+        console.log(`https://bpweb.bikimex.net/player/singleTable4.jsp?dm=1&t=${tableId}&title=1&sgt=3&hall=1`)
+        await axios.get(`https://bpweb.bikimex.net/player/singleTable4.jsp?dm=1&t=${tableId}&title=1&sgt=3&hall=1`,
+            {
+                headers: {
+                    Cookie: cookie
+                }
+            })
+    }
+    
     interval = setInterval(predictPlay, 1500);
 
 
@@ -171,13 +175,13 @@ async function predictPlay() {
     let cookieAge = Math.round((moment() - cookieTime) / 1000)
     // console.log(cookieAge)
     if(previousEventType === 'GP_NEW_GAME_START' && !isPlay && cookieAge > 1120){
-        while(cookie != null){
+        while(!cookie){
             try{
                 cookie = null
                 isReCookie = true
                 cookie = await utils.reCookie(username, password)
                 cookieTime = moment()
-                await axios.get(`https://bpweb.bikimex.net/player/singleTable4.jsp?dm=1&t=${tableId}&title=1&sgt=6&hall=1`,
+                await axios.get(`https://bpweb.bikimex.net/player/singleTable4.jsp?dm=1&t=${tableId}&title=1&sgt=0&hall=1`,
                 {
                     headers: {
                         Cookie: cookie
@@ -213,13 +217,13 @@ async function predictPlay() {
     {
         livePlaying(res.data)
     }else{
-        while(cookie != null){
+        while(!cookie){
             try{
                 cookie = null
                 isReCookie = true
                 cookie = await utils.reCookie(username, password)
                 cookieTime = moment()
-                await axios.get(`https://bpweb.bikimex.net/player/singleTable4.jsp?dm=1&t=${tableId}&title=1&sgt=6&hall=1`,
+                await axios.get(`https://bpweb.bikimex.net/player/singleTable4.jsp?dm=1&t=${tableId}&title=1&sgt=0&hall=1`,
                 {
                     headers: {
                         Cookie: cookie
