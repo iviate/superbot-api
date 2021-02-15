@@ -2186,13 +2186,9 @@ myApp.post('/transfer_wallet/ae', async function (request, response) {
     if (user && user.is_mock) {
         // console.log(user.mock_wallet)
         response.json({
-            success: true,
-            error_code: null,
+            success: false,
+            error_code: 600,
             data: {
-                profit_wallet: 0,
-                all_wallet: user.mock_wallet,
-                play_wallet: user.mock_wallet,
-                myWallet: {}
             }
         })
     }
@@ -2225,10 +2221,15 @@ myApp.get('/wallet/:id', async function (request, response) {
     // console.log(user)
     if (user && user.is_mock) {
         // console.log(user.mock_wallet)
+
         response.json({
-            success: false,
-            error_code: 600,
+            success: true,
+            error_code: null,
             data: {
+                profit_wallet: 0,
+                all_wallet: user.mock_wallet,
+                play_wallet: user.mock_wallet,
+                myWallet: {}
             }
         })
     }
