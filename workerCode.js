@@ -333,7 +333,7 @@ async function livePlaying(data) {
                 // console.log(current)
 
                 let remainBet = Math.max(WAITNG_TIME - Math.round((moment() - previousGameStartAt) / 1000), 0)
-                parentPort.postMessage({ action: 'start', remaining: remainBet })
+                parentPort.postMessage({ action: 'start', remaining: remainBet, data: dataJson })
                 if (remainBet > 10) {
 
                     let sum = predictStats.correct + predictStats.wrong + predictStats.tie
