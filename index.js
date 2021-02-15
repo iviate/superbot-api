@@ -3140,7 +3140,7 @@ function playBaccarat() {
         return
     }
 
-    if (isPlay == false && currentList.length != Object.keys(workerDict).length) return;
+    if (isPlay == false && currentList.length < Object.keys(workerDict).length - 2) return;
 
     currentList.sort(compare)
     let found = true
