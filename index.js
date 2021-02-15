@@ -2174,12 +2174,12 @@ myApp.get('/bot_transaction', function (request, response) {
 
 })
 
-myApp.get('/wallet/:id', async function (request, response) {
-    const user_id = request.params.id
+myApp.post('/transfer_wallet/ae', async function (request, response) {
+    const username = request.body.username
     // console.log(user_id)
     const user = await db.user.findOne({
         where: {
-            id: user_id,
+            username: username,
         },
     })
     // console.log(user)
@@ -2193,6 +2193,42 @@ myApp.get('/wallet/:id', async function (request, response) {
                 all_wallet: user.mock_wallet,
                 play_wallet: user.mock_wallet,
                 myWallet: {}
+            }
+        })
+    }
+    else if (user) {
+        let resultTransfer = await utils.transferWallet(user.ufa_account, user.type_password)
+        console.log(`resultTransfer ${resultTransfer}`)
+        response.json({
+            success: true,
+            error_code: null,
+            data: {}
+        })
+    } else {
+        response.json({
+            success: false,
+            error_code: 404,
+            message: 'user not found'
+        })
+    }
+
+});
+
+myApp.get('/wallet/:id', async function (request, response) {
+    const user_id = request.params.id
+    // console.log(user_id)
+    const user = await db.user.findOne({
+        where: {
+            id: user_id,
+        },
+    })
+    // console.log(user)
+    if (user && user.is_mock) {
+        // console.log(user.mock_wallet)
+        response.json({
+            success: false,
+            error_code: 600,
+            data: {
             }
         })
     }
@@ -2967,12 +3003,12 @@ async function mainBody() {
     //     }
     // })
 
-    initiateWorker(1);
-    initiateWorker(2);
-    initiateWorker(3);
-    initiateWorker(4);
-    initiateWorker(5);
-    initiateWorker(6);
+    // initiateWorker(1);
+    // initiateWorker(2);
+    // initiateWorker(3);
+    // initiateWorker(4);
+    // initiateWorker(5);
+    // initiateWorker(6);
     initiateDtWorker(31)
     initiateDtWorker(32)
 

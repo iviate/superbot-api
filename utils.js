@@ -185,7 +185,9 @@ exports.transferWallet = async function(username, password){
 
             const content = await frame.evaluate(async () => await [...document.querySelectorAll('.spMargin2')].find(element => element.textContent === 'คาสิโนสด' || element.textContent === 'Live Casino').onclick.toString())
             console.log(content.split('\''))
-
+            var amount = await frame.evaluate(async () => await document.querySelector('strong span.Positive').innerText)
+            var amt = parseInt(amount.replace(/,/g, ''), 10);
+            console.log(amt)
             var gameSelectUrl = content.split('\'')[1]
             var param = content.split('?')[1]
             console.log(param)
@@ -213,10 +215,10 @@ exports.transferWallet = async function(username, password){
 
             console.log(cookieHeader)
 
-            let fieldHandle = await page2.$('#DepositAmt')
-            console.log(fieldHandle)
-            const amt = await page2.evaluate(x => x.value, fieldHandle);
-            console.log(`amt = ${amt}`)
+            // let fieldHandle = await page2.$('#DepositAmt')
+            // // console.log(fieldHandle)
+            // const amt = await page2.evaluate(x => x.value, fieldHandle);
+            // console.log(`amt = ${amt}`)
             // var pData = qs.stringify({
             //     'accid': paramObj.accid,
             //     'sid': paramObj.sid,
@@ -227,6 +229,7 @@ exports.transferWallet = async function(username, password){
             //     'amt': amt
             // });
             let depositUrl = `https://igtx399.isme99.com/api.aspx?accid=${paramObj.accid}&sid=${paramObj.sid}&home=${paramObj.home}&game=39-101&ct=${paramObj.ct}&action=deposit&amt=${amt}`
+            
             console.log(depositUrl)
             var config = {
                 method: 'post',
@@ -239,6 +242,21 @@ exports.transferWallet = async function(username, password){
 
             let res = await axios(config)
             console.log(res.data)
+
+            depositUrl = `https://igtx399.isme99.com/api.aspx?accid=${paramObj.accid}&sid=${paramObj.sid}&home=${paramObj.home}&game=39-101&ct=${paramObj.ct}&action=deposit&amt=${amt-1}`
+            
+            console.log(depositUrl)
+            config = {
+                method: 'post',
+                url: depositUrl,
+                headers: {
+                    'Cookie': cookieHeader,
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                }
+            };
+
+            let res2 = await axios(config)
+            console.log(res2.data)
 
 
             
