@@ -186,11 +186,10 @@ async function predictPlay() {
                 isReCookie = false
             } catch (e) {
                 cookie = null
-                continue
             }
-
-            return
         }
+
+        return
     }
 
     let balanceAPI = "https://bpweb.bikimex.net/player/query/queryDealerEventV2"
@@ -212,16 +211,24 @@ async function predictPlay() {
     if (typeof res.data === 'object' && res !== null) {
         livePlaying(res.data)
     } else {
-        isReCookie = true
-        cookie = await utils.reCookie(username, password)
-        cookieTime = moment()
-        await axios.get(`https://bpweb.bikimex.net/player/singleTable4.jsp?dm=1&t=${tableId}&title=1&sgt=0&hall=1`,
-            {
-                headers: {
-                    Cookie: cookie
-                }
-            })
-        isReCookie = false
+        while (cookie != null) {
+            try {
+                cookie = null
+                isReCookie = true
+                cookie = await utils.reCookie(username, password)
+                cookieTime = moment()
+                await axios.get(`https://bpweb.bikimex.net/player/singleTable4.jsp?dm=1&t=${tableId}&title=1&sgt=0&hall=1`,
+                    {
+                        headers: {
+                            Cookie: cookie
+                        }
+                    })
+                isReCookie = false
+            } catch (e) {
+                cookie = null
+            }
+        }
+
         return
     }
     // console.log(res.data)

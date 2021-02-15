@@ -177,7 +177,7 @@ async function predictPlay() {
                 isReCookie = true
                 cookie = await utils.reCookie(username, password)
                 cookieTime = moment()
-                await axios.get(`https://bpweb.bikimex.net/player/singleTable4.jsp?dm=1&t=${tableId}&title=1&sgt=0&hall=1`,
+                await axios.get(`https://bpweb.bikimex.net/player/singleTable4.jsp?dm=1&t=${tableId}&title=1&sgt=6&hall=1`,
                 {
                     headers: {
                         Cookie: cookie
@@ -186,12 +186,10 @@ async function predictPlay() {
                 isReCookie = false
             }catch(e){
                 cookie = null
-                continue
             }
-
-            return
         }
         
+        return
         
     }
 
@@ -215,16 +213,23 @@ async function predictPlay() {
     {
         livePlaying(res.data)
     }else{
-        isReCookie = true
-        cookie = await utils.reCookie(username, password)
-        cookieTime = moment()
-        await axios.get(`https://bpweb.bikimex.net/player/singleTable4.jsp?dm=1&t=${tableId}&title=1&sgt=3&hall=1`,
-        {
-            headers: {
-                Cookie: cookie
+        while(cookie != null){
+            try{
+                cookie = null
+                isReCookie = true
+                cookie = await utils.reCookie(username, password)
+                cookieTime = moment()
+                await axios.get(`https://bpweb.bikimex.net/player/singleTable4.jsp?dm=1&t=${tableId}&title=1&sgt=6&hall=1`,
+                {
+                    headers: {
+                        Cookie: cookie
+                    }
+                })
+                isReCookie = false
+            }catch(e){
+                cookie = null
             }
-        })
-        isReCookie = false
+        }
         return
     }
     // console.log(res.data)
