@@ -49,7 +49,7 @@ function getCurrent() {
         winner_percent = ((predictStats.correct + predictStats.tie) / sum) * 100
     }
 
-    console.log(`tableId : ${tableId} sum = ${sum} bot = ${bot} round = ${round} percent = ${winner_percent}`)
+    // console.log(`tableId : ${tableId} sum = ${sum} bot = ${bot} round = ${round} percent = ${winner_percent}`)
 
     if (bot != null && round != 0) {
         parentPort.postMessage({

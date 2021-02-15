@@ -3157,7 +3157,7 @@ function playBaccarat() {
             if (win_percent == 100) {
                 win_percent = 92
             }
-
+            console.log(`table: ${current.table_id} percent: ${current.winner_percent} bot: ${current.bot}`)
             // console.log(`table: ${current.table_id} percent: ${win_percent} bot: ${current.bot}`)
             isPlay = true
             // console.log('post play')
@@ -3369,11 +3369,11 @@ function initiateWorker(table) {
             return console.error(err);
         }
         if (result.action == 'start') {
-            console.log('start')
+            console.log('bac start')
             io.emit(`start`, result)
         }
         if (result.action == 'point') {
-            console.log('point')
+            console.log('bac point')
             io.emit(`point`, result)
         }
         if (result.action == 'getCurrent') {
@@ -3521,11 +3521,11 @@ function initiateDtWorker(table) {
             return console.error(err);
         }
         if (result.action == 'start') {
-            console.log('start')
+            console.log('dt start')
             io.emit(`start`, result)
         }
         if (result.action == 'point') {
-            console.log('point')
+            console.log('dt point')
             io.emit(`point`, result)
         }
         if (result.action == 'getCurrent') {
