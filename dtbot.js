@@ -467,7 +467,7 @@ async function livePlaying(data){
                         stats: predictStats.predict[playCount - 1], 
                         shoe: shoe, 
                         table: tableId,
-                        bot_type: 1 
+                        bot_type: 3
                     })
                   }, 7000)
                 
