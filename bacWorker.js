@@ -244,29 +244,6 @@ async function livePlaying(tableId, tableTitle = null){
 
         }
 
-        
-        // let gameId = data.id;
-        // liveData.round = round;
-        // liveData.gameId = gameId;
-        // liveData.winner = "-";
-
-        // await this.predictBaccarat(tableId, gameId)
-
-        // let predict = await this.getPredictBaccarat(tableId, gameId, round)
-        // liveData.predict = predict;
-        // liveData.status = "START";
-
-        // liveData.score = {
-        //     player: 0,
-        //     banker: 0,
-        // }
-        // liveData.cards = {
-        //     player: [],
-        //     banker: [],
-        // }
-        // setTimeout(() => {
-        //     liveData.status = "BETTING"
-        // }, 2000);
     });
 
     channel.bind('result', async (data) => {

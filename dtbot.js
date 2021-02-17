@@ -119,13 +119,14 @@ async function inititalInfo() {
             console.log(cookie)
             cookieTime = moment()
 
-            console.log(`https://bpweb.bikimex.net/player/singleTable4.jsp?dm=1&t=${tableId}&title=1&sgt=3&hall=1`)
+            // console.log(`https://bpweb.bikimex.net/player/singleTable4.jsp?dm=1&t=${tableId}&title=1&sgt=3&hall=1`)
             await axios.get(`https://bpweb.bikimex.net/player/singleTable4.jsp?dm=1&t=${tableId}&title=1&sgt=3&hall=1`,
                 {
                     headers: {
                         Cookie: cookie
                     }
                 })
+            isReCookie = false
         }catch(e){
             cookie = null
             isReCookie = true
@@ -176,7 +177,7 @@ async function inititalInfo() {
 
 async function predictPlay() {
     if(isReCookie){
-        console.log("reCookie")
+        console.log(`table - ${tableId} reCookie`)
         return
     }
     let cookieAge = Math.round((moment() - cookieTime) / 1000)
@@ -424,7 +425,7 @@ async function livePlaying(data){
     }
     else if(dataJson.eventType === "GP_WINNER" && previousEventType !== "GP_WINNER"){
         previousEventType = "GP_WINNER"
-        console.log(`${tableId}-baccarat-result`)
+        // console.log(`${tableId}-baccarat-result`)
         let winner = null
         if(dataJson.winner == 1){
             winner = 'TIGER'
@@ -441,7 +442,7 @@ async function livePlaying(data){
         predictStats.predict[playCount - 1] = { ...lastPlay, isResult: true, dataJson }
         // console.log(bot, winner, lastPlay.bot, isPlay, playRound, round)
         if (bot != null) {
-            console.log(`table ${tableId} winner ${winner} - ${lastPlay.bot}`)
+            console.log(`dt-result table ${tableId} winner ${winner} - ${lastPlay.bot}`)
             let status = ''
             if (winner == 'TIE') {
                 predictStats.tie++;

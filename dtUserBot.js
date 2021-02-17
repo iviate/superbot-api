@@ -35,46 +35,6 @@ var latestBetSuccess = {
 var bet_time = null
 registerForEventListening();
 
-async function callBet(betVal, bet) {
-    let wallet = await (async (cookie) => {
-
-        let balanceAPI = "https://bpweb.bikimex.net/player/query/queryBalancePC"
-        const ps = new URLSearchParams()
-        ps.append('dm', '1')
-        ps.append('hallType', '1')
-
-        const config = {
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-                'Cookie': cookie
-            }
-        }
-
-
-
-        let res = await axios.post(balanceAPI, ps, config)
-
-        console.log(res.data.status)
-
-        if (res.data.status == 200) {
-            return res.data.balance
-        } else {
-            return null
-        }
-
-        //   response.json(data);
-
-
-        // access baccarat room 2
-        // await page.goto("https://truthbet.com/g/live/baccarat/22", {
-        //   waitUntil: "networkidle2",
-        // });
-        // await browser.close();
-    })(cookie);
-
-    return wallet
-}
-
 function restartOnlyProfit() {
     axios.get(`https://truthbet.com/api/wallet`, {
         headers: {
@@ -520,7 +480,6 @@ function genLeftProfitXSystem(wallet) {
 }
 
 async function processResultBet(betStatus, botTransactionId, botTransaction) {
-    console.log('processResultBet')
     if (botObj.money_system == 1) { }
     else if (botObj.money_system == 2 || botObj.money_system == 5) {
         if ((betStatus == 'WIN' && current.is_opposite == false) || (betStatus == 'LOSE' && current.is_opposite == true)) {
@@ -566,7 +525,6 @@ async function processResultBet(betStatus, botTransactionId, botTransaction) {
         let currentWallet = 0
         let cTime = parseFloat(user.cookieTime) || 0
         let cookieAge = Math.round((moment() - cTime) / 1000)
-        console.log(cookieAge)
         if (cookieAge > 1300 || !user.cookie) {
             let c = await utils.reCookie(user.ufa_account, user.type_password)
             currentWallet = await utils.getUserWallet(c)
@@ -576,7 +534,7 @@ async function processResultBet(betStatus, botTransactionId, botTransaction) {
         } else {
             currentWallet = await utils.getUserWallet(user.cookie)
         }
-        console.log(`result ${currentWallet}`)
+        console.log(`dt ${botObj.userId} wallet ${currentWallet}`)
 
         let cutProfit = botObj.init_wallet + Math.floor(((botObj.profit_threshold - botObj.init_wallet) * 94) / 100)
         if (playData.length == 0) {
@@ -902,10 +860,10 @@ function registerForEventListening() {
             parentPort.postMessage({ action: 'info', botObj: botObj, playData: playData, turnover: turnover, userId: botObj.userId, table: table, current: current })
         }
         if (result.action == 'result_bet') {
-            console.log('action result_bet')
+            // console.log('action result_bet')
             betFailed = false
-            console.log(result)
-            console.log(current)
+            // console.log(result)
+            // console.log(current)
             if (result.table == current.table && result.round == current.round && result.shoe == current.shoe) {
                 processResultBet(result.status, result.botTransactionId, result.botTransaction)
             }

@@ -267,7 +267,7 @@ myApp.post('/login', async function (request, response) {
                         return
                     } else {
                         let resultTransfer = await utils.transferWallet(user.ufa_account, user.type_password)
-                        console.log(`resultTransfer ${resultTransfer}`)
+                        // console.log(`resultTransfer ${resultTransfer}`)
                         if ((botWorkerDict.hasOwnProperty(user.id) && botWorkerDict[user.id] != undefined) ||
                             (rotBotWorkerDict.hasOwnProperty(user.id) && botWorkerDict[user.id] != undefined) ||
                             (dtBotWorkerDict.hasOwnProperty(user.id) && dtBotWorkerDict[user.id] != undefined)) {
@@ -318,7 +318,7 @@ myApp.post('/login', async function (request, response) {
                     // await page.evaluate(() => {
                     //     document.querySelector("form").submit();
                     // });
-                    console.log(PASSWORD)
+                    // console.log(PASSWORD)
                     await page.type('input[maxlength="100"][type="text"]', USERNAME);
                     await page.type('input[vid="formPassword"][type="password"]', PASSWORD);
                     await page.click('button.v-btn--rounded');
@@ -345,7 +345,7 @@ myApp.post('/login', async function (request, response) {
                                 existRes.truthbet_token_at = db.sequelize.fn('NOW')
                                 existRes.save()
                                 let resultTransfer = await utils.transferWallet(existRes.ufa_account, existRes.type_password)
-                                console.log(`resultTransfer ${resultTransfer}`)
+                                // console.log(`resultTransfer ${resultTransfer}`)
                                 response.json({
                                     success: true,
                                     data: {
@@ -381,7 +381,7 @@ myApp.post('/login', async function (request, response) {
     } else {
         // require("dotenv").config();
         (async (USERNAME, PASSWORD) => {
-            console.log(USERNAME, PASSWORD)
+            // console.log(USERNAME, PASSWORD)
             const browser = await puppeteer.launch({
                 headless: true,
                 devtools: false,
@@ -437,10 +437,10 @@ myApp.post('/login', async function (request, response) {
 
 
             try {
-                console.log('wait page')
+                // console.log('wait page')
                 // await page.click('button.green--text')
                 await page.waitForSelector('.mdi-logout', {})
-                console.log('wait success')
+                // console.log('wait success')
 
                 const ufa_account = await page.evaluate(async () => await document.querySelector('.d-sm-flex').innerHTML.trim())
                 // await page.click('button.v-btn--text');
@@ -450,7 +450,7 @@ myApp.post('/login', async function (request, response) {
                 // })()
 
 
-                console.log(ufa_account)
+                // console.log(ufa_account)
 
 
                 bcrypt.hash(PASSWORD, 12, function (err, hash) {
@@ -463,7 +463,7 @@ myApp.post('/login', async function (request, response) {
                         ufa_account: ufa_account
                     }).then(async (result) => {
                         let resultTransfer = await utils.transferWallet(ufa_account, PASSWORD)
-                        console.log(`resultTransfer ${resultTransfer}`)
+                        // console.log(`resultTransfer ${resultTransfer}`)
                         db.user.findOne({
                             where: {
                                 username: USERNAME
@@ -2906,7 +2906,7 @@ function createDtWorker(obj, playData, is_mock) {
         }
     };
 
-    let w = new Worker(__dirname + '/dtBotWorker.js', {
+    let w = new Worker(__dirname + '/dtUserBot.js', {
         workerData: {
             obj: obj,
             playData: playData,
@@ -3008,12 +3008,12 @@ async function mainBody() {
     //     }
     // })
 
-    initiateWorker(1);
-    initiateWorker(2);
-    initiateWorker(3);
-    initiateWorker(4);
-    initiateWorker(5);
-    initiateWorker(6);
+    // initiateWorker(1);
+    // initiateWorker(2);
+    // initiateWorker(3);
+    // initiateWorker(4);
+    // initiateWorker(5);
+    // initiateWorker(6);
     initiateDtWorker(31)
     initiateDtWorker(32)
 
@@ -3585,7 +3585,7 @@ function initiateDtWorker(table) {
                     }).then((res) => {
 
 
-                        console.log(res)
+                        // console.log(res)
                         if (res) {
 
                             if (latestBotTransactionId != res.id) {

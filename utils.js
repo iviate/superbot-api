@@ -46,16 +46,16 @@ exports.reCookie = async function reCookie(username, password){
             })
 
             const frame = (await page.frames())[3];
-            console.log(`frame ${frame['_name']}`)
+            // console.log(`frame ${frame['_name']}`)
 
             const content = await frame.evaluate(async () => await [...document.querySelectorAll('.spMargin2')].find(element => element.textContent === 'คาสิโนสด' || element.textContent === 'Live Casino').onclick.toString())
             // console.log(content.split('\''))
 
             var gameSelectUrl = content.split('\'')[1]
             var param = content.split('?')[1]
-            console.log(param)
+            // console.log(param)
             var paramObj = Object.fromEntries(new URLSearchParams(param))
-            console.log(paramObj)
+            // console.log(paramObj)
 
             var url = "https://igtx399.isme99.com/txgame.aspx?game=" + "39-101" + "&home=" + 
                         paramObj.home + "&sid=" + paramObj.sid + "&accid=" + paramObj.accid + 
@@ -77,7 +77,7 @@ exports.reCookie = async function reCookie(username, password){
             })
 
             await browser.close();
-            console.log(cookieHeader)
+            // console.log(cookieHeader)
             return cookieHeader
 
             // const ps = new URLSearchParams()
@@ -114,7 +114,7 @@ exports.reCookie = async function reCookie(username, password){
             // console.log(plainValue)
             
         } catch (e) {
-            console.log(e)
+            // console.log(e)
             await browser.close();
             return null
         }
@@ -139,7 +139,7 @@ function delay(time) {
  }
 
 exports.transferWallet = async function(username, password){
-        console.log(username, password)
+        // console.log(username, password)
         const browser = await puppeteer.launch({
             headless: true,
             devtools: false,
@@ -181,18 +181,18 @@ exports.transferWallet = async function(username, password){
             })
 
             const frame = (await page.frames())[3];
-            console.log(`frame ${frame['_name']}`)
+            // console.log(`frame ${frame['_name']}`)
 
             const content = await frame.evaluate(async () => await [...document.querySelectorAll('.spMargin2')].find(element => element.textContent === 'คาสิโนสด' || element.textContent === 'Live Casino').onclick.toString())
-            console.log(content.split('\''))
+            // console.log(content.split('\''))
             var amount = await frame.evaluate(async () => await document.querySelector('strong span.Positive').innerText)
             var amt = parseInt(amount.replace(/,/g, ''), 10);
-            console.log(amt)
+            // console.log(amt)
             var gameSelectUrl = content.split('\'')[1]
             var param = content.split('?')[1]
-            console.log(param)
+            // console.log(param)
             var paramObj = Object.fromEntries(new URLSearchParams(param))
-            console.log(paramObj)
+            // console.log(paramObj)
 
             var url = "https://igtx399.isme99.com/tx4.aspx?game=" + "39-101" + "&home=" + 
                         paramObj.home + "&sid=" + paramObj.sid + "&accid=" + paramObj.accid + 
@@ -213,7 +213,7 @@ exports.transferWallet = async function(username, password){
                 cookieHeader += value.name + '=' + value.value + '; '
             })
 
-            console.log(cookieHeader)
+            // console.log(cookieHeader)
 
             // let fieldHandle = await page2.$('#DepositAmt')
             // // console.log(fieldHandle)
@@ -230,7 +230,7 @@ exports.transferWallet = async function(username, password){
             // });
             let depositUrl = `https://igtx399.isme99.com/api.aspx?accid=${paramObj.accid}&sid=${paramObj.sid}&home=${paramObj.home}&game=39-101&ct=${paramObj.ct}&action=deposit&amt=${amt}`
             
-            console.log(depositUrl)
+            // console.log(depositUrl)
             var config = {
                 method: 'post',
                 url: depositUrl,
@@ -245,7 +245,7 @@ exports.transferWallet = async function(username, password){
 
             depositUrl = `https://igtx399.isme99.com/api.aspx?accid=${paramObj.accid}&sid=${paramObj.sid}&home=${paramObj.home}&game=39-101&ct=${paramObj.ct}&action=deposit&amt=${amt-1}`
             
-            console.log(depositUrl)
+            // console.log(depositUrl)
             config = {
                 method: 'post',
                 url: depositUrl,
@@ -256,7 +256,7 @@ exports.transferWallet = async function(username, password){
             };
 
             let res2 = await axios(config)
-            console.log(res2.data)
+            // console.log(res2.data)
 
 
             
@@ -309,7 +309,7 @@ exports.transferWallet = async function(username, password){
             // console.log(plainValue)
             
         } catch (e) {
-            console.log(e)
+            // console.log(e)
             await browser.close();
         }
 
@@ -343,7 +343,7 @@ exports.getUserWallet = async function getUserWallet(cookie){
         
         let res = await axios.post(balanceAPI, ps, config)
     
-        console.log(res.data)
+        // console.log(res.data)
 
         if(res.data.status == 200){
             return res.data.balance
