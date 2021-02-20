@@ -1,6 +1,7 @@
 const puppeteer = require("puppeteer");
 const axios = require('axios');
 var qs = require('qs');
+const timeout = 12000
 
 exports.reCookie = async function reCookie(username, password) {
     let cookie = await (async (username, password) => {
@@ -9,10 +10,11 @@ exports.reCookie = async function reCookie(username, password) {
             devtools: false,
             args: ['--no-sandbox']
         });
-        
+
         try {
             
             const page = await browser.newPage();
+            page.setDefaultTimeout(timeout)
             await page.goto("http://www.777beer.com/", {
                 waitUntil: "networkidle2"
             });
@@ -43,8 +45,7 @@ exports.reCookie = async function reCookie(username, password) {
 
 
             await page.waitForSelector('#fraSet', {
-                visible: false,
-                timeout: 5000
+                visible: false
             })
 
             const frame = (await page.frames())[3];
@@ -65,6 +66,7 @@ exports.reCookie = async function reCookie(username, password) {
 
 
             const page2 = await browser.newPage();
+            page2.setDefaultTimeout(timeout)
             await page2.goto(url, {
                 waitUntil: "networkidle2"
             });
@@ -148,7 +150,9 @@ exports.transferWallet = async function (username, password) {
         devtools: false,
         args: ['--no-sandbox']
     });
+    
     const page = await browser.newPage();
+    page.setDefaultTimeout(timeout)
     await page.goto("http://www.777beer.com/", {
         waitUntil: "networkidle2"
     });
@@ -179,8 +183,7 @@ exports.transferWallet = async function (username, password) {
 
     try {
         await page.waitForSelector('#fraSet', {
-            visible: false,
-            timeout: 5000
+            visible: false
         })
 
         const frame = (await page.frames())[3];
@@ -203,6 +206,7 @@ exports.transferWallet = async function (username, password) {
 
 
         const page2 = await browser.newPage();
+        page2.setDefaultTimeout(timeout)
         await page2.goto(url, {
             waitUntil: "networkidle2"
         });
