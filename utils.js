@@ -4,13 +4,14 @@ var qs = require('qs');
 
 exports.reCookie = async function reCookie(username, password) {
     let cookie = await (async (username, password) => {
-
+        const browser = await puppeteer.launch({
+            headless: true,
+            devtools: false,
+            args: ['--no-sandbox']
+        });
+        
         try {
-            const browser = await puppeteer.launch({
-                headless: true,
-                devtools: false,
-                args: ['--no-sandbox']
-            });
+            
             const page = await browser.newPage();
             await page.goto("http://www.777beer.com/", {
                 waitUntil: "networkidle2"
