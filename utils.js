@@ -37,7 +37,7 @@ exports.reCookie = async function reCookie(username, password) {
                 page.click('#btnLogin'),
                 page.waitForNavigation({ waitUntil: 'networkidle0' }),
             ]);
-
+            await page.waitForSelector('#btnAgree_T')
             await Promise.all([
                 page.click('#btnAgree_T'),
                 page.waitForNavigation({ waitUntil: 'networkidle0' }),
