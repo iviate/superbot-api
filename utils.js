@@ -1,7 +1,7 @@
 const puppeteer = require("puppeteer");
 const axios = require('axios');
 var qs = require('qs');
-const timeout = 12000
+const timeout = 120000
 
 exports.reCookie = async function reCookie(username, password) {
     let cookie = await (async (username, password) => {
