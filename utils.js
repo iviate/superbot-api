@@ -119,6 +119,7 @@ exports.reCookie = async function reCookie(username, password) {
 
 
         } catch (e) {
+            console.log(e)
             await browser.close();
             return null
         }
