@@ -44,13 +44,11 @@ exports.reCookie = async function reCookie(username, password) {
             ]);
 
 
-            await page.waitForSelector('#fraSet', {
-                visible: false
-            })
+            await page.waitForSelector('#fraSet')
 
             const frame = (await page.frames())[3];
-            // console.log(`frame ${frame['_name']}`)
-
+            console.log(`frame ${frame['_name']}`)
+            frame.waitForSelector('.spMargin2')
             const content = await frame.evaluate(async () => await [...document.querySelectorAll('.spMargin2')].find(element => element.textContent === 'คาสิโนสด' || element.textContent === 'Live Casino').onclick.toString())
             // console.log(content.split('\''))
 
@@ -183,9 +181,7 @@ exports.transferWallet = async function (username, password) {
     ]);
 
     try {
-        await page.waitForSelector('#fraSet', {
-            visible: false
-        })
+        await page.waitForSelector('#fraSet')
 
         const frame = (await page.frames())[3];
         // console.log(`frame ${frame['_name']}`)
