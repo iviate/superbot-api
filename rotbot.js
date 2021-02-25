@@ -6,6 +6,7 @@ const axios = require('axios');
 const puppeteer = require("puppeteer");
 const utils = require("./utils.js")
 const moment = require('moment-timezone');
+const rotConfig = require('./config/rot.config.js')
 
 
 let interval;
@@ -31,6 +32,29 @@ let isPlay = false;
 let cookie = null;
 var date = new Date();
 var tableId = 0
+
+let isPlayHalfRB = false
+let isPlayHalfEO = false
+let isPlayHalfSB = false
+let isPlayZone = false
+
+let statCount = {
+    rbCorrect: 0,
+    rbWrong: 0,
+    edCorrect: 0,
+    edWrong: 0,
+    sbCorrect: 0,
+    sbWrong: 0,
+    twoZoneCorrect: 0,
+    twoZoneWrong: 0,
+    oneZoneCorrect: 0,
+    oneZoneWrong: 0
+}
+
+let HalfRB = ['BLACK', 'REO']
+let HalfEO = ['EVEN', 'ODD']
+let HalfSB = ['SMALL', 'BIG']
+let Dozen = ['FIRST', 'SECOND', 'THIRD']
 // var resultStats = ''
 // var threeCutPlay = {}
 // var fourCutPlay = {}
@@ -112,17 +136,27 @@ function registerForEventListening() {
 }
 
 async function inititalInfo() {
-    cookie = await utils.reCookie(username, password)
-    console.log(cookie)
-    cookieTime = moment()
+    while(cookie == null)
+    {
+        try{
+            cookie = await utils.reCookie(username, password)
+            console.log(cookie)
+            cookieTime = moment()
+            await axios.get(`https://bpweb.bikimex.net/player/singleTable4.jsp?dm=1&t=${tableId}&title=1&sgt=6&hall=1`,
+                {
+                    headers: {
+                        Cookie: cookie
+                    }
+                })
+            isReCookie = false
+        }catch(e){
+            cookie = null
+            isReCookie = true
 
-    console.log(`https://bpweb.bikimex.net/player/singleTable4.jsp?dm=1&t=${tableId}&title=1&sgt=3&hall=1`)
-    await axios.get(`https://bpweb.bikimex.net/player/singleTable4.jsp?dm=1&t=${tableId}&title=1&sgt=3&hall=1`,
-        {
-            headers: {
-                Cookie: cookie
-            }
-        })
+        }
+        
+    }
+    
     interval = setInterval(predictPlay, 1500);
 
 
@@ -211,7 +245,7 @@ async function predictPlay() {
 
 
     let res = await axios.post(balanceAPI, ps, config)
-    console.log(res.data)
+    // console.log(res.data)
     if(typeof res.data === 'object' && res !== null)
     {
         livePlaying(res.data)
@@ -261,8 +295,135 @@ async function predictPlay() {
     //     });
 }
 
+function randomHalfRB() {
+    return HalfRB[Math.floor(Math.random() * HalfRB.length)]
+}
+
+function randomHalfEO() {
+    return HalfEO[Math.floor(Math.random() * HalfEO.length)]
+}
+
+function randomHalfSB() {
+    return HalfSB[Math.floor(Math.random() * HalfSB.length)]
+}
+
+function randomTwoZone() {
+    var ret = []
+    while (ret.length != 2) {
+        let rand = Dozen[Math.floor(Math.random() * Dozen.length)]
+        if (ret.indexOf(rand) == -1) {
+            ret.push(rand)
+        }
+    }
+    return ret
+}
+
+function randomOneZone(twozone) {
+    return twozone[Math.floor(Math.random() * twozone.length)]
+}
+
+function getRBWinerPercent() {
+    let sum = statCount.rbCorrect + statCount.rbWrong
+    let win_percent = 50
+    if (sum != 0) {
+        win_percent = (statCount.rbCorrect / sum) * 100
+    }
+
+    if (win_percent < 50) {
+        win_percent = 100 - win_percent
+    } else {
+        win_percent = win_percent
+    }
+
+    if (win_percent == 100) {
+        win_percent = 91
+    }
+
+    return win_percent
+}
+
+function getEOWinerPercent() {
+    let sum = statCount.edCorrect + statCount.edWrong
+    let win_percent = 55
+    if (sum != 0) {
+        win_percent = (statCount.edCorrect / sum) * 100
+    }
+
+    if (win_percent < 50) {
+        win_percent = 100 - win_percent
+    } else {
+        win_percent = win_percent
+    }
+
+    if (win_percent == 100) {
+        win_percent = 91
+    }
+
+    return win_percent
+}
+
+function getSBWinerPercent() {
+    let sum = statCount.sbCorrect + statCount.sbWrong
+    let win_percent = 55
+    if (sum != 0) {
+        win_percent = (statCount.sbCorrect / sum) * 100
+    }
+
+    if (win_percent < 50) {
+        win_percent = 100 - win_percent
+    } else {
+        win_percent = win_percent
+    }
+
+    if (win_percent == 100) {
+        win_percent = 91
+    }
+
+    return win_percent
+}
+
+function getTwozoneWinerPercent() {
+    let sum = statCount.twoZoneCorrect + statCount.twoZoneWrong
+    let win_percent = 55
+    if (sum != 0) {
+        win_percent = (statCount.twoZoneCorrect / sum) * 100
+    }
+
+    if (win_percent < 50) {
+        win_percent = 100 - win_percent
+    } else {
+        win_percent = win_percent
+    }
+
+    if (win_percent == 100) {
+        win_percent = 91
+    }
+
+    return win_percent
+}
+
+function getOnezoneWinerPercent() {
+    let sum = statCount.oneZoneCorrect + statCount.oneZoneWrong
+    let win_percent = 55
+    if (sum != 0) {
+        win_percent = (statCount.oneZoneCorrect / sum) * 100
+    }
+
+    if (win_percent < 50) {
+        win_percent = 100 - win_percent
+    } else {
+        win_percent = win_percent
+    }
+
+    if (win_percent == 100) {
+        win_percent = 91
+    }
+
+    return win_percent
+}
+
 async function livePlaying(data){
-    return
+
     // const APP_KEY = 'ef1bd779bdd77aad75f8'
     // const pusher = new Pusher(APP_KEY, {
     //     cluster: 'ap1',
@@ -272,7 +433,7 @@ async function livePlaying(data){
 
     // const io = global['io'];
 
-    const WAITNG_TIME = 30;
+    const WAITNG_TIME = 29;
 
     // let liveData = {
     //     status: "",
@@ -297,159 +458,176 @@ async function livePlaying(data){
     // console.log(dataJson)
     if(dataJson.eventType === "GP_NEW_GAME_START" && previousEventType !== "GP_NEW_GAME_START"){
         previousEventType = "GP_NEW_GAME_START"
+
+        let playCount = predictStats.predict.length
+        let lastPlay = { ...predictStats.predict[playCount - 1] }
+        if (!lastPlay.isResult && isPlay && playRound < dataJson.gameRound) {
+            parentPort.postMessage({
+                action: 'played',
+                status: status,
+                stats: predictStats.predict[playCount - 1],
+                shoe: shoe,
+                table: workerData,
+                bot_type: 2,
+                playList: ['RB', 'EO', 'SB', 'ZONE'],
+            })
+        }
+
         round = dataJson.gameRound
-        console.log(`${tableId}-baccarat-start`)
+        console.log(`${tableId}-baccarat-start round ${dataJson.gameShoe}-${dataJson.gameRound}`)
         //console.log(data)
         previousGameStartAt = dataJson.roundStartTime
 
         if (shoe != dataJson.gameShoe) {
-            shoe = dataJson.gameShoe
+            shoe =  dataJson.gameShoe
             round = dataJson.gameRound
             // predictStatsHistory.push({ ...predictStats })
             predictStats = { shoe: shoe, correct: 0, wrong: 0, tie: 0, info: {}, predict: [] }
-            if(isPlay){
+            statCount = {
+                rbCorrect: 0,
+                rbWrong: 0,
+                edCorrect: 0,
+                edWrong: 0,
+                sbCorrect: 0,
+                sbWrong: 0,
+                twoZoneCorrect: 0,
+                twoZoneWrong: 0,
+                oneZoneCorrect: 0,
+                oneZoneWrong: 0
+            }
+            if (isPlay) {
                 isPlay = false
                 bot = null
-                parentPort.postMessage({ action: 'played', status: 'FAILED' })
+                parentPort.postMessage({ action: 'played', status: 'FAILED', playList: playList, table: workerData })
             }
             return
         }
 
-        if(isPlay && playRound < dataJson.gameRound){
-            isPlay = false
-            parentPort.postMessage({ action: 'played', status: 'FAILED' })
-            return
+        // if (isPlay && playRound < data.round) {
+        //     isPlay = false
+        //     parentPort.postMessage({ action: 'played', status: 'FAILEO', playList: playList, table: workerData })
+        //     return
+        // }
+        let remainBet = Math.max(WAITNG_TIME - Math.round((moment() - previousGameStartAt) / 1000), 0)
+        let twozone = randomTwoZone()
+        bot = {
+            RB: randomHalfRB(),
+            EO: randomHalfEO(),
+            SB: randomHalfSB(),
+            TWOZONE: twozone,
+            ONEZONE: randomOneZone(twozone)
         }
+        let winPercent = {
+            RB: getRBWinerPercent(),
+            EO: getEOWinerPercent(),
+            SB: getSBWinerPercent(),
+            TWOZONE: getTwozoneWinerPercent(),
+            ONEZONE: getOnezoneWinerPercent()
+        }
+        console.log(`remainBet ${remainBet}`)
 
-        if (dataJson.gameRound < 2) {
+        if (dataJson.gameRound < 3) {
             bot = null
             predictStats.predict.push({ round: dataJson.gameRound, bot: null, isResult: false })
             if (isPlay && playRound < 4) {
                 isPlay = false
-                parentPort.postMessage({ action: 'played', status: 'FAILED' })
+                parentPort.postMessage({ action: 'played', status: 'FAILED', playList: playList, table: workerData })
             }
         } else {
-            bot = botChoice[Math.floor(Math.random() * botChoice.length)]
-            predictStats.predict.push({ round: dataJson.gameRound, bot: bot, isResult: false })
-            if (isPlay && playRound == dataJson.gameRound) {
-                // console.log(response.data);
-                // console.log(`round = ${response.data.info.detail.round}`)
-                // let current = response.data.game
-                // console.log(current)
-                
-                let remainBet = Math.max(WAITNG_TIME - Math.round((moment() - previousGameStartAt) / 1000), 0)
-                parentPort.postMessage({ action: 'start', remaining : remainBet })
-                if (remainBet > 10) {
+            if (remainBet > 17) {
 
-                    let sum = predictStats.correct + predictStats.wrong + predictStats.tie
-                    let win_percent = 0
-                    if (sum != 0) {
-                        win_percent = ((predictStats.correct + predictStats.tie) / sum) * 100
-                    }
-
-                    if (win_percent < 50) {
-                        win_percent = 100 - win_percent
-                    } else {
-                        win_percent = win_percent
-                    }
-        
-                    if( win_percent == 100){
-                        win_percent = 92
-                    }
-                    
-                    parentPort.postMessage({ action: 'bet', data: { 
-                        bot: bot, 
-                        table: tableId, 
-                        shoe: shoe, 
-                        round: dataJson.gameRound, 
-                        game_id: dataJson.gameRound, 
-                        remaining: remainBet,
-                        win_percent: win_percent
-                    } })
-                }else{
-                    isPlay = false
-                    
-                    parentPort.postMessage({ action: 'played', status: 'FAILED' })
-                }
-
-                    
+                setTimeout(function () {
+                    parentPort.postMessage({
+                        action: 'bet', data: {
+                            bot: bot,
+                            table: tableId,
+                            shoe: shoe,
+                            round: data.round,
+                            game_id: data.id,
+                            remaining: remainBet,
+                            win_percent: winPercent,
+                            playList: ['RB', 'EO', 'SB', 'ZONE']
+                        }
+                    })
+                }, 7000)
+               
+            } else {
+                // parentPort.postMessage({ action: 'played', status: 'FAILEO', playList: ['RB', 'EO', 'SB', 'ZONE'], table: workerData })
             }
+            predictStats.predict.push({ round: dataJson.gameRound, bot: bot, isResult: false, winPercent: winPercent })
+
+
         }
-
-        
-        // let gameId = data.id;
-        // liveData.round = round;
-        // liveData.gameId = gameId;
-        // liveData.winner = "-";
-
-        // await this.predictBaccarat(tableId, gameId)
-
-        // let predict = await this.getPredictBaccarat(tableId, gameId, round)
-        // liveData.predict = predict;
-        // liveData.status = "START";
-
-        // liveData.score = {
-        //     player: 0,
-        //     banker: 0,
-        // }
-        // liveData.cards = {
-        //     player: [],
-        //     banker: [],
-        // }
-        // setTimeout(() => {
-        //     liveData.status = "BETTING"
-        // }, 2000);
     }
     else if(dataJson.eventType === "GP_WINNER" && previousEventType !== "GP_WINNER"){
         previousEventType = "GP_WINNER"
-        console.log(`${tableId}-baccarat-result`)
-        let winner = null
-        if(dataJson.winner == 1){
-            winner = 'TIGER'
-        }else if(dataJson.winner == 2){
-            winner = 'DRAGON'
-        }else if(dataJson.winner == 3){
-            winner = 'TIE'
-        }
+        // console.log(`${tableId}-baccarat-result`)
+        console.log(`${tableId}-routlette-result`)
+        // console.log(data)
+        let winner = dataJson.winner;
+        let score = dataJson.tableCards[0]
+        console.log(score, rotConfig[score])
         let playCount = predictStats.predict.length
         let lastPlay = { ...predictStats.predict[playCount - 1] }
-        if(lastPlay.isResult){
-            return
-        }
-        predictStats.predict[playCount - 1] = { ...lastPlay, isResult: true, dataJson }
+        predictStats.predict[playCount - 1] = { ...lastPlay, isResult: true, data }
         // console.log(bot, winner, lastPlay.bot, isPlay, playRound, round)
         if (bot != null) {
-            console.log(`table ${tableId} winner ${winner} - ${lastPlay.bot}`)
-            let status = ''
-            if (winner == 'TIE') {
-                predictStats.tie++;
-                status = 'TIE'
-                
-            }
-            else if (lastPlay.bot == winner) {
-                predictStats.correct++;
-                status = 'WIN'
-            } else {
-                predictStats.wrong++;
-                status = 'LOSE'
+
+            // parentPort.postMessage({ action: 'clear_static_bet' })
+            let status = {
+                RB: 'LOSE',
+                EO: 'LOSE',
+                SB: 'LOSE',
+                TWOZONE: 'LOSE',
+                ONEZONE: 'LOSE'
             }
 
-            if (isPlay && playRound == round) {
-                parentPort.postMessage({ action: 'point', data: dataJson })
-                playRound = null
-                isPlay = false
-                setTimeout(function () {
-                    parentPort.postMessage({
-                        action: 'played',
-                        status: status, 
-                        stats: predictStats.predict[playCount - 1], 
-                        shoe: shoe, 
-                        table: tableId,
-                        bot_type: 1 
-                    })
-                  }, 12000)
-                
+            let addition = rotConfig[score]
+            if (addition.findIndex((item) => item == bot.RB) != -1) {
+                statCount.rbCorrect++;
+                status.RB = 'WIN'
+            } else {
+                statCount.rbWrong++;
             }
+
+            if (addition.findIndex((item) => item == bot.EO) != -1) {
+                statCount.edCorrect++;
+                status.EO = 'WIN'
+            } else {
+                statCount.edWrong++;
+            }
+
+            if (addition.findIndex((item) => item == bot.SB) != -1) {
+                statCount.sbCorrect++;
+                status.SB = 'WIN'
+            } else {
+                statCount.sbCorrect++;
+            }
+
+            if (addition.findIndex((item) => item == bot.TWOZONE[0]) != -1 ||
+                addition.findIndex((item) => item == bot.TWOZONE[1]) != -1) {
+                statCount.twoZoneCorrect++;
+                status.TWOZONE = 'WIN'
+            } else {
+                statCount.twoZoneWrong++;
+            }
+
+            if (addition.findIndex((item) => item == bot.ONEZONE) != -1) {
+                statCount.oneZoneCorrect++;
+                status.ONEZONE = 'WIN'
+            } else {
+                statCount.oneZoneWrong++;
+            }
+            console.log(status, predictStats.predict[playCount - 1])
+            parentPort.postMessage({
+                action: 'played',
+                status: status,
+                stats: predictStats.predict[playCount - 1],
+                shoe: shoe,
+                table: tableId,
+                bot_type: 2,
+                playList: ['RB', 'EO', 'SB', 'ZONE'],
+            })
             bot = null
         }
         // liveData.winner = winner;
@@ -597,14 +775,14 @@ async function livePlaying(data){
 //                                 }
 //                             })
 //                         } else {
-//                             parentPort.postMessage({ action: 'played', status: 'FAILED' })
+//                             parentPort.postMessage({ action: 'played', status: 'FAILEO' })
 //                         }
 
 //                     })
 //                     .catch(error => {
 //                         console.log(`current: ${error}`);
 //                         isPlay = false
-//                         parentPort.postMessage({ action: 'played', status: 'FAILED' })
+//                         parentPort.postMessage({ action: 'played', status: 'FAILEO' })
 //                     });
 //             }
 

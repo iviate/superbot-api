@@ -15,7 +15,7 @@ exports.reCookie = async function reCookie(username, password) {
             
             const page = await browser.newPage();
             page.setDefaultTimeout(timeout)
-            await page.goto("http://www.777beer.com/", {
+            await page.goto("http://www.star5566.com/", {
                 waitUntil: "networkidle2"
             });
 
@@ -152,7 +152,7 @@ exports.transferWallet = async function (username, password) {
     
     const page = await browser.newPage();
     page.setDefaultTimeout(timeout)
-    await page.goto("http://www.777beer.com/", {
+    await page.goto("http://www.star5566.com/", {
         waitUntil: "networkidle2"
     });
 

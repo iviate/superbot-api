@@ -288,7 +288,7 @@ function getBetVal() {
 
 function bet(data) {
     table = data.table
-    // console.log(status, betFailed, botObj.bet_side, botObj.is_infinite, data.playList)
+    console.log(status, betFailed, botObj.bet_side, botObj.is_infinite, data.playList)
     if (betFailed) {
         return
     }
@@ -370,46 +370,46 @@ function bet(data) {
         let payload = { table_id: data.table.id, game_id: data.game_id }
         if (botObj.bet_side == 11) {
             realBet = data.bot.RB
-            if (data.bot.RB == 'HALFxBLACK' && is_opposite == false) {
-                payload.chip = { credit: { 'HALFxBLACK': betVal } }
-            } else if (data.bot.RB == 'HALFxRED' && is_opposite == false) {
-                payload.chip = { credit: { 'HALFxRED': betVal } }
-            } else if (data.bot.RB == 'HALFxBLACK' && is_opposite == true) {
-                payload.chip = { credit: { 'HALFxRED': betVal } }
-                realBet = 'HALFxRED'
-            } else if (data.bot.RB == 'HALFxRED' && is_opposite == true) {
-                payload.chip = { credit: { 'HALFxBLACK': betVal } }
-                realBet = 'HALFxBLACK'
+            if (data.bot.RB == 'BLACK' && is_opposite == false) {
+                payload.chip = { credit: { 'BLACK': betVal } }
+            } else if (data.bot.RB == 'RED' && is_opposite == false) {
+                payload.chip = { credit: { 'RED': betVal } }
+            } else if (data.bot.RB == 'BLACK' && is_opposite == true) {
+                payload.chip = { credit: { 'RED': betVal } }
+                realBet = 'RED'
+            } else if (data.bot.RB == 'RED' && is_opposite == true) {
+                payload.chip = { credit: { 'BLACK': betVal } }
+                realBet = 'BLACK'
             } else {
                 return
             }
         } else if (botObj.bet_side == 12) {
             realBet = data.bot.ED
-            if (data.bot.ED == 'HALFxEVEN' && is_opposite == false) {
-                payload.chip = { credit: { 'HALFxEVEN': betVal } }
-            } else if (data.bot.ED == 'HALFxODD' && is_opposite == false) {
-                payload.chip = { credit: { 'HALFxODD': betVal } }
-            } else if (data.bot.ED == 'HALFxEVEN' && is_opposite == true) {
-                payload.chip = { credit: { 'HALFxODD': betVal } }
-                realBet = 'HALFxODD'
-            } else if (data.bot.ED == 'HALFxODD' && is_opposite == true) {
-                payload.chip = { credit: { 'HALFxEVEN': betVal } }
-                realBet = 'HALFxEVEN'
+            if (data.bot.ED == 'EVEN' && is_opposite == false) {
+                payload.chip = { credit: { 'EVEN': betVal } }
+            } else if (data.bot.ED == 'ODD' && is_opposite == false) {
+                payload.chip = { credit: { 'ODD': betVal } }
+            } else if (data.bot.ED == 'EVEN' && is_opposite == true) {
+                payload.chip = { credit: { 'ODD': betVal } }
+                realBet = 'ODD'
+            } else if (data.bot.ED == 'ODD' && is_opposite == true) {
+                payload.chip = { credit: { 'EVEN': betVal } }
+                realBet = 'EVEN'
             } else {
                 return
             }
         } else if (botObj.bet_side == 13) {
             realBet = data.bot.SB
-            if (data.bot.SB == 'HALFxSMALL' && is_opposite == false) {
-                payload.chip = { credit: { 'HALFxSMALL': betVal } }
-            } else if (data.bot.SB == 'HALFxBIG' && is_opposite == false) {
-                payload.chip = { credit: { 'HALFxBIG': betVal } }
-            } else if (data.bot.SB == 'HALFxBIG' && is_opposite == true) {
-                payload.chip = { credit: { 'HALFxSMALL': betVal } }
-                realBet = 'HALFxSMALL'
-            } else if (data.bot.SB == 'HALFxSMALL' && is_opposite == true) {
-                payload.chip = { credit: { 'HALFxBIG': betVal } }
-                realBet = 'HALFxBIG'
+            if (data.bot.SB == 'SMALL' && is_opposite == false) {
+                payload.chip = { credit: { 'SMALL': betVal } }
+            } else if (data.bot.SB == 'BIG' && is_opposite == false) {
+                payload.chip = { credit: { 'BIG': betVal } }
+            } else if (data.bot.SB == 'BIG' && is_opposite == true) {
+                payload.chip = { credit: { 'SMALL': betVal } }
+                realBet = 'SMALL'
+            } else if (data.bot.SB == 'SMALL' && is_opposite == true) {
+                payload.chip = { credit: { 'BIG': betVal } }
+                realBet = 'BIG'
             } else {
                 return
             }
@@ -427,7 +427,7 @@ function bet(data) {
                 payload.chip.credit[realBet] = betVal
             }else{
                 // console.log('opposite one zone')
-                let dozen = ['DOZENx1st', 'DOZENx2nd', 'DOZENx3rd']
+                let dozen = ['FIRST', 'SECOND', 'THIRD']
                 let index = dozen.indexOf(data.bot.ONEZONE)
                 // console.log(index)
                 if(index != -1){

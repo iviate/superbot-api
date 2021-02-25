@@ -397,7 +397,7 @@ myApp.post('/login', async function (request, response) {
             // await page.evaluate((USERNAME, PASSWORD) => {
             //     document.querySelector('[maxlength="100"][type="text"]').value = USERNAME;
             //     document.querySelector('input[vid="formPassword"][type="password"]').value = PASSWORD;
-                
+
             // }, USERNAME, PASSWORD);
 
             await page.type('input[maxlength="100"][type="text"]', USERNAME);
@@ -407,13 +407,13 @@ myApp.post('/login', async function (request, response) {
                 page.click('button.v-btn--rounded'),
                 page.waitForNavigation({ waitUntil: 'networkidle0' }),
             ]);
-            
-            
+
+
             // await Promise.all([
             //     page.evaluate((USERNAME, PASSWORD) => {
             //         document.querySelector('[maxlength="100"][type="text"]').value = USERNAME;
             //         document.querySelector('input[vid="formPassword"][type="password"]').value = PASSWORD;
-                    
+
             //     }, USERNAME, PASSWORD),
 
             //     page.waitFor('input[maxlength="100"][type="text"]'),
@@ -421,19 +421,19 @@ myApp.post('/login', async function (request, response) {
             //     // page.waitForFunction(USERNAME => document.querySelector('[maxlength="100"][type="text"]').value == USERNAME, {
             //     // }, USERNAME),
             //     // Clicks on first submit button
-                
+
             // ]);
 
             // await page.$eval( 'button.v-btn--rounded', form => form.click() )
-            
-            
+
+
             // const form = await page.$('button.v-btn--rounded');
             // // login
             // await page.evaluate( form  => {
             //     form.click()
             // });
 
-            
+
 
 
             try {
@@ -2240,15 +2240,15 @@ myApp.get('/wallet/:id', async function (request, response) {
         console.log(cTime)
         let cookieAge = Math.round((moment() - cTime) / 1000)
         console.log(cookieAge)
-        if(cookieAge > 1200 || !user.cookie){
+        if (cookieAge > 1200 || !user.cookie) {
             let c = await utils.reCookie(user.ufa_account, user.type_password)
             w = await utils.getUserWallet(c)
             user.cookie = c
             user.cookieTime = moment().valueOf()
             user.save()
-        }else{
+        } else {
             w = await utils.getUserWallet(user.cookie)
-            if(w == null){
+            if (w == null) {
                 let c = await utils.reCookie(user.ufa_account, user.type_password)
                 w = await utils.getUserWallet(c)
                 user.cookie = c
@@ -2256,7 +2256,7 @@ myApp.get('/wallet/:id', async function (request, response) {
                 user.save()
             }
         }
-        
+
         console.log(`return wallet = ${w}`)
         response.json({
             success: true,
@@ -2492,7 +2492,7 @@ function createBotWorker(obj, playData, is_mock) {
             // console.log(result.wallet.myWallet.MAIN_WALLET.chips.cre)
             let userWallet = result.wallet
             let winner_result = result.botTransaction.win_result
-            if (result.botTransaction.win_result != 'TIE' && 
+            if (result.botTransaction.win_result != 'TIE' &&
                 result.bet.toLowerCase() != result.botTransaction.bet.toLowerCase()) {
                 if (result.botTransaction.win_result == 'WIN') {
                     winner_result = 'LOSE'
@@ -2510,8 +2510,8 @@ function createBotWorker(obj, playData, is_mock) {
                 botTransactionId: result.botTransactionId
             }
 
-            
-            let current_profit_threshold =  parseFloat(result.botObj.init_wallet) + Math.floor((((result.botObj.profit_threshold - result.botObj.init_wallet) * 94) / 100))
+
+            let current_profit_threshold = parseFloat(result.botObj.init_wallet) + Math.floor((((result.botObj.profit_threshold - result.botObj.init_wallet) * 94) / 100))
             // console.log(userTransactionData)
             let indexIsStop = result.isStop || (result.botObj.is_infinite == false
                 && userWallet >= current_profit_threshold)
@@ -2532,9 +2532,9 @@ function createBotWorker(obj, playData, is_mock) {
                 botObj: result.botObj
             })
             console.log(result.isStop, indexIsStop,
-                 userWallet, 
-                 typeof parseFloat(result.botObj.init_wallet), typeof Math.floor((((result.botObj.profit_threshold - result.botObj.init_wallet) * 94) / 100)),
-                 current_profit_threshold,
+                userWallet,
+                typeof parseFloat(result.botObj.init_wallet), typeof Math.floor((((result.botObj.profit_threshold - result.botObj.init_wallet) * 94) / 100)),
+                current_profit_threshold,
                 userWallet - result.botObj.profit_wallet,
                 result.botObj.loss_threshold)
 
@@ -2814,7 +2814,7 @@ function createDtWorker(obj, playData, is_mock) {
             let userWallet = result.wallet
             let winner_result = result.botTransaction.win_result
 
-            if (result.botTransaction.win_result != 'TIE' && 
+            if (result.botTransaction.win_result != 'TIE' &&
                 result.bet.toLowerCase() != result.botTransaction.bet.toLowerCase()) {
                 if (result.botTransaction.win_result == 'WIN') {
                     winner_result = 'LOSE'
@@ -2833,7 +2833,7 @@ function createDtWorker(obj, playData, is_mock) {
             }
 
             // console.log(userTransactionData)
-            let current_profit_threshold =  parseFloat(result.botObj.init_wallet) + Math.floor((((result.botObj.profit_threshold - result.botObj.init_wallet) * 94) / 100))
+            let current_profit_threshold = parseFloat(result.botObj.init_wallet) + Math.floor((((result.botObj.profit_threshold - result.botObj.init_wallet) * 94) / 100))
             let indexIsStop = result.isStop || (result.botObj.is_infinite == false
                 && userWallet >= current_profit_threshold)
             // || (userWallet - result.botObj.profit_wallet <= result.botObj.loss_threshold)
@@ -3026,13 +3026,13 @@ async function mainBody() {
 
     //         initiateWorker(table);
     //     }
-        // else if (table.game_id == 10) {
-        //     initiateRotWorker(table)
-        // }
-        // else if (table.game_id == 6) {
-        //     // console.log(table.id)
-        //     initiateDtWorker(table)
-        // }
+    // else if (table.game_id == 10) {
+    //     initiateRotWorker(table)
+    // }
+    // else if (table.game_id == 6) {
+    //     // console.log(table.id)
+    //     initiateDtWorker(table)
+    // }
     // }
 
     interval = setInterval(function () {
@@ -3230,135 +3230,135 @@ function playDragonTiger() {
 
 var isFullCurrent = true
 var countNotFullCurrent = 0
-function playRot() {
-    // console.log(Object.keys(botWorkerDict))
-    let hasNotPlay = !isPlayRot.RB || !isPlayRot.ED || !isPlayRot.SB || !isPlayRot.ZONE
-    let isAllPlay = isPlayRot.RB && isPlayRot.ED && isPlayRot.SB && isPlayRot.ZONE
-    // console.log(isPlayRot)
-    // console.log(isPlayRot)
-    if (isAllPlay) return;
-    if (hasNotPlay) {
-        Object.keys(rotWorkerDict).forEach(function (key) {
-            var val = rotWorkerDict[key];
-            // console.log(key, val)
-            val.worker.postMessage({
-                'action': 'getCurrent'
-            })
-        });
-        // return
-    }
+// function playRot() {
+//     // console.log(Object.keys(botWorkerDict))
+//     let hasNotPlay = !isPlayRot.RB || !isPlayRot.ED || !isPlayRot.SB || !isPlayRot.ZONE
+//     let isAllPlay = isPlayRot.RB && isPlayRot.ED && isPlayRot.SB && isPlayRot.ZONE
+//     // console.log(isPlayRot)
+//     // console.log(isPlayRot)
+//     if (isAllPlay) return;
+//     if (hasNotPlay) {
+//         Object.keys(rotWorkerDict).forEach(function (key) {
+//             var val = rotWorkerDict[key];
+//             // console.log(key, val)
+//             val.worker.postMessage({
+//                 'action': 'getCurrent'
+//             })
+//         });
+//         // return
+//     }
 
-    // console.log(countNotFullCurrent)
-    if (countNotFullCurrent > 15) {
-        // console.log('countNotFullCurrent full')
-        isFullCurrent = false
-        countNotFullCurrent = 0
-    }
-    // console.log(hasNotPlay, rotCurrentList.length, Math.floor(Math.random() * Object.keys(rotWorkerDict).length) + 1)
-    if (isFullCurrent) {
-        if (hasNotPlay == true && rotCurrentList.length != Object.keys(rotWorkerDict).length) {
-            // rotCurrentList = []
-            // console.log(countNotFullCurrent)
-            countNotFullCurrent++;
-            return;
-        }
-    } else {
-        if (hasNotPlay == true && rotCurrentList.length == 0) {
-            // rotCurrentList = []
-            return;
-        }
-    }
+//     // console.log(countNotFullCurrent)
+//     if (countNotFullCurrent > 15) {
+//         // console.log('countNotFullCurrent full')
+//         isFullCurrent = false
+//         countNotFullCurrent = 0
+//     }
+//     // console.log(hasNotPlay, rotCurrentList.length, Math.floor(Math.random() * Object.keys(rotWorkerDict).length) + 1)
+//     if (isFullCurrent) {
+//         if (hasNotPlay == true && rotCurrentList.length != Object.keys(rotWorkerDict).length) {
+//             // rotCurrentList = []
+//             // console.log(countNotFullCurrent)
+//             countNotFullCurrent++;
+//             return;
+//         }
+//     } else {
+//         if (hasNotPlay == true && rotCurrentList.length == 0) {
+//             // rotCurrentList = []
+//             return;
+//         }
+//     }
 
-    // console.log(rotCurrentList)
-    // console.log('play')
+//     // console.log(rotCurrentList)
+//     // console.log('play')
 
-    if (!isPlayRot.RB) {
-        // rotCurrentList.sort(compareRB)
-        // console.log(rotCurrentList)
-        // console.log(rotCurrentList[0])
-        if (rotCurrentList[0].winner_percent.RB > 0) {
-            rotWorkerDict[rotCurrentList[0].table_id].worker.postMessage({
-                action: 'play',
-                type: 'RB'
-            })
-            isPlayRot.RB = true
-        }
-
-
-    }
-
-    if (!isPlayRot.ED) {
-        rotCurrentList.sort(compareED)
-        if (rotCurrentList[0].winner_percent.ED > 0) {
-            rotWorkerDict[rotCurrentList[0].table_id].worker.postMessage({
-                action: 'play',
-                type: 'ED'
-            })
-            isPlayRot.ED = true
-        }
-
-    }
-
-    if (!isPlayRot.SB) {
-        rotCurrentList.sort(compareSB)
-        if (rotCurrentList[0].winner_percent.SB > 0) {
-            rotWorkerDict[rotCurrentList[0].table_id].worker.postMessage({
-                action: 'play',
-                type: 'SB'
-            })
-            isPlayRot.SB = true
-        }
-    }
-
-    if (!isPlayRot.ZONE) {
-        rotCurrentList.sort(compareZONE)
-        if (rotCurrentList[0].winner_percent.TWOZONE > 0) {
-            rotWorkerDict[rotCurrentList[0].table_id].worker.postMessage({
-                action: 'play',
-                type: 'ZONE'
-            })
-            isPlayRot.ZONE = true
-        }
-
-    }
+//     if (!isPlayRot.RB) {
+//         // rotCurrentList.sort(compareRB)
+//         // console.log(rotCurrentList)
+//         // console.log(rotCurrentList[0])
+//         if (rotCurrentList[0].winner_percent.RB > 0) {
+//             rotWorkerDict[rotCurrentList[0].table_id].worker.postMessage({
+//                 action: 'play',
+//                 type: 'RB'
+//             })
+//             isPlayRot.RB = true
+//         }
 
 
+//     }
 
-    // currentList.sort(compare)
-    // let found = true
-    // for (current of currentList) {
-    //     // console.log(`table: ${current.table_id} percent: ${current.winner_percent} bot: ${current.bot}`)
-    //     // console.log(current.winner_percent != 0, current.current.remaining >= 10, current.bot != null)
-    //     if (current.winner_percent != 0 && current.bot != null) {
-    //         if (current.winner_percent < 50) {
-    //             win_percent = 100 - current.winner_percent
-    //         } else {
-    //             win_percent = current.winner_percent
-    //         }
+//     if (!isPlayRot.ED) {
+//         rotCurrentList.sort(compareED)
+//         if (rotCurrentList[0].winner_percent.ED > 0) {
+//             rotWorkerDict[rotCurrentList[0].table_id].worker.postMessage({
+//                 action: 'play',
+//                 type: 'ED'
+//             })
+//             isPlayRot.ED = true
+//         }
 
-    //         if (win_percent == 100) {
-    //             win_percent = 92
-    //         }
+//     }
 
-    //         console.log(`table: ${current.table_id} percent: ${win_percent} bot: ${current.bot}`)
-    //         isPlay = true
-    //         // console.log('post play')
-    //         workerDict[current.table_id].worker.postMessage({
-    //             action: 'play',
-    //         })
+//     if (!isPlayRot.SB) {
+//         rotCurrentList.sort(compareSB)
+//         if (rotCurrentList[0].winner_percent.SB > 0) {
+//             rotWorkerDict[rotCurrentList[0].table_id].worker.postMessage({
+//                 action: 'play',
+//                 type: 'SB'
+//             })
+//             isPlayRot.SB = true
+//         }
+//     }
 
-    //         // io.emit('bot_play', {
-    //         //     current
-    //         // });
-    //         break;
-    //     }
-    // }
-    // if (isPlay == false) {
-    //     currentList = []
-    // }
-    isFullCurrent = true
-    rotCurrentList = []
-}
+//     if (!isPlayRot.ZONE) {
+//         rotCurrentList.sort(compareZONE)
+//         if (rotCurrentList[0].winner_percent.TWOZONE > 0) {
+//             rotWorkerDict[rotCurrentList[0].table_id].worker.postMessage({
+//                 action: 'play',
+//                 type: 'ZONE'
+//             })
+//             isPlayRot.ZONE = true
+//         }
+
+//     }
+
+
+
+//     // currentList.sort(compare)
+//     // let found = true
+//     // for (current of currentList) {
+//     //     // console.log(`table: ${current.table_id} percent: ${current.winner_percent} bot: ${current.bot}`)
+//     //     // console.log(current.winner_percent != 0, current.current.remaining >= 10, current.bot != null)
+//     //     if (current.winner_percent != 0 && current.bot != null) {
+//     //         if (current.winner_percent < 50) {
+//     //             win_percent = 100 - current.winner_percent
+//     //         } else {
+//     //             win_percent = current.winner_percent
+//     //         }
+
+//     //         if (win_percent == 100) {
+//     //             win_percent = 92
+//     //         }
+
+//     //         console.log(`table: ${current.table_id} percent: ${win_percent} bot: ${current.bot}`)
+//     //         isPlay = true
+//     //         // console.log('post play')
+//     //         workerDict[current.table_id].worker.postMessage({
+//     //             action: 'play',
+//     //         })
+
+//     //         // io.emit('bot_play', {
+//     //         //     current
+//     //         // });
+//     //         break;
+//     //     }
+//     // }
+//     // if (isPlay == false) {
+//     //     currentList = []
+//     // }
+//     isFullCurrent = true
+//     rotCurrentList = []
+// }
 
 // Defining callback method for receiving data or error on worker thread
 function initiateWorker(table) {
@@ -3501,7 +3501,7 @@ function initiateWorker(table) {
     };
 
     // start worker
-    myWorker = startWorker({table : table, username: botConfig.user[table]}, __dirname + '/workerCode.js', cb);
+    myWorker = startWorker({ table: table, username: botConfig.user[table] }, __dirname + '/workerCode.js', cb);
 
     if (myWorker != null) {
         workerDict[table] = {
@@ -3651,7 +3651,7 @@ function initiateDtWorker(table) {
     };
 
     // start worker
-    myWorker = startWorker({table : table, username: botConfig.user[table]}, __dirname + '/dtbot.js', cb);
+    myWorker = startWorker({ table: table, username: botConfig.user[table] }, __dirname + '/dtbot.js', cb);
 
     if (myWorker != null) {
         dtWorkerDict[table] = {
@@ -3683,430 +3683,426 @@ function initiateRotWorker(table) {
         }
         if (result.action == 'played') {
             // console.log('rot played', result)
-            clearInterval(rotBetInt[result.table.id])
-            if (result.status == 'FAILED' || result.status == null) {
-                if (result.playList.findIndex((item) => item == 'RB') != -1) {
-                    isPlayRot.RB = false
+            clearInterval(rotBetInt[result.table])
+            // if (result.status == 'FAILED' || result.status == null) {
+            //     if (result.playList.findIndex((item) => item == 'RB') != -1) {
+            //         isPlayRot.RB = false
+            //     }
+            //     if (result.playList.findIndex((item) => item == 'ED') != -1) {
+            //         isPlayRot.ED = false
+            //     }
+            //     if (result.playList.findIndex((item) => item == 'SB') != -1) {
+            //         isPlayRot.SB = false
+            //     }
+            //     if (result.playList.findIndex((item) => item == 'ZONE') != -1) {
+            //         isPlayRot.ZONE = false
+            //     }
+
+            //     // isPlay = false
+            //     rotCurrentList = []
+            //     return
+            // }
+
+            db.botTransction.findOne({
+                where: {
+                    bot_type: 21,
+                },
+                order: [
+                    ['id', 'DESC']
+                ]
+            }).then((latest) => {
+                let point = 0
+                if (latest) {
+                    point = latest.point
                 }
-                if (result.playList.findIndex((item) => item == 'ED') != -1) {
-                    isPlayRot.ED = false
+                botTransactionObj['RB'] = null
+                if (result.status.RB == 'WIN') {
+                    point += 1
+                } else if (result.status.RB == 'LOSE') {
+                    point -= 1
                 }
-                if (result.playList.findIndex((item) => item == 'SB') != -1) {
-                    isPlayRot.SB = false
+                let RBbotTransactionData = {
+                    bot_type: 21,
+                    table_id: result.table,
+                    table_title: result.table,
+                    shoe: result.shoe,
+                    round: result.stats.round,
+                    bet: result.stats.bot.RB,
+                    result: JSON.stringify(result.stats),
+                    win_result: result.status.RB,
+                    user_count: 0,
+                    point: point
                 }
-                if (result.playList.findIndex((item) => item == 'ZONE') != -1) {
-                    isPlayRot.ZONE = false
+
+                db.botTransction.create(RBbotTransactionData).then((created) => {
+                    db.botTransction.findOne({
+                        where: {
+                            bot_type: 21,
+                        },
+                        order: [
+                            ['id', 'DESC']
+                        ]
+                    }).then((res) => {
+                        // console.log(res)
+                        if (res) {
+
+                            if (latestBotTransactionId != res.id) {
+                                io.emit('all', {
+                                    bot_type: 21,
+                                    bet: res.bet
+                                })
+                                latestBotTransactionId = res.id
+                            }
+
+                            RBbotTransactionData.id = res.id
+
+                            if (Object.keys(rotBotWorkerDict).length > 0) {
+                                Object.keys(rotBotWorkerDict).forEach(function (key) {
+                                    var val = rotBotWorkerDict[key];
+                                    // console.log(key, val)
+                                    val.postMessage({
+                                        action: 'result_bet',
+                                        bot_type: result.bot_type,
+                                        table_id: result.table,
+                                        table_title: result.table,
+                                        shoe: result.shoe,
+                                        round: result.stats.round,
+                                        bet: result.stats.bot.RB,
+                                        result: JSON.stringify(result.stats),
+                                        status: result.status.RB,
+                                        user_count: 0,
+                                        botTransactionId: res.id,
+                                        botTransaction: RBbotTransactionData
+
+                                    })
+                                });
+                            }
+                        }
+                    })
+                })
+            })
+
+            db.botTransction.findOne({
+                where: {
+                    bot_type: 22,
+                },
+                order: [
+                    ['id', 'DESC']
+                ]
+            }).then((latest) => {
+                let point = 0
+                if (latest) {
+                    point = latest.point
+                }
+                botTransactionObj['EO'] = null
+                if (result.status.EO == 'WIN') {
+                    point += 1
+                } else if (result.status.EO == 'LOSE') {
+                    point -= 1
+                }
+                let EDbotTransactionData = {
+                    bot_type: 22,
+                    table_id: result.table,
+                    table_title: result.table,
+                    shoe: result.shoe,
+                    round: result.stats.round,
+                    bet: result.stats.bot.EO,
+                    result: JSON.stringify(result.stats),
+                    win_result: result.status.EO,
+                    user_count: 0,
+                    point: point
                 }
 
-                // isPlay = false
-                rotCurrentList = []
-                return
-            }
+                db.botTransction.create(EDbotTransactionData).then((created) => {
+                    db.botTransction.findOne({
+                        where: {
+                            bot_type: 22,
+                        },
+                        order: [
+                            ['id', 'DESC']
+                        ]
+                    }).then((res) => {
+                        // console.log(res)
+                        if (res) {
 
-            if (result.playList.findIndex((item) => item == 'RB') != -1) {
-                db.botTransction.findOne({
-                    where: {
-                        bot_type: 21,
-                    },
-                    order: [
-                        ['id', 'DESC']
-                    ]
-                }).then((latest) => {
-                    let point = 0
-                    if (latest) {
-                        point = latest.point
-                    }
-                    botTransactionObj['RB'] = null
-                    if (result.status.RB == 'WIN') {
-                        point += 1
-                    } else if (result.status.RB == 'LOSE') {
-                        point -= 1
-                    }
-                    let RBbotTransactionData = {
-                        bot_type: 21,
-                        table_id: result.table.id,
-                        table_title: result.table.title,
-                        shoe: result.shoe,
-                        round: result.stats.round,
-                        bet: result.stats.bot.RB,
-                        result: JSON.stringify(result.stats),
-                        win_result: result.status.RB,
-                        user_count: 0,
-                        point: point
-                    }
-
-                    db.botTransction.create(RBbotTransactionData).then((created) => {
-                        db.botTransction.findOne({
-                            where: {
-                                bot_type: 21,
-                            },
-                            order: [
-                                ['id', 'DESC']
-                            ]
-                        }).then((res) => {
-                            // console.log(res)
-                            if (res) {
-
-                                if (latestBotTransactionId != res.id) {
-                                    io.emit('all', {
-                                        bot_type: 21,
-                                        bet: res.bet
-                                    })
-                                    latestBotTransactionId = res.id
-                                }
-
-                                RBbotTransactionData.id = res.id
-
-                                if (Object.keys(rotBotWorkerDict).length > 0) {
-                                    Object.keys(rotBotWorkerDict).forEach(function (key) {
-                                        var val = rotBotWorkerDict[key];
-                                        // console.log(key, val)
-                                        val.postMessage({
-                                            action: 'result_bet',
-                                            bot_type: result.bot_type,
-                                            table_id: result.table.id,
-                                            table_title: result.table.title,
-                                            shoe: result.shoe,
-                                            round: result.stats.round,
-                                            bet: result.stats.bot.RB,
-                                            result: JSON.stringify(result.stats),
-                                            status: result.status.RB,
-                                            user_count: 0,
-                                            botTransactionId: res.id,
-                                            botTransaction: RBbotTransactionData
-
-                                        })
-                                    });
-                                }
+                            if (latestBotTransactionId != res.id) {
+                                io.emit('all', {
+                                    bot_type: 22,
+                                    bet: res.bet
+                                })
+                                latestBotTransactionId = res.id
                             }
-                        })
+
+                            EDbotTransactionData.id = res.id
+
+                            if (Object.keys(rotBotWorkerDict).length > 0) {
+                                Object.keys(rotBotWorkerDict).forEach(function (key) {
+                                    var val = rotBotWorkerDict[key];
+                                    // console.log(key, val)
+                                    val.postMessage({
+                                        action: 'result_bet',
+                                        bot_type: result.bot_type,
+                                        table_id: result.table,
+                                        table_title: result.table,
+                                        shoe: result.shoe,
+                                        round: result.stats.round,
+                                        bet: result.stats.bot.ED,
+                                        result: JSON.stringify(result.stats),
+                                        status: result.status.ED,
+                                        user_count: 0,
+                                        botTransactionId: res.id,
+                                        botTransaction: EDbotTransactionData
+
+                                    })
+                                });
+                            }
+                        }
                     })
                 })
-                isPlayRot.RB = false
-            }
-            if (result.playList.findIndex((item) => item == 'ED') != -1) {
-                db.botTransction.findOne({
-                    where: {
-                        bot_type: 22,
-                    },
-                    order: [
-                        ['id', 'DESC']
-                    ]
-                }).then((latest) => {
-                    let point = 0
-                    if (latest) {
-                        point = latest.point
-                    }
-                    botTransactionObj['ED'] = null
-                    if (result.status.ED == 'WIN') {
-                        point += 1
-                    } else if (result.status.ED == 'LOSE') {
-                        point -= 1
-                    }
-                    let EDbotTransactionData = {
-                        bot_type: 22,
-                        table_id: result.table.id,
-                        table_title: result.table.title,
-                        shoe: result.shoe,
-                        round: result.stats.round,
-                        bet: result.stats.bot.ED,
-                        result: JSON.stringify(result.stats),
-                        win_result: result.status.ED,
-                        user_count: 0,
-                        point: point
-                    }
+            })
+            // isPlayRot.ED = false
 
-                    db.botTransction.create(EDbotTransactionData).then((created) => {
-                        db.botTransction.findOne({
-                            where: {
-                                bot_type: 22,
-                            },
-                            order: [
-                                ['id', 'DESC']
-                            ]
-                        }).then((res) => {
-                            // console.log(res)
-                            if (res) {
+            db.botTransction.findOne({
+                where: {
+                    bot_type: 23,
+                },
+                order: [
+                    ['id', 'DESC']
+                ]
+            }).then((latest) => {
+                let point = 0
+                if (latest) {
+                    point = latest.point
+                }
+                botTransactionObj['SB'] = null
+                if (result.status.SB == 'WIN') {
+                    point += 1
+                } else if (result.status.SB == 'LOSE') {
+                    point -= 1
+                }
+                let SBbotTransactionData = {
+                    bot_type: 23,
+                    table_id: result.table,
+                    table_title: result.table,
+                    shoe: result.shoe,
+                    round: result.stats.round,
+                    bet: result.stats.bot.SB,
+                    result: JSON.stringify(result.stats),
+                    win_result: result.status.SB,
+                    user_count: 0,
+                    point: point
+                }
 
-                                if (latestBotTransactionId != res.id) {
-                                    io.emit('all', {
-                                        bot_type: 22,
-                                        bet: res.bet
-                                    })
-                                    latestBotTransactionId = res.id
-                                }
+                db.botTransction.create(SBbotTransactionData).then((created) => {
+                    db.botTransction.findOne({
+                        where: {
+                            bot_type: 23,
+                        },
+                        order: [
+                            ['id', 'DESC']
+                        ]
+                    }).then((res) => {
+                        // console.log(res)
+                        if (res) {
 
-                                EDbotTransactionData.id = res.id
-
-                                if (Object.keys(rotBotWorkerDict).length > 0) {
-                                    Object.keys(rotBotWorkerDict).forEach(function (key) {
-                                        var val = rotBotWorkerDict[key];
-                                        // console.log(key, val)
-                                        val.postMessage({
-                                            action: 'result_bet',
-                                            bot_type: result.bot_type,
-                                            table_id: result.table.id,
-                                            table_title: result.table.title,
-                                            shoe: result.shoe,
-                                            round: result.stats.round,
-                                            bet: result.stats.bot.ED,
-                                            result: JSON.stringify(result.stats),
-                                            status: result.status.ED,
-                                            user_count: 0,
-                                            botTransactionId: res.id,
-                                            botTransaction: EDbotTransactionData
-
-                                        })
-                                    });
-                                }
+                            if (latestBotTransactionId != res.id) {
+                                io.emit('all', {
+                                    bot_type: 23,
+                                    bet: res.bet
+                                })
+                                latestBotTransactionId = res.id
                             }
-                        })
+
+                            SBbotTransactionData.id = res.id
+
+                            if (Object.keys(rotBotWorkerDict).length > 0) {
+                                Object.keys(rotBotWorkerDict).forEach(function (key) {
+                                    var val = rotBotWorkerDict[key];
+                                    // console.log(key, val)
+                                    val.postMessage({
+                                        action: 'result_bet',
+                                        bot_type: result.bot_type,
+                                        table_id: result.table,
+                                        table_title: result.table,
+                                        shoe: result.shoe,
+                                        round: result.stats.round,
+                                        bet: result.stats.bot.SB,
+                                        result: JSON.stringify(result.stats),
+                                        status: result.status.SB,
+                                        user_count: 0,
+                                        botTransactionId: res.id,
+                                        botTransaction: SBbotTransactionData
+
+                                    })
+                                });
+                            }
+                        }
                     })
                 })
-                isPlayRot.ED = false
-            }
-            if (result.playList.findIndex((item) => item == 'SB') != -1) {
-                db.botTransction.findOne({
-                    where: {
-                        bot_type: 23,
-                    },
-                    order: [
-                        ['id', 'DESC']
-                    ]
-                }).then((latest) => {
-                    let point = 0
-                    if (latest) {
-                        point = latest.point
-                    }
-                    botTransactionObj['SB'] = null
-                    if (result.status.SB == 'WIN') {
-                        point += 1
-                    } else if (result.status.SB == 'LOSE') {
-                        point -= 1
-                    }
-                    let SBbotTransactionData = {
-                        bot_type: 23,
-                        table_id: result.table.id,
-                        table_title: result.table.title,
-                        shoe: result.shoe,
-                        round: result.stats.round,
-                        bet: result.stats.bot.SB,
-                        result: JSON.stringify(result.stats),
-                        win_result: result.status.SB,
-                        user_count: 0,
-                        point: point
-                    }
+            })
+            // isPlayRot.SB = false
 
-                    db.botTransction.create(SBbotTransactionData).then((created) => {
-                        db.botTransction.findOne({
-                            where: {
-                                bot_type: 23,
-                            },
-                            order: [
-                                ['id', 'DESC']
-                            ]
-                        }).then((res) => {
-                            // console.log(res)
-                            if (res) {
 
-                                if (latestBotTransactionId != res.id) {
-                                    io.emit('all', {
-                                        bot_type: 23,
-                                        bet: res.bet
-                                    })
-                                    latestBotTransactionId = res.id
-                                }
 
-                                SBbotTransactionData.id = res.id
+            db.botTransction.findOne({
+                where: {
+                    bot_type: 24,
+                },
+                order: [
+                    ['id', 'DESC']
+                ]
+            }).then((latest) => {
+                let point = 0
+                if (latest) {
+                    point = latest.point
+                }
+                botTransactionObj['TWOZONE'] = null
+                if (result.status.TWOZONE == 'WIN') {
+                    point += 1
+                } else if (result.status.TWOZONE == 'LOSE') {
+                    point -= 1
+                }
+                let TWOZONEbotTransactionData = {
+                    bot_type: 24,
+                    table_id: result.table,
+                    table_title: result.table,
+                    shoe: result.shoe,
+                    round: result.stats.round,
+                    bet: JSON.stringify(result.stats.bot.TWOZONE),
+                    result: JSON.stringify(result.stats),
+                    win_result: result.status.TWOZONE,
+                    user_count: 0,
+                    point: point
+                }
 
-                                if (Object.keys(rotBotWorkerDict).length > 0) {
-                                    Object.keys(rotBotWorkerDict).forEach(function (key) {
-                                        var val = rotBotWorkerDict[key];
-                                        // console.log(key, val)
-                                        val.postMessage({
-                                            action: 'result_bet',
-                                            bot_type: result.bot_type,
-                                            table_id: result.table.id,
-                                            table_title: result.table.title,
-                                            shoe: result.shoe,
-                                            round: result.stats.round,
-                                            bet: result.stats.bot.SB,
-                                            result: JSON.stringify(result.stats),
-                                            status: result.status.SB,
-                                            user_count: 0,
-                                            botTransactionId: res.id,
-                                            botTransaction: SBbotTransactionData
+                db.botTransction.create(TWOZONEbotTransactionData).then((created) => {
+                    db.botTransction.findOne({
+                        where: {
+                            bot_type: 24,
+                        },
+                        order: [
+                            ['id', 'DESC']
+                        ]
+                    }).then((res) => {
+                        // console.log(res)
+                        if (res) {
 
-                                        })
-                                    });
-                                }
+                            if (latestBotTransactionId != res.id) {
+                                io.emit('all', {
+                                    bot_type: 24,
+                                    bet: res.bet
+                                })
+                                latestBotTransactionId = res.id
                             }
-                        })
+
+                            TWOZONEbotTransactionData.id = res.id
+
+                            if (Object.keys(rotBotWorkerDict).length > 0) {
+                                Object.keys(rotBotWorkerDict).forEach(function (key) {
+                                    var val = rotBotWorkerDict[key];
+                                    // console.log(key, val)
+                                    val.postMessage({
+                                        action: 'result_bet',
+                                        bot_type: result.bot_type,
+                                        table_id: result.table,
+                                        table_title: result.table,
+                                        shoe: result.shoe,
+                                        round: result.stats.round,
+                                        bet: JSON.stringify(result.stats.bot.TWOZONE),
+                                        result: JSON.stringify(result.stats),
+                                        status: result.status.TWOZONE,
+                                        user_count: 0,
+                                        botTransactionId: res.id,
+                                        botTransaction: TWOZONEbotTransactionData
+
+                                    })
+                                });
+                            }
+                        }
                     })
                 })
-                isPlayRot.SB = false
-            }
+            })
 
-            if (result.playList.findIndex((item) => item == 'ZONE') != -1) {
-                db.botTransction.findOne({
-                    where: {
-                        bot_type: 24,
-                    },
-                    order: [
-                        ['id', 'DESC']
-                    ]
-                }).then((latest) => {
-                    let point = 0
-                    if (latest) {
-                        point = latest.point
-                    }
-                    botTransactionObj['TWOZONE'] = null
-                    if (result.status.TWOZONE == 'WIN') {
-                        point += 1
-                    } else if (result.status.TWOZONE == 'LOSE') {
-                        point -= 1
-                    }
-                    let TWOZONEbotTransactionData = {
-                        bot_type: 24,
-                        table_id: result.table.id,
-                        table_title: result.table.title,
-                        shoe: result.shoe,
-                        round: result.stats.round,
-                        bet: JSON.stringify(result.stats.bot.TWOZONE),
-                        result: JSON.stringify(result.stats),
-                        win_result: result.status.TWOZONE,
-                        user_count: 0,
-                        point: point
-                    }
+            db.botTransction.findOne({
+                where: {
+                    bot_type: 25,
+                },
+                order: [
+                    ['id', 'DESC']
+                ]
+            }).then((latest) => {
+                let point = 0
+                if (latest) {
+                    point = latest.point
+                }
+                botTransactionObj['ONEZONE'] = null
+                if (result.status.ONEZONE == 'WIN') {
+                    point += 1
+                } else if (result.status.ONEZONE == 'LOSE') {
+                    point -= 1
+                }
+                let ONEZONEbotTransactionData = {
+                    bot_type: 25,
+                    table_id: result.table,
+                    table_title: result.table,
+                    shoe: result.shoe,
+                    round: result.stats.round,
+                    bet: result.stats.bot.ONEZONE,
+                    result: JSON.stringify(result.stats),
+                    win_result: result.status.ONEZONE,
+                    user_count: 0,
+                    point: point
+                }
 
-                    db.botTransction.create(TWOZONEbotTransactionData).then((created) => {
-                        db.botTransction.findOne({
-                            where: {
-                                bot_type: 24,
-                            },
-                            order: [
-                                ['id', 'DESC']
-                            ]
-                        }).then((res) => {
-                            // console.log(res)
-                            if (res) {
+                db.botTransction.create(ONEZONEbotTransactionData).then((created) => {
+                    db.botTransction.findOne({
+                        where: {
+                            bot_type: 25,
+                        },
+                        order: [
+                            ['id', 'DESC']
+                        ]
+                    }).then((res) => {
+                        // console.log(res)
+                        if (res) {
 
-                                if (latestBotTransactionId != res.id) {
-                                    io.emit('all', {
-                                        bot_type: 24,
-                                        bet: res.bet
-                                    })
-                                    latestBotTransactionId = res.id
-                                }
-
-                                TWOZONEbotTransactionData.id = res.id
-
-                                if (Object.keys(rotBotWorkerDict).length > 0) {
-                                    Object.keys(rotBotWorkerDict).forEach(function (key) {
-                                        var val = rotBotWorkerDict[key];
-                                        // console.log(key, val)
-                                        val.postMessage({
-                                            action: 'result_bet',
-                                            bot_type: result.bot_type,
-                                            table_id: result.table.id,
-                                            table_title: result.table.title,
-                                            shoe: result.shoe,
-                                            round: result.stats.round,
-                                            bet: JSON.stringify(result.stats.bot.TWOZONE),
-                                            result: JSON.stringify(result.stats),
-                                            status: result.status.TWOZONE,
-                                            user_count: 0,
-                                            botTransactionId: res.id,
-                                            botTransaction: TWOZONEbotTransactionData
-
-                                        })
-                                    });
-                                }
+                            if (latestBotTransactionId != res.id) {
+                                io.emit('all', {
+                                    bot_type: 25,
+                                    bet: res.bet
+                                })
+                                latestBotTransactionId = res.id
                             }
-                        })
+
+                            ONEZONEbotTransactionData.id = res.id
+
+                            if (Object.keys(rotBotWorkerDict).length > 0) {
+                                Object.keys(rotBotWorkerDict).forEach(function (key) {
+                                    var val = rotBotWorkerDict[key];
+                                    // console.log(key, val)
+                                    val.postMessage({
+                                        action: 'result_bet',
+                                        bot_type: result.bot_type,
+                                        table_id: result.table,
+                                        table_title: result.table,
+                                        shoe: result.shoe,
+                                        round: result.stats.round,
+                                        bet: result.stats.bot.ONEZONE,
+                                        result: JSON.stringify(result.stats),
+                                        status: result.status.ONEZONE,
+                                        user_count: 0,
+                                        botTransactionId: res.id,
+                                        botTransaction: ONEZONEbotTransactionData
+
+                                    })
+                                });
+                            }
+                        }
                     })
                 })
+            })
+            // isPlayRot.ZONE = false
 
-                db.botTransction.findOne({
-                    where: {
-                        bot_type: 25,
-                    },
-                    order: [
-                        ['id', 'DESC']
-                    ]
-                }).then((latest) => {
-                    let point = 0
-                    if (latest) {
-                        point = latest.point
-                    }
-                    botTransactionObj['ONEZONE'] = null
-                    if (result.status.ONEZONE == 'WIN') {
-                        point += 1
-                    } else if (result.status.ONEZONE == 'LOSE') {
-                        point -= 1
-                    }
-                    let ONEZONEbotTransactionData = {
-                        bot_type: 25,
-                        table_id: result.table.id,
-                        table_title: result.table.title,
-                        shoe: result.shoe,
-                        round: result.stats.round,
-                        bet: result.stats.bot.ONEZONE,
-                        result: JSON.stringify(result.stats),
-                        win_result: result.status.ONEZONE,
-                        user_count: 0,
-                        point: point
-                    }
-
-                    db.botTransction.create(ONEZONEbotTransactionData).then((created) => {
-                        db.botTransction.findOne({
-                            where: {
-                                bot_type: 25,
-                            },
-                            order: [
-                                ['id', 'DESC']
-                            ]
-                        }).then((res) => {
-                            // console.log(res)
-                            if (res) {
-
-                                if (latestBotTransactionId != res.id) {
-                                    io.emit('all', {
-                                        bot_type: 25,
-                                        bet: res.bet
-                                    })
-                                    latestBotTransactionId = res.id
-                                }
-
-                                ONEZONEbotTransactionData.id = res.id
-
-                                if (Object.keys(rotBotWorkerDict).length > 0) {
-                                    Object.keys(rotBotWorkerDict).forEach(function (key) {
-                                        var val = rotBotWorkerDict[key];
-                                        // console.log(key, val)
-                                        val.postMessage({
-                                            action: 'result_bet',
-                                            bot_type: result.bot_type,
-                                            table_id: result.table.id,
-                                            table_title: result.table.title,
-                                            shoe: result.shoe,
-                                            round: result.stats.round,
-                                            bet: result.stats.bot.ONEZONE,
-                                            result: JSON.stringify(result.stats),
-                                            status: result.status.ONEZONE,
-                                            user_count: 0,
-                                            botTransactionId: res.id,
-                                            botTransaction: ONEZONEbotTransactionData
-
-                                        })
-                                    });
-                                }
-                            }
-                        })
-                    })
-                })
-                isPlayRot.ZONE = false
-            }
 
 
             // // isPlay = false
@@ -4126,11 +4122,11 @@ function initiateRotWorker(table) {
         }
         if (result.action == 'bet') {
             rotStartBet = new Date().getTime()
-            rotBetInt[result.data.table.id] = setInterval(function () {
-                rotBetInterval(rotStartBet, result.data, result.data.table.id);
-            }, 2400);
+            rotBetInt[result.data.table] = setInterval(function () {
+                rotBetInterval(rotStartBet, result.data, result.data.table);
+            }, 2000);
 
-            rotCurrentBetData[result.data.table.id] = result.data
+            rotCurrentBetData[result.data.table] = result.data
             // rotIsBet = true;
             // rotRemainingBet = result.data.remaining
             // rotCurrentBetData = result.data
@@ -4140,9 +4136,9 @@ function initiateRotWorker(table) {
     };
 
     // start worker
-    myWorker = startWorker({table : table, username: botConfig.user[table]}, __dirname + '/rotbot.js', cb);
+    myWorker = startWorker({ table: table, username: botConfig.user[table] }, __dirname + '/rotbot.js', cb);
     if (myWorker != null) {
-        rotWorkerDict[table.id] = {
+        rotWorkerDict[table] = {
             worker: myWorker
         }
     }
