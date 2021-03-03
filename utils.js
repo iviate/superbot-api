@@ -207,7 +207,7 @@ exports.transferWallet = async function (username, password) {
 
         const page2 = await browser.newPage();
         page2.setDefaultTimeout(timeout)
-        await page2.goto(url);
+        await page2.goto(url, { waitUntil: 'networkidle0' });
         console.log(url)
 
         // await page2.waitForSelector('#DepositAmt')
