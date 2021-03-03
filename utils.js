@@ -199,18 +199,17 @@ exports.transferWallet = async function (username, password) {
         var paramObj = Object.fromEntries(new URLSearchParams(param))
         // console.log(paramObj)
 
-        var url = "https://igtx999.isme99.com/tx4.aspx?game=" + "39-101" + "&home=" +
-            paramObj.home + "&sid=" + paramObj.sid + "&accid=" + paramObj.accid +
-            "&lang=" + paramObj.lang + "&ct=" + paramObj.ct
+        var url = "https://igtx999.isme99.com" 
+        // /tx4.aspx?game=" + "39-101" + "&home=" +
+        //     paramObj.home + "&sid=" + paramObj.sid + "&accid=" + paramObj.accid +
+        //     "&lang=" + paramObj.lang + "&ct=" + paramObj.ct
 
 
         const page2 = await browser.newPage();
         page2.setDefaultTimeout(timeout)
-        await page2.goto(url, {
-            waitUntil: "networkidle2"
-        });
+        await page2.goto(url);
 
-        await page2.waitForSelector('#DepositAmt')
+        // await page2.waitForSelector('#DepositAmt')
         const cookies = await page2.cookies()
         // console.log(cookies)
 
@@ -262,7 +261,7 @@ exports.transferWallet = async function (username, password) {
         };
 
         let res2 = await axios(config)
-        // console.log(res2.data)
+        console.log(res2.data)
 
 
 
@@ -280,7 +279,7 @@ exports.transferWallet = async function (username, password) {
         // })
 
         await browser.close();
-
+        return null
         // const ps = new URLSearchParams()
         // ps.append('dm', '1')
 
