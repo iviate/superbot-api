@@ -208,9 +208,11 @@ exports.transferWallet = async function (username, password) {
         const page2 = await browser.newPage();
         page2.setDefaultTimeout(timeout)
         await page2.goto(url);
+        console.log(url)
 
         // await page2.waitForSelector('#DepositAmt')
         const cookies = await page2.cookies()
+        console.log(url)
         // console.log(cookies)
 
         let cookieHeader = ''
