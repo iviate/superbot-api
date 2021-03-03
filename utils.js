@@ -79,8 +79,9 @@ exports.reCookie = async function reCookie(username, password) {
                 cookieHeader += value.name + '=' + value.value + '; '
             })
 
+            
+            console.log(cookieHeader)
             await browser.close();
-            // console.log(cookieHeader)
             return cookieHeader
 
             // const ps = new URLSearchParams()
