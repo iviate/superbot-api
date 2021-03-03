@@ -1,12 +1,13 @@
 const puppeteer = require("puppeteer");
 const axios = require('axios');
 var qs = require('qs');
-const timeout = 180000
+const timeout = 60000
+const env = require('./config/web.config.js')
 
 exports.reCookie = async function reCookie(username, password) {
     let cookie = await (async (username, password) => {
         const browser = await puppeteer.launch({
-            headless: true,
+            headless: false,
             devtools: false,
             args: ['--no-sandbox']
         });
@@ -15,7 +16,7 @@ exports.reCookie = async function reCookie(username, password) {
             
             const page = await browser.newPage();
             page.setDefaultTimeout(timeout)
-            await page.goto("http://www.star5566.com/", {
+            await page.goto(env.web, {
                 waitUntil: "networkidle2"
             });
 
@@ -58,7 +59,7 @@ exports.reCookie = async function reCookie(username, password) {
             var paramObj = Object.fromEntries(new URLSearchParams(param))
             // console.log(paramObj)
 
-            var url = "https://igtx399.isme99.com/txgame.aspx?game=" + "39-101" + "&home=" +
+            var url = "https://igtx999.isme99.com/txgame.aspx?game=" + "39-101" + "&home=" +
                 paramObj.home + "&sid=" + paramObj.sid + "&accid=" + paramObj.accid +
                 "&lang=" + paramObj.lang + "&ct=" + paramObj.ct
 
@@ -152,7 +153,7 @@ exports.transferWallet = async function (username, password) {
     
     const page = await browser.newPage();
     page.setDefaultTimeout(timeout)
-    await page.goto("http://www.star5566.com/", {
+    await page.goto(env.web, {
         waitUntil: "networkidle2"
     });
 
@@ -197,7 +198,7 @@ exports.transferWallet = async function (username, password) {
         var paramObj = Object.fromEntries(new URLSearchParams(param))
         // console.log(paramObj)
 
-        var url = "https://igtx399.isme99.com/tx4.aspx?game=" + "39-101" + "&home=" +
+        var url = "https://igtx999.isme99.com/tx4.aspx?game=" + "39-101" + "&home=" +
             paramObj.home + "&sid=" + paramObj.sid + "&accid=" + paramObj.accid +
             "&lang=" + paramObj.lang + "&ct=" + paramObj.ct
 
@@ -232,7 +233,7 @@ exports.transferWallet = async function (username, password) {
         //     'action': deposit,
         //     'amt': amt
         // });
-        let depositUrl = `https://igtx399.isme99.com/api.aspx?accid=${paramObj.accid}&sid=${paramObj.sid}&home=${paramObj.home}&game=39-101&ct=${paramObj.ct}&action=deposit&amt=${amt}`
+        let depositUrl = `https://igtx999.isme99.com/api.aspx?accid=${paramObj.accid}&sid=${paramObj.sid}&home=${paramObj.home}&game=39-101&ct=${paramObj.ct}&action=deposit&amt=${amt}`
 
         // console.log(depositUrl)
         var config = {
@@ -247,7 +248,7 @@ exports.transferWallet = async function (username, password) {
         let res = await axios(config)
         console.log(res.data)
 
-        depositUrl = `https://igtx399.isme99.com/api.aspx?accid=${paramObj.accid}&sid=${paramObj.sid}&home=${paramObj.home}&game=39-101&ct=${paramObj.ct}&action=deposit&amt=${amt - 1}`
+        depositUrl = `https://igtx999.isme99.com/api.aspx?accid=${paramObj.accid}&sid=${paramObj.sid}&home=${paramObj.home}&game=39-101&ct=${paramObj.ct}&action=deposit&amt=${amt - 1}`
 
         // console.log(depositUrl)
         config = {

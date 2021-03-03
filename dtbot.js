@@ -317,7 +317,7 @@ async function livePlaying(data){
     if(dataJson.eventType === "GP_NEW_GAME_START" && previousEventType !== "GP_NEW_GAME_START"){
         previousEventType = "GP_NEW_GAME_START"
         round = dataJson.gameRound
-        console.log(`${tableId}-baccarat-start`)
+        console.log(`${tableId}-dgt-start`)
         //console.log(data)
         previousGameStartAt = dataJson.roundStartTime
 

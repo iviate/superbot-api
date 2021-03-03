@@ -2041,7 +2041,7 @@ myApp.get('/user_bot_transaction/:bot_id', function (request, response) {
 myApp.get('/bot_transaction', function (request, response) {
     let rotBotType = {
         'RB': 21,
-        'ED': 22,
+        'EO': 22,
         'SB': 23,
         'TWOZONE': 24,
         'ONEZONE': 25
@@ -2142,7 +2142,7 @@ myApp.get('/bot_transaction', function (request, response) {
             })
         }
 
-    } else if (BET == 'RB' || BET == 'ED' || BET == 'SB' || BET == 'TWOZONE' || BET == 'ONEZONE') {
+    } else if (BET == 'RB' || BET == 'EO' || BET == 'SB' || BET == 'TWOZONE' || BET == 'ONEZONE') {
         if (botTransactionObj[BET] == null) {
 
             db.botTransction.findAll({
@@ -3016,8 +3016,7 @@ async function mainBody() {
     initiateWorker(6);
     initiateDtWorker(31)
     initiateDtWorker(32)
-
-    // initiateRotWorker(71)
+    initiateRotWorker(71)
 
     // console.log(response.data);
     // tables = response.data.tables
@@ -3667,6 +3666,14 @@ function initiateRotWorker(table) {
     let cb = (err, result) => {
         if (err) {
             return console.error(err);
+        }
+        if (result.action == 'start') {
+            console.log('rot start')
+            io.emit(`start`, result)
+        }
+        if (result.action == 'point') {
+            console.log('rot point')
+            io.emit(`point`, result)
         }
         if (result.action == 'getCurrent') {
             // console.log(result.error)

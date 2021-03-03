@@ -232,8 +232,8 @@ async function bet(data) {
         // console.log(`betVal : ${betVal}`)
         if (betVal < botObj.init_bet) {
             betVal = botObj.init_bet
-        } else if (betVal > 10000) {
-            betVal = 10000
+        } else if (betVal > 5000) {
+            betVal = 5000
         }
 
         // if(!is_mock){

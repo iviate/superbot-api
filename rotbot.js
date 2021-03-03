@@ -509,6 +509,7 @@ async function livePlaying(data){
         //     return
         // }
         let remainBet = Math.max(WAITNG_TIME - Math.round((moment() - previousGameStartAt) / 1000), 0)
+        parentPort.postMessage({ action: 'start', remaining : remainBet, data: dataJson })
         let twozone = randomTwoZone()
         bot = {
             RB: randomHalfRB(),
@@ -583,6 +584,7 @@ async function livePlaying(data){
             }
 
             let addition = rotConfig[score]
+            parentPort.postMessage({ action: 'point', data: dataJson, result: addition, score: score})
             if (addition.findIndex((item) => item == bot.RB) != -1) {
                 statCount.rbCorrect++;
                 status.RB = 'WIN'
@@ -618,7 +620,7 @@ async function livePlaying(data){
             } else {
                 statCount.oneZoneWrong++;
             }
-            console.log(status, predictStats.predict[playCount - 1])
+            console.log(status)
             parentPort.postMessage({
                 action: 'played',
                 status: status,

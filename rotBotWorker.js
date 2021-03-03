@@ -301,7 +301,7 @@ function bet(data) {
     if(botObj.bet_side == 11 && data.playList.findIndex((item) => item == 'RB') == -1){
         return
     }
-    else if(botObj.bet_side == 12 && data.playList.findIndex((item) => item == 'ED') == -1){
+    else if(botObj.bet_side == 12 && data.playList.findIndex((item) => item == 'EO') == -1){
         return
     }
     else if(botObj.bet_side == 13 && data.playList.findIndex((item) => item == 'SB') == -1){
@@ -366,35 +366,51 @@ function bet(data) {
         }
 
         // getBetPayLoad(data.table.id, data.game_id, data.bot, betVal)
+        let mapZone = {
+            FIRST: 148,
+            SECOND: 149,
+            THIRD: 150
+        }
+        let bPayload = {"details": [], "categoryStakes": []}
+        console.log(data.table.id, data.bot, betVal)
         let realBet = null
+        let idx = []
         let payload = { table_id: data.table.id, game_id: data.game_id }
         if (botObj.bet_side == 11) {
             realBet = data.bot.RB
             if (data.bot.RB == 'BLACK' && is_opposite == false) {
+                idx.push(156)
                 payload.chip = { credit: { 'BLACK': betVal } }
             } else if (data.bot.RB == 'RED' && is_opposite == false) {
                 payload.chip = { credit: { 'RED': betVal } }
+                idx.push(155)
             } else if (data.bot.RB == 'BLACK' && is_opposite == true) {
                 payload.chip = { credit: { 'RED': betVal } }
                 realBet = 'RED'
+                idx.push(155)
             } else if (data.bot.RB == 'RED' && is_opposite == true) {
                 payload.chip = { credit: { 'BLACK': betVal } }
                 realBet = 'BLACK'
+                idx.push(156)
             } else {
                 return
             }
         } else if (botObj.bet_side == 12) {
-            realBet = data.bot.ED
-            if (data.bot.ED == 'EVEN' && is_opposite == false) {
+            realBet = data.bot.EO
+            if (data.bot.EO == 'EVEN' && is_opposite == false) {
                 payload.chip = { credit: { 'EVEN': betVal } }
-            } else if (data.bot.ED == 'ODD' && is_opposite == false) {
+                idx.push(154)
+            } else if (data.bot.EO == 'ODD' && is_opposite == false) {
                 payload.chip = { credit: { 'ODD': betVal } }
-            } else if (data.bot.ED == 'EVEN' && is_opposite == true) {
+                idx.push(153)
+            } else if (data.bot.EO == 'EVEN' && is_opposite == true) {
                 payload.chip = { credit: { 'ODD': betVal } }
                 realBet = 'ODD'
-            } else if (data.bot.ED == 'ODD' && is_opposite == true) {
+                idx.push(153)
+            } else if (data.bot.EO == 'ODD' && is_opposite == true) {
                 payload.chip = { credit: { 'EVEN': betVal } }
                 realBet = 'EVEN'
+                idx.push(154)
             } else {
                 return
             }
@@ -402,29 +418,30 @@ function bet(data) {
             realBet = data.bot.SB
             if (data.bot.SB == 'SMALL' && is_opposite == false) {
                 payload.chip = { credit: { 'SMALL': betVal } }
+                idx.push(151)
             } else if (data.bot.SB == 'BIG' && is_opposite == false) {
                 payload.chip = { credit: { 'BIG': betVal } }
+                idx.push(152)
             } else if (data.bot.SB == 'BIG' && is_opposite == true) {
                 payload.chip = { credit: { 'SMALL': betVal } }
                 realBet = 'SMALL'
+                idx.push(152)
             } else if (data.bot.SB == 'SMALL' && is_opposite == true) {
                 payload.chip = { credit: { 'BIG': betVal } }
                 realBet = 'BIG'
+                idx.push(151)
             } else {
                 return
             }
         } else if (botObj.bet_side == 14) {
             realBet = data.bot.TWOZONE
-            payload.chip = {}
-            payload.chip['credit'] = {}
-            payload.chip.credit[realBet[0]] = betVal
-            payload.chip.credit[realBet[1]] = betVal
+            realBet.forEach(element => {
+                idx.push(mapZone[element])
+            });
         } else if (botObj.bet_side == 15) {
             if(!is_opposite){
                 realBet = data.bot.ONEZONE
-                payload.chip = {}
-                payload.chip['credit'] = {}
-                payload.chip.credit[realBet] = betVal
+                idx.push(mapZone[realBet])
             }else{
                 // console.log('opposite one zone')
                 let dozen = ['FIRST', 'SECOND', 'THIRD']
@@ -433,33 +450,93 @@ function bet(data) {
                 if(index != -1){
                     dozen.splice(index, 1)
                     realBet = dozen
-                    // console.log(realBet)
-                    payload.chip = {}
-                    payload.chip['credit'] = {}
-                    payload.chip.credit[realBet[0]] = betVal
-                    payload.chip.credit[realBet[1]] = betVal
+                    realBet.forEach(element => {
+                        idx.push(mapZone[element])
+                    });
                 }else{
                     realBet = data.bot.ONEZONE
-                    payload.chip = {}
-                    payload.chip['credit'] = {}
-                    payload.chip.credit[realBet] = betVal
-                }
-
-                
-                
+                    idx.push(mapZone[realBet])
+                    
+                }    
             }
         }
+        
+        idx.forEach(element => {
+            bPayload["details"].push({"mode":0,"idx":element,"orders":[{"idx":element,"amt":betVal}],"orderLength":1,"totAmt":betVal})
+            bPayload["categoryStakes"].push({"idx":element,"stake":betVal})
+        })
 
+        let zeroVal = 0
         if(botObj.open_zero && botObj.zero_bet > 9){
             if(botObj.zero_bet < minZero){
-                payload.chip.credit['STRAIGHTUPx0'] = minZero
+                zeroVal = minZero
+                bPayload["details"].push({"mode":0,"idx":0,"orders":[{"idx":0,"amt":zeroVal}],"orderLength":1,"totAmt":zeroVal})
+                bPayload["categoryStakes"].push({"idx":0,"stake":zeroVal})
             }else{
-                payload.chip.credit['STRAIGHTUPx0'] = botObj.zero_bet
+                zeroVal = botObj.zero_bet
+                bPayload["details"].push({"mode":0,"idx":0,"orders":[{"idx":0,"amt":zeroVal}],"orderLength":1,"totAmt":zeroVal})
+                bPayload["categoryStakes"].push({"idx":0,"stake":zeroVal})
             }
             
         }
 
         // console.log(payload)
+
+        if (!is_mock) {
+            const user = await db.user.findOne({
+                where: {
+                    id: botObj.userId
+                },
+            })
+            // let bData = [{ "categoryIdx": categoryId, "categoryName": realBet, "stake": betVal }]
+            console.log(bData)
+            var pData = qs.stringify({
+                'dealerDomain': '1',
+                'tableID': data.table.toString(),
+                'gameShoe': data.shoe.toString(),
+                'gameRound': data.round.toString(),
+                'data': JSON.stringify(bPayload),
+                'betLimitID': '110901',
+                'f': '-1',
+                'c': 'A'
+            });
+            var config = {
+                method: 'post',
+                url: 'https://bpweb.bikimex.net/player/update/addRouTransaction',
+                headers: {
+                    'Cookie': user.cookie,
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                data: pData
+            };
+
+            let res = await axios(config)
+
+            if (res.data.status == 200) {
+                if(botObj.open_zero){
+                    turnover += zeroVal
+                }
+
+                if(botObj.bet_side == 14 || ( botObj.bet_side == 15 && is_opposite == true ) ){
+                    turnover += betVal * 2
+                }else{
+                    turnover += betVal
+                }
+                current = { bot: data.bot, bet: realBet, shoe: data.shoe, round: data.round, table_id: data.table.id, betVal: betVal, playTurn: playTurn, botObj: botObj, is_opposite: is_opposite }
+                parentPort.postMessage({ action: 'bet_success', data: { ...data, betVal: betVal, current: current, botObj: botObj, turnover: turnover, bet: realBet } })
+                betFailed = true
+            } else {
+                parentPort.postMessage({ action: 'bet_failed', botObj: botObj, error: res.data })
+                betFailed = false
+            }
+
+        } else {
+            turnover += betVal
+            current = { bot: data.bot, bet: realBet, shoe: data.shoe, round: data.round, table_id: data.table.id, betVal: betVal, playTurn: playTurn, botObj: botObj, is_opposite: is_opposite }
+            parentPort.postMessage({ action: 'bet_success', data: { ...data, betVal: betVal, current: current, botObj: botObj, turnover: turnover, bet: realBet } })
+            betFailed = true
+            bet_time = Date.now()
+        }
 
         axios.post(`https://truthbet.com/api/bet/roulette`, payload,
             {
@@ -567,6 +644,7 @@ function genLeftProfitXSystem(wallet) {
 async function processResultBet(betStatus, botTransactionId, botTransaction, gameResult) {
     
     let gameResultObj = JSON.parse(gameResult)
+    console.log(gameResult)
     // console.log(gameResultObj.winner)
     if (botObj.money_system == 1) { }
     else if (botObj.money_system == 6 || botObj.money_system == 5) {

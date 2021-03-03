@@ -221,9 +221,9 @@ async function bet(data) {
         // console.log(`bot ${workerData.obj.userId} pause`)
     } else if (status == 3) {
         // console.log(`bot ${workerData.obj.userId} stop`)
-    } else if (botObj.bet_side == 2 && data.bot == 'BANKER') {
+    } else if (botObj.bet_side == 2 && data.bot == 'TIGER') {
 
-    } else if (botObj.bet_side == 3 && data.bot == 'PLAYER') {
+    } else if (botObj.bet_side == 3 && data.bot == 'DRAGON') {
 
     }
     else {
@@ -232,8 +232,8 @@ async function bet(data) {
         // console.log(`betVal : ${betVal}`)
         if (betVal < botObj.init_bet) {
             betVal = botObj.init_bet
-        } else if (betVal > 10000) {
-            betVal = 10000
+        } else if (betVal > 5000) {
+            betVal = 5000
         }
 
         // if(!is_mock){
@@ -277,7 +277,7 @@ async function bet(data) {
 
         let realBet = null
         let categoryId = 0
-        console.log(data.bot)
+        // console.log(data.bot)
         if (data.bot == 'DRAGON' && is_opposite == false) {
             realBet = "Dragon"
             categoryId = 1
@@ -292,7 +292,7 @@ async function bet(data) {
             return
         }
 
-        console.log(data.bot, realBet, is_opposite)
+        // console.log(data.bot, realBet, is_opposite)
 
         if (!is_mock) {
             const user = await db.user.findOne({
