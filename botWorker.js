@@ -681,6 +681,7 @@ async function processResultBet(betStatus, botTransactionId, botTransaction) {
         }).then(async (u) => {
 
             if ((betStatus == 'WIN' && current.is_opposite == false) || (betStatus == 'LOSE' && current.is_opposite == true)) {
+                console.log("process :::: " , current.bet, current.betVal)
                 if (current.bet == 'PLAYER') {
                     u.mock_wallet += current.betVal
                 } else {
