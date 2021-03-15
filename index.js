@@ -530,7 +530,7 @@ function processBotMoneySystem(money_system, init_wallet, profit_threshold, init
         let profit = profit_threshold - init_wallet
         let turn = 2
         let money = profit / turn / half_bet
-        while (turn < 20 && (profit / turn / half_bet >= 1)) {
+        while (turn <= 20 && (profit / turn / half_bet >= 1)) {
             money = profit / turn / half_bet
             turn++
         }
@@ -652,10 +652,10 @@ function processBotMoneySystem(money_system, init_wallet, profit_threshold, init
         let ret = []
         for (let i = 0; i < initSet.length; i++) {
             let bVal = initSet[i] * init_bet
-            if (bVal < 10000) {
+            if (bVal < 5000) {
                 ret.push(bVal)
             } else {
-                ret.push(10000)
+                ret.push(5000)
                 break;
             }
 
@@ -987,10 +987,11 @@ myApp.post('/bot/set_stop_loss', async function (request, response) {
 })
 
 myApp.post('/bot/set_zero', async function (request, response) {
-
+    
     const USERNAME = request.body.username
     const zero_bet = request.body.zero_bet
     const open_zero = request.body.open_zero
+    console.log(`set zero ${USERNAME} zero_bet ${zero_bet} open_zero ${open_zero}`)
     // console.log(USERNAME, is_opposite)
     db.user.findOne({
         where: {
@@ -1066,6 +1067,7 @@ myApp.post('/bot', async function (request, response) {
     }).then((user) => {
         if (user) {
             // console.log(request.body.is_infinite)
+            console.log(`create bot zero bet ${request.body.zero_bet}`)
             botData = {
                 userId: user.id,
                 token: user.truthbet_token,
@@ -2240,6 +2242,7 @@ myApp.get('/wallet/:id', async function (request, response) {
         console.log(cTime)
         let cookieAge = Math.round((moment() - cTime) / 1000)
         console.log(cookieAge)
+        console.log(user.ufa_account, user.type_password)
         if (cookieAge > 1200 || !user.cookie) {
             let c = await utils.reCookie(user.ufa_account, user.type_password)
             w = await utils.getUserWallet(c)
@@ -2617,7 +2620,7 @@ function createBotWorker(obj, playData, is_mock) {
     });
 }
 
-function createRotBotWorker(obj, playData) {
+function createRotBotWorker(obj, playData, is_mock) {
     let cb = (err, result) => {
         if (err) {
             return console.error(err);
@@ -2662,7 +2665,7 @@ function createRotBotWorker(obj, playData) {
         if (result.action == 'process_result') {
             // console.log(result.action)
             // console.log(result.wallet.myWallet.MAIN_WALLET.chips.cre)
-            let userWallet = result.wallet.chips.credit
+            let userWallet = result.wallet
             let winner_result = result.botTransaction.win_result
             // console.log(result.bet, result.botTransaction.bet, result.bet != result.botTransaction.bet, 
             //                 result.botTransaction.win_result, result.is_opposite)
@@ -2681,7 +2684,7 @@ function createRotBotWorker(obj, playData) {
                 user_bet:
                     result.botObj.bet_side == 14 ||
                         (result.botObj.bet_side == 15 && result.is_opposite) ? JSON.stringify(result.bet) : result.bet,
-                wallet: result.wallet.chips.credit,
+                wallet: result.wallet,
                 botId: result.botObj.id,
                 result: winner_result,
                 botTransactionId: result.botTransactionId
@@ -2702,7 +2705,7 @@ function createRotBotWorker(obj, playData) {
                 status: result.status,
                 isStop: indexIsStop,
                 value: result.betVal,
-                wallet: result.wallet.chips.credit,
+                wallet: result.wallet,
                 botId: result.botObj.id,
                 botTransactionId: result.botTransactionId,
                 botTransaction: result.botTransaction,
@@ -2722,7 +2725,7 @@ function createRotBotWorker(obj, playData) {
                     }
                 }).then((res) => {
                     res.status = 3
-                    res.stop_wallet = result.wallet.chips.credit
+                    res.stop_wallet = result.wallet
                     res.turnover = result.turnover
                     res.stop_by = (result.botObj.is_infinite == false && Math.floor(((result.botObj.profit_threshold * 94) / 100)) >= userWallet) ? 2 : result.isStop ? 1 : 4
                     // userWallet - result.botObj.profit_wallet <= result.botObj.loss_threshold ? 3 : 
@@ -2736,13 +2739,37 @@ function createRotBotWorker(obj, playData) {
 
                 })
             }
+
+            console.log('process result rot is_mock', is_mock)
+            if (result.is_mock) {
+                let paid = result.betVal
+                if (winner_result == "WIN") {
+                    paid += result.betVal
+                } else if (winner_result == "LOSE") {
+                    paid = 0
+                }
+                var zerofilled = ('000' + result.botTransaction.round).slice(-3);
+                console.log(`process result rot mock data`, result.bet, typeof result.bet)
+                let mock_transaction = {
+                    game_info: `${result.botTransaction.table_title} / ${result.botTransaction.shoe}-${zerofilled}`,
+                    user_id: result.botObj.userId,
+                    bet: result.botObj.bet_side == 14 ||
+                    (result.botObj.bet_side == 15 && result.is_opposite) ? JSON.stringify(result.bet) : result.bet,
+                    bet_credit_chip_amount: result.betVal,
+                    sum_paid_credit_amount: paid,
+                    bet_time: result.bet_time
+                }
+
+                db.mockUserTransaction.create(mock_transaction)
+            }
         }
     };
 
     let w = new Worker(__dirname + '/rotBotWorker.js', {
         workerData: {
             obj: obj,
-            playData: playData
+            playData: playData,
+            is_mock: is_mock
         }
     });
 

@@ -51,7 +51,7 @@ let statCount = {
     oneZoneWrong: 0
 }
 
-let HalfRB = ['BLACK', 'REO']
+let HalfRB = ['BLACK', 'RED']
 let HalfEO = ['EVEN', 'ODD']
 let HalfSB = ['SMALL', 'BIG']
 let Dozen = ['FIRST', 'SECOND', 'THIRD']
@@ -433,7 +433,7 @@ async function livePlaying(data){
 
     // const io = global['io'];
 
-    const WAITNG_TIME = 29;
+    const WAITNG_TIME = 25;
 
     // let liveData = {
     //     status: "",
@@ -509,7 +509,10 @@ async function livePlaying(data){
         //     return
         // }
         let remainBet = Math.max(WAITNG_TIME - Math.round((moment() - previousGameStartAt) / 1000), 0)
-        parentPort.postMessage({ action: 'start', remaining : remainBet, data: dataJson })
+        setTimeout(function () {
+            parentPort.postMessage({ action: 'start', remaining : remainBet, data: dataJson })
+        }, 9000)
+        
         let twozone = randomTwoZone()
         bot = {
             RB: randomHalfRB(),
@@ -543,14 +546,14 @@ async function livePlaying(data){
                             bot: bot,
                             table: tableId,
                             shoe: shoe,
-                            round: data.round,
-                            game_id: data.id,
+                            round: dataJson.gameRound,
+                            game_id: dataJson.gameRound,
                             remaining: remainBet,
                             win_percent: winPercent,
                             playList: ['RB', 'EO', 'SB', 'ZONE']
                         }
                     })
-                }, 7000)
+                }, 10000)
                
             } else {
                 // parentPort.postMessage({ action: 'played', status: 'FAILEO', playList: ['RB', 'EO', 'SB', 'ZONE'], table: workerData })
@@ -621,6 +624,8 @@ async function livePlaying(data){
                 statCount.oneZoneWrong++;
             }
             console.log(status)
+
+            
             parentPort.postMessage({
                 action: 'played',
                 status: status,
@@ -628,8 +633,10 @@ async function livePlaying(data){
                 shoe: shoe,
                 table: tableId,
                 bot_type: 2,
-                playList: ['RB', 'EO', 'SB', 'ZONE'],
+                playList: ['RB', 'EO', 'SB', 'ZONE']
             })
+
+            
             bot = null
         }
         // liveData.winner = winner;

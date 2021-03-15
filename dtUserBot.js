@@ -534,7 +534,7 @@ async function processResultBet(betStatus, botTransactionId, botTransaction) {
         } else {
             currentWallet = await utils.getUserWallet(user.cookie)
         }
-        console.log(`dt ${botObj.userId} wallet ${currentWallet}`)
+        console.log(`dt ${botObj.userId}-${user.ufa_account} wallet ${currentWallet}`)
 
         let cutProfit = botObj.init_wallet + Math.floor(((botObj.profit_threshold - botObj.init_wallet) * 94) / 100)
         if (playData.length == 0) {

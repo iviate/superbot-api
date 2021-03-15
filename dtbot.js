@@ -470,7 +470,7 @@ async function livePlaying(data){
                         table: tableId,
                         bot_type: 3
                     })
-                  }, 7000)
+                  }, 4000)
                 
             }
             bot = null

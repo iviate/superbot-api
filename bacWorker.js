@@ -281,7 +281,7 @@ async function livePlaying(tableId, tableTitle = null){
                         table: workerData,
                         bot_type: 1 
                     })
-                  }, 5000)
+                  }, 4000)
                 
             }
             bot = null
