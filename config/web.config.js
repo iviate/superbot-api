@@ -1,3 +1,3 @@
 module.exports = {
-    web : 'http://www.star5566.com/'
+    web : 'http://www.sun34444.com/'
 }
