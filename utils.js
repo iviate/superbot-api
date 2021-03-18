@@ -40,7 +40,9 @@ exports.reCookie = async function reCookie(username, password) {
             ]);
             await page.waitForSelector('#btnAgree_T')
             await Promise.all([
-                page.click('#btnAgree_T'),
+                page.evaluate(() => {
+                    document.querySelector('#btnAgree_T').click();
+                  }),
                 page.waitForNavigation({ waitUntil: 'networkidle0' }),
             ]);
 
@@ -178,7 +180,9 @@ exports.transferWallet = async function (username, password) {
     ]);
 
     await Promise.all([
-        page.click('#btnAgree_T'),
+        page.evaluate(() => {
+            document.querySelector('#btnAgree_T').click();
+          }),
         page.waitForNavigation({ waitUntil: 'networkidle0' }),
     ]);
 
