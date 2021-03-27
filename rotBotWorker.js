@@ -435,11 +435,11 @@ async function bet(data) {
             } else if (data.bot.SB == 'BIG' && is_opposite == true) {
                 payload.chip = { credit: { 'SMALL': betVal } }
                 realBet = 'SMALL'
-                idx.push(152)
+                idx.push(151)
             } else if (data.bot.SB == 'SMALL' && is_opposite == true) {
                 payload.chip = { credit: { 'BIG': betVal } }
                 realBet = 'BIG'
-                idx.push(151)
+                idx.push(152)
             } else {
                 return
             }
