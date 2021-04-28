@@ -1,7 +1,7 @@
 const puppeteer = require("puppeteer");
 const axios = require('axios');
 var qs = require('qs');
-const timeout = 60000
+const timeout = 20000
 const env = require('./config/web.config.js')
 
 exports.reCookie = async function reCookie(username, password) {
