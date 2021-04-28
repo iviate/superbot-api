@@ -3171,14 +3171,14 @@ async function mainBody() {
     //     }
     // })
 
-    initiateWorker(1);
-    initiateWorker(2);
-    initiateWorker(3);
-    initiateWorker(4);
-    initiateWorker(5);
-    initiateWorker(6);
-    initiateDtWorker(31)
-    initiateDtWorker(32)
+    // initiateWorker(1);
+    // initiateWorker(2);
+    // initiateWorker(3);
+    // initiateWorker(4);
+    // initiateWorker(5);
+    // initiateWorker(6);
+    // initiateDtWorker(31)
+    // initiateDtWorker(32)
     initiateRotWorker(71)
 
     // console.log(response.data);
