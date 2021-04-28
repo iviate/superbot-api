@@ -1,11 +1,12 @@
 const puppeteer = require("puppeteer");
 const axios = require('axios');
 var qs = require('qs');
-const timeout = 20000
+const timeout = 40000
 const env = require('./config/web.config.js')
 
 exports.reCookie = async function reCookie(username, password) {
     let cookie = await (async (username, password) => {
+        
         const browser = await puppeteer.launch({
             headless: true,
             devtools: false,
@@ -15,6 +16,7 @@ exports.reCookie = async function reCookie(username, password) {
         try {
             
             const page = await browser.newPage();
+            await page.setUserAgent('Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36');
             page.setDefaultTimeout(timeout)
             await page.goto(env.web, {
                 waitUntil: "networkidle2"
@@ -67,6 +69,7 @@ exports.reCookie = async function reCookie(username, password) {
 
 
             const page2 = await browser.newPage();
+            await page2.setUserAgent('Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36');
             page2.setDefaultTimeout(timeout)
             await page2.goto(url, {
                 waitUntil: "networkidle2"
@@ -155,6 +158,7 @@ exports.transferWallet = async function (username, password) {
     });
     
     const page = await browser.newPage();
+    await page.setUserAgent('Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36');
     page.setDefaultTimeout(timeout)
     await page.goto(env.web, {
         waitUntil: "networkidle2"
@@ -210,6 +214,7 @@ exports.transferWallet = async function (username, password) {
 
 
         const page2 = await browser.newPage();
+        await page2.setUserAgent('Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36');
         page2.setDefaultTimeout(timeout)
         await page2.goto(url, { waitUntil: 'networkidle0' });
         console.log(url)
