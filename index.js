@@ -301,12 +301,13 @@ myApp.post('/login', async function (request, response) {
             } else {
                 if(WEB == 1){
                     (async (USERNAME, PASSWORD) => {
-                        try {
+                        
                             const browser = await puppeteer.launch({
                                 headless: true,
                                 devtools: false,
                                 args: ['--no-sandbox', '--disable-setuid-sandbox']
                             });
+                        try {
                             const page = await browser.newPage();
                             await page.goto("https://ufa6811.ibetauto.com/ufa6811/ufabet/login", {
                                 waitUntil: "networkidle2"
@@ -368,12 +369,13 @@ myApp.post('/login', async function (request, response) {
                     })(USERNAME, PASSWORD);
                 }else if(WEB == 2){
                     (async (USERNAME, PASSWORD) => {
-                        try {
+                        
                             const browser = await puppeteer.launch({
                                 headless: true,
                                 devtools: false,
                                 args: ['--no-sandbox', '--disable-setuid-sandbox']
                             });
+                        try {
                             const page = await browser.newPage();
                             await page.goto("https://ufanextbet5g.ibetauto.com/ufanextbet5g/u369369/login", {
                                 waitUntil: "networkidle2"
@@ -436,12 +438,13 @@ myApp.post('/login', async function (request, response) {
                 }
                 else if(WEB == 3){
                     (async (USERNAME, PASSWORD) => {
-                        try {
+                        
                             const browser = await puppeteer.launch({
                                 headless: true,
                                 devtools: false,
                                 args: ['--no-sandbox', '--disable-setuid-sandbox']
                             });
+                            try {
                             const page = await browser.newPage();
                             await page.goto("https://ufasuperbet.ibetauto.com/ufasuperbet/ufabet/login", {
                                 waitUntil: "networkidle2"
@@ -511,8 +514,8 @@ myApp.post('/login', async function (request, response) {
         if(WEB == 1){
             if (USERNAME.startsWith("ufi10")) {
 
-                (async (USERNAME, PASSWORD) => {
-                    try {
+                (async (USERNAME, PASSWORD, WEB) => {
+                    
                         // console.log(USERNAME, PASSWORD)
                         console.log(`nextb5g UFI login ${USERNAME}`)
                         const browser = await puppeteer.launch({
@@ -520,6 +523,7 @@ myApp.post('/login', async function (request, response) {
                             devtools: false,
                             args: ['--no-sandbox', '--disable-setuid-sandbox']
                         });
+                    try {
                         const page = await browser.newPage();
                         await page.goto(env.web, {
                             waitUntil: "networkidle2"
@@ -582,17 +586,18 @@ myApp.post('/login', async function (request, response) {
                     //   waitUntil: "networkidle2",
                     // });
                     // await browser.close();
-                })(USERNAME, PASSWORD);
+                })(USERNAME, PASSWORD, WEB);
             }else{
-                (async (USERNAME, PASSWORD) => {
+                (async (USERNAME, PASSWORD, WEB) => {
                     // console.log(USERNAME, PASSWORD)
-                    try {
+                    
                         console.log(`Next5G phone number login ${USERNAME}`)
                         const browser = await puppeteer.launch({
                             headless: true,
                             devtools: false,
                             args: ['--no-sandbox', '--disable-setuid-sandbox']
                         });
+                    try {
                         const page = await browser.newPage();
                         await page.goto("https://ufanextbet5g.ibetauto.com/ufanextbet5g/u369369/login", {
                             waitUntil: "networkidle2"
@@ -648,11 +653,11 @@ myApp.post('/login', async function (request, response) {
                         });
                     }
 
-                })(USERNAME, PASSWORD);
+                })(USERNAME, PASSWORD, WEB);
             }
         }
         else if(WEB == 2) {
-            (async (USERNAME, PASSWORD) => {
+            (async (USERNAME, PASSWORD, WEB) => {
                 // console.log(USERNAME, PASSWORD)
                 try {
                     console.log(`6811 login ${USERNAME}`)
@@ -772,10 +777,10 @@ myApp.post('/login', async function (request, response) {
                 //   waitUntil: "networkidle2",
                 // });
                 // await browser.close();
-            })(USERNAME, PASSWORD);
+            })(USERNAME, PASSWORD, WEB);
         }
         else if(WEB == 3) {
-            (async (USERNAME, PASSWORD) => {
+            (async (USERNAME, PASSWORD, WEB) => {
                 // console.log(USERNAME, PASSWORD)
                 try {
                     console.log(`6811 login ${USERNAME}`)
@@ -844,7 +849,7 @@ myApp.post('/login', async function (request, response) {
                 //   waitUntil: "networkidle2",
                 // });
                 // await browser.close();
-            })(USERNAME, PASSWORD);
+            })(USERNAME, PASSWORD, WEB);
         }
 
     }

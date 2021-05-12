@@ -7,13 +7,13 @@ const env = require('./config/web.config.js')
 exports.reCookie = async function reCookie(username, password) {
     let cookie = await (async (username, password) => {
 
-        try {
+        
             const browser = await puppeteer.launch({
                 headless: true,
                 devtools: false,
                 args: ['--no-sandbox', '--disable-setuid-sandbox']
             });
-
+        try {
             const page = await browser.newPage();
             await page.setUserAgent('Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36');
             page.setDefaultTimeout(timeout)
@@ -140,14 +140,14 @@ function delay(time) {
 
 exports.transferWallet = async function (username, password) {
     // console.log(username, password)
-    try {
+    
 
         const browser = await puppeteer.launch({
             headless: true,
             devtools: false,
             args: ['--no-sandbox', '--disable-setuid-sandbox']
         });
-
+    try {
         const page = await browser.newPage();
         await page.setUserAgent('Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36');
         page.setDefaultTimeout(timeout)
