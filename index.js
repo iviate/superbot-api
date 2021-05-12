@@ -231,7 +231,7 @@ myApp.post('/login', async function (request, response) {
     console.log('login')
     const USERNAME = request.body.username;
     const PASSWORD = request.body.password;
-    const WEB = request.body.web
+    const WEB = request.body.web || 1
 
     const user = await db.user.findOne({
         where: {
