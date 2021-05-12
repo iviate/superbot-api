@@ -1430,7 +1430,7 @@ myApp.post('/bot', async function (request, response) {
             botData = {
                 userId: user.id,
                 token: "",
-                token_at: "",
+                token_at: db.sequelize.fn('NOW'),
                 status: 2,
                 bot_type: request.body.bot_type,
                 money_system: request.body.money_system,
