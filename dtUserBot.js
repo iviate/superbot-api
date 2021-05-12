@@ -322,14 +322,23 @@ async function bet(data) {
                 data: pData
             };
 
-            let res = await axios(config)
+            let res = null
+            try{
+                res = await axios(config)
+            }catch (e){
 
-            if (res.data.status == 200) {
+            }
+
+            if(res == null || res.data.status != 200) {
+                parentPort.postMessage({ action: 'bet_failed', botObj: botObj, error: res.data })
+                betFailed = false
+            }
+            else if (res.data.status == 200) {
                 turnover += betVal
                 current = { bot: data.bot, bet: realBet, shoe: data.shoe, round: data.round, table_id: data.table, betVal: betVal, playTurn: playTurn, botObj: botObj, is_opposite: is_opposite }
                 parentPort.postMessage({ action: 'bet_success', data: { ...data, betVal: betVal, current: current, botObj: botObj, turnover: turnover, bet: realBet } })
                 betFailed = true
-            } else {
+            }else {
                 parentPort.postMessage({ action: 'bet_failed', botObj: botObj, error: res.data })
                 betFailed = false
             }

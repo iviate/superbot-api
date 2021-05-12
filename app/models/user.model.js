@@ -42,14 +42,6 @@ module.exports = (sequelize, Sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: true,
       },
-      truthbet_token: {
-        type: DataTypes.STRING,
-        allowNull: true,
-      },
-      truthbet_token_at: {
-        type: DataTypes.DATE,
-        allowNull: true,
-      },
       profit_wallet: {
         type: DataTypes.FLOAT,
         defaultValue: 0,
@@ -70,6 +62,10 @@ module.exports = (sequelize, Sequelize, DataTypes) => {
       },
       cookieTime : {
         type: DataTypes.STRING
+      },
+      web: {
+        type: DataTypes.INTEGER,
+        defaultValue: 2,
       }
       
     });

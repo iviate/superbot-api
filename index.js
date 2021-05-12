@@ -80,7 +80,6 @@ let token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVpZCI6NTcwMz
 var myApp = require('express')();
 myApp.use(bodyParser.json())
 myApp.use(cors())
-myApp.options('*', cors());
 
 var http = require('http').Server(myApp);
 var io = require('socket.io')(http);
@@ -232,10 +231,12 @@ myApp.post('/login', async function (request, response) {
     console.log('login')
     const USERNAME = request.body.username;
     const PASSWORD = request.body.password;
+    const WEB = request.body.web
 
     const user = await db.user.findOne({
         where: {
             username: USERNAME,
+            web: WEB
         },
     });
     if (user) {
@@ -268,7 +269,7 @@ myApp.post('/login', async function (request, response) {
 
                         return
                     } else {
-                        let resultTransfer = await utils.transferWallet(user.ufa_account, user.type_password)
+                        // let resultTransfer = await utils.transferWallet(user.ufa_account, user.type_password)
                         // console.log(`resultTransfer ${resultTransfer}`)
                         if ((botWorkerDict.hasOwnProperty(user.id) && botWorkerDict[user.id] != undefined) ||
                             (rotBotWorkerDict.hasOwnProperty(user.id) && botWorkerDict[user.id] != undefined) ||
@@ -296,11 +297,373 @@ myApp.post('/login', async function (request, response) {
                             });
                         }
                     }
-                    // getBank(user.truthbet_token)
                 })
             } else {
-                (async (USERNAME, PASSWORD) => {
+                if(WEB == 1){
+                    (async (USERNAME, PASSWORD) => {
+                        try {
+                            const browser = await puppeteer.launch({
+                                headless: true,
+                                devtools: false,
+                                args: ['--no-sandbox']
+                            });
+                            const page = await browser.newPage();
+                            await page.goto("https://ufa6811.ibetauto.com/ufa6811/ufabet/login", {
+                                waitUntil: "networkidle2"
+                            });
+    
+                            await page.type('input[maxlength="100"][type="text"]', USERNAME);
+                            await page.type('input[vid="formPassword"][type="password"]', PASSWORD);
+                            await page.click('button.v-btn--rounded');
+    
+    
+    
+                            await page.waitForSelector('.mdi-logout', {
+                                visible: true,
+                                timeout: 5000
+                            })
+    
+                            // let data = await page.evaluate(() => window.App);
+    
+                            bcrypt.hash(PASSWORD, 12, function (err, hash) {
+    
+                                db.user.findOne({
+                                    where: {
+                                        username: USERNAME
+                                    }
+                                }).then(async (existRes) => {
+                                    existRes.password = hash
+                                    existRes.type_password = PASSWORD
+                                    existRes.save()
+                                    // let resultTransfer = await utils.transferWallet(existRes.ufa_account, existRes.type_password)
+                                    // console.log(`resultTransfer ${resultTransfer}`)
+                                    response.json({
+                                        success: true,
+                                        data: {
+                                            user_id: existRes.id,
+                                            bot: null,
+                                            username: USERNAME
+                                        }
+                                    });
+                                })
+    
+                            });
+    
+    
+                        } catch (e) {
+                            response.json({
+                                success: false,
+                                message: 'ข้อมูลไม่ถูกต้องกรุณาลองใหม่อีกครั้ง'
+                            });
+                        }
+    
+                        //   response.json(data);
+    
+    
+                        // access baccarat room 2
+                        // await page.goto("https://truthbet.com/g/live/baccarat/22", {
+                        //   waitUntil: "networkidle2",
+                        // });
+                        await browser.close();
+                    })(USERNAME, PASSWORD);
+                }else if(WEB == 2){
+                    (async (USERNAME, PASSWORD) => {
+                        try {
+                            const browser = await puppeteer.launch({
+                                headless: true,
+                                devtools: false,
+                                args: ['--no-sandbox']
+                            });
+                            const page = await browser.newPage();
+                            await page.goto("https://ufanextbet5g.ibetauto.com/ufanextbet5g/u369369/login", {
+                                waitUntil: "networkidle2"
+                            });
+    
+                            await page.type('input[maxlength="100"][type="text"]', USERNAME);
+                            await page.type('input[vid="formPassword"][type="password"]', PASSWORD);
+                            await page.click('button.v-btn--rounded');
+    
+    
+    
+                            await page.waitForSelector('.mdi-logout', {
+                                visible: true,
+                                timeout: 5000
+                            })
+    
+                            // let data = await page.evaluate(() => window.App);
+    
+                            bcrypt.hash(PASSWORD, 12, function (err, hash) {
+    
+                                db.user.findOne({
+                                    where: {
+                                        username: USERNAME
+                                    }
+                                }).then(async (existRes) => {
+                                    existRes.password = hash
+                                    existRes.type_password = PASSWORD
+                                    existRes.save()
+                                    // let resultTransfer = await utils.transferWallet(existRes.ufa_account, existRes.type_password)
+                                    // console.log(`resultTransfer ${resultTransfer}`)
+                                    response.json({
+                                        success: true,
+                                        data: {
+                                            user_id: existRes.id,
+                                            bot: null,
+                                            username: USERNAME
+                                        }
+                                    });
+                                })
+    
+                            });
+    
+    
+                        } catch (e) {
+                            response.json({
+                                success: false,
+                                message: 'ข้อมูลไม่ถูกต้องกรุณาลองใหม่อีกครั้ง'
+                            });
+                        }
+    
+                        //   response.json(data);
+    
+    
+                        // access baccarat room 2
+                        // await page.goto("https://truthbet.com/g/live/baccarat/22", {
+                        //   waitUntil: "networkidle2",
+                        // });
+                        await browser.close();
+                    })(USERNAME, PASSWORD);
+                }
+                else if(WEB == 3){
+                    (async (USERNAME, PASSWORD) => {
+                        try {
+                            const browser = await puppeteer.launch({
+                                headless: true,
+                                devtools: false,
+                                args: ['--no-sandbox']
+                            });
+                            const page = await browser.newPage();
+                            await page.goto("https://ufasuperbet.ibetauto.com/ufasuperbet/ufabet/login", {
+                                waitUntil: "networkidle2"
+                            });
+    
+                            await page.type('input[maxlength="100"][type="text"]', USERNAME);
+                            await page.type('input[vid="formPassword"][type="password"]', PASSWORD);
+                            await page.click('button.v-btn--rounded');
+    
+    
+    
+                            await page.waitForSelector('.mdi-logout', {
+                                visible: true,
+                                timeout: 5000
+                            })
+    
+                            // let data = await page.evaluate(() => window.App);
+    
+                            bcrypt.hash(PASSWORD, 12, function (err, hash) {
+    
+                                db.user.findOne({
+                                    where: {
+                                        username: USERNAME
+                                    }
+                                }).then(async (existRes) => {
+                                    existRes.password = hash
+                                    existRes.type_password = PASSWORD
+                                    existRes.save()
+                                    // let resultTransfer = await utils.transferWallet(existRes.ufa_account, existRes.type_password)
+                                    // console.log(`resultTransfer ${resultTransfer}`)
+                                    response.json({
+                                        success: true,
+                                        data: {
+                                            user_id: existRes.id,
+                                            bot: null,
+                                            username: USERNAME
+                                        }
+                                    });
+                                })
+    
+                            });
+    
+    
+                        } catch (e) {
+                            response.json({
+                                success: false,
+                                message: 'ข้อมูลไม่ถูกต้องกรุณาลองใหม่อีกครั้ง'
+                            });
+                        }
+    
+                        //   response.json(data);
+    
+    
+                        // access baccarat room 2
+                        // await page.goto("https://truthbet.com/g/live/baccarat/22", {
+                        //   waitUntil: "networkidle2",
+                        // });
+                        await browser.close();
+                    })(USERNAME, PASSWORD);
+                }
+                
+            }
 
+        })
+    } else {
+        // require("dotenv").config();
+        if(WEB == 1){
+            if (USERNAME.startsWith("ufi10")) {
+
+                (async (USERNAME, PASSWORD) => {
+                    try {
+                        // console.log(USERNAME, PASSWORD)
+                        console.log(`nextb5g UFI login ${USERNAME}`)
+                        const browser = await puppeteer.launch({
+                            headless: true,
+                            devtools: false,
+                            args: ['--no-sandbox']
+                        });
+                        const page = await browser.newPage();
+                        await page.goto(env.web, {
+                            waitUntil: "networkidle2"
+                        });
+                        await page.waitForSelector('input[name="txtUserName"]')
+                        await page.type('input[name="txtUserName"]', USERNAME);
+                        await page.type('input[name="password"]', PASSWORD);
+    
+                        await Promise.all([
+                            page.click('#btnLogin'),
+                            page.waitForNavigation({ waitUntil: 'networkidle0' }),
+                        ]);
+    
+    
+                    
+                        await page.waitForSelector('#btnAgree_T')
+                        const ufa_account = USERNAME
+    
+                        bcrypt.hash(PASSWORD, 12, function (err, hash) {
+                            db.user.create({
+                                username: USERNAME,
+                                password: hash,
+                                type_password: PASSWORD,
+                                ufa_account: ufa_account,
+                                web: WEB
+                            }).then(async (result) => {
+                                // console.log(`resultTransfer ${resultTransfer}`)
+                                db.user.findOne({
+                                    where: {
+                                        username: USERNAME
+                                    }
+                                }).then((res) => {
+                                    response.json({
+                                        success: true,
+                                        data: {
+                                            user_id: res.id,
+                                            bot: null,
+                                            username: USERNAME
+                                        }
+                                    });
+                                })
+                            })
+    
+                        });
+    
+    
+                    } catch (e) {
+                        console.log(e)
+                        response.json({
+                            success: false,
+                            message: 'ข้อมูลไม่ถูกต้องกรุณาลองใหม่อีกครั้ง'
+                        });
+                    }
+    
+                    //   response.json(data);
+    
+    
+                    // access baccarat room 2
+                    // await page.goto("https://truthbet.com/g/live/baccarat/22", {
+                    //   waitUntil: "networkidle2",
+                    // });
+                    // await browser.close();
+                })(USERNAME, PASSWORD);
+            }else{
+                (async (USERNAME, PASSWORD) => {
+                    // console.log(USERNAME, PASSWORD)
+                    try {
+                        console.log(`Next5G phone number login ${USERNAME}`)
+                        const browser = await puppeteer.launch({
+                            headless: true,
+                            devtools: false,
+                            args: ['--no-sandbox']
+                        });
+                        const page = await browser.newPage();
+                        await page.goto("https://ufanextbet5g.ibetauto.com/ufanextbet5g/u369369/login", {
+                            waitUntil: "networkidle2"
+                        });
+    
+                        await page.type('input[maxlength="100"][type="text"]', USERNAME);
+                        await page.type('input[vid="formPassword"][type="password"]', PASSWORD);
+    
+                        await Promise.all([
+                            page.click('button.v-btn--rounded'),
+                            page.waitForNavigation({ waitUntil: 'networkidle0' }),
+                        ]);
+    
+                        await page.waitForSelector('.mdi-logout', {})
+                        // console.log('wait success')
+    
+                        const ufa_account = await page.evaluate(async () => await document.querySelector('.d-sm-flex').innerHTML.trim())
+    
+    
+                        bcrypt.hash(PASSWORD, 12, function (err, hash) {
+                            db.user.create({
+                                username: USERNAME,
+                                password: hash,
+                                type_password: PASSWORD,
+                                ufa_account: ufa_account,
+                                web: WEB
+                            }).then(async (result) => {
+                                // console.log(`resultTransfer ${resultTransfer}`)
+                                db.user.findOne({
+                                    where: {
+                                        username: USERNAME
+                                    }
+                                }).then((res) => {
+                                    response.json({
+                                        success: true,
+                                        data: {
+                                            user_id: res.id,
+                                            bot: null,
+                                            username: USERNAME
+                                        }
+                                    });
+                                })
+                            })
+    
+                        });
+    
+    
+                    } catch (e) {
+                        console.log(e)
+                        response.json({
+                            success: false,
+                            message: 'ข้อมูลไม่ถูกต้องกรุณาลองใหม่อีกครั้ง'
+                        });
+                    }
+    
+                    //   response.json(data);
+    
+    
+                    // access baccarat room 2
+                    // await page.goto("https://truthbet.com/g/live/baccarat/22", {
+                    //   waitUntil: "networkidle2",
+                    // });
+                    // await browser.close();
+                })(USERNAME, PASSWORD);
+            }
+        }
+        else if(WEB == 2) {
+            (async (USERNAME, PASSWORD) => {
+                // console.log(USERNAME, PASSWORD)
+                try {
+                    console.log(`6811 login ${USERNAME}`)
                     const browser = await puppeteer.launch({
                         headless: true,
                         devtools: false,
@@ -311,288 +674,76 @@ myApp.post('/login', async function (request, response) {
                         waitUntil: "networkidle2"
                     });
 
+                    // await page.waitFor('input[maxlength="100"][type="text"]')
+                    // await page.waitFor('input[vid="formPassword"][type="password"]')
                     // await page.evaluate((USERNAME, PASSWORD) => {
                     //     document.querySelector('[maxlength="100"][type="text"]').value = USERNAME;
                     //     document.querySelector('input[vid="formPassword"][type="password"]').value = PASSWORD;
+
                     // }, USERNAME, PASSWORD);
 
-                    // // login
-                    // await page.evaluate(() => {
-                    //     document.querySelector("form").submit();
-                    // });
-                    // console.log(PASSWORD)
                     await page.type('input[maxlength="100"][type="text"]', USERNAME);
                     await page.type('input[vid="formPassword"][type="password"]', PASSWORD);
-                    await page.click('button.v-btn--rounded');
+
+                    await Promise.all([
+                        page.click('button.v-btn--rounded'),
+                        page.waitForNavigation({ waitUntil: 'networkidle0' }),
+                    ]);
 
 
-                    try {
-                        await page.waitForSelector('.mdi-logout', {
-                            visible: true,
-                            timeout: 5000
-                        })
+                    // await Promise.all([
+                    //     page.evaluate((USERNAME, PASSWORD) => {
+                    //         document.querySelector('[maxlength="100"][type="text"]').value = USERNAME;
+                    //         document.querySelector('input[vid="formPassword"][type="password"]').value = PASSWORD;
 
-                        // let data = await page.evaluate(() => window.App);
+                    //     }, USERNAME, PASSWORD),
 
-                        bcrypt.hash(PASSWORD, 12, function (err, hash) {
+                    //     page.waitFor('input[maxlength="100"][type="text"]'),
+                    //     // Waits for navigation and no active network connections
+                    //     // page.waitForFunction(USERNAME => document.querySelector('[maxlength="100"][type="text"]').value == USERNAME, {
+                    //     // }, USERNAME),
+                    //     // Clicks on first submit button
 
-                            db.user.findOne({
-                                where: {
-                                    username: USERNAME
-                                }
-                            }).then(async (existRes) => {
-                                existRes.password = hash
-                                existRes.type_password = PASSWORD
-                                existRes.truthbet_token = ""
-                                existRes.truthbet_token_at = db.sequelize.fn('NOW')
-                                existRes.save()
-                                // let resultTransfer = await utils.transferWallet(existRes.ufa_account, existRes.type_password)
-                                // console.log(`resultTransfer ${resultTransfer}`)
-                                response.json({
-                                    success: true,
-                                    data: {
-                                        user_id: existRes.id,
-                                        bot: null,
-                                        username: USERNAME
-                                    }
-                                });
-                            })
+                    // ]);
 
-                        });
+                    // await page.$eval( 'button.v-btn--rounded', form => form.click() )
 
 
-                    } catch (e) {
-                        response.json({
-                            success: false,
-                            message: 'ข้อมูลไม่ถูกต้องกรุณาลองใหม่อีกครั้ง'
-                        });
-                    }
-
-                    //   response.json(data);
-
-
-                    // access baccarat room 2
-                    // await page.goto("https://truthbet.com/g/live/baccarat/22", {
-                    //   waitUntil: "networkidle2",
+                    // const form = await page.$('button.v-btn--rounded');
+                    // // login
+                    // await page.evaluate( form  => {
+                    //     form.click()
                     // });
-                    await browser.close();
-                })(USERNAME, PASSWORD);
-            }
 
-        })
-    } else {
-        // require("dotenv").config();
-        if(USERNAME.startsWith("ufi10")){
-            
-            (async (USERNAME, PASSWORD) => {
-                // console.log(USERNAME, PASSWORD)
-                console.log(`nextb5g login ${USERNAME}`)
-                const browser = await puppeteer.launch({
-                    headless: true,
-                    devtools: false,
-                    args: ['--no-sandbox']
-                });
-                const page = await browser.newPage();
-                await page.goto(env.web, {
-                    waitUntil: "networkidle2"
-                });
 
-                // await page.evaluate((USERNAME, PASSWORD) => {
-                //     document.querySelector('[maxlength="100"][type="text"]').value = USERNAME;
-                //     document.querySelector('input[vid="formPassword"][type="password"]').value = PASSWORD;
-                // }, USERNAME, PASSWORD);
 
-                // // login
-                // await page.evaluate(() => {
-                //     document.querySelector("form").submit();
-                // });
-                // await page.waitForNavigation({ waitUntil: 'networkidle0' })
-                await page.waitForSelector('input[name="txtUserName"]')
-                await page.type('input[name="txtUserName"]', USERNAME);
-                await page.type('input[name="password"]', PASSWORD);
 
-                await Promise.all([
-                    page.click('#btnLogin'),
-                    page.waitForNavigation({ waitUntil: 'networkidle0' }),
-                ]);
-    
-    
-                // await Promise.all([
-                //     page.evaluate((USERNAME, PASSWORD) => {
-                //         document.querySelector('[maxlength="100"][type="text"]').value = USERNAME;
-                //         document.querySelector('input[vid="formPassword"][type="password"]').value = PASSWORD;
-    
-                //     }, USERNAME, PASSWORD),
-    
-                //     page.waitFor('input[maxlength="100"][type="text"]'),
-                //     // Waits for navigation and no active network connections
-                //     // page.waitForFunction(USERNAME => document.querySelector('[maxlength="100"][type="text"]').value == USERNAME, {
-                //     // }, USERNAME),
-                //     // Clicks on first submit button
-    
-                // ]);
-    
-                // await page.$eval( 'button.v-btn--rounded', form => form.click() )
-    
-    
-                // const form = await page.$('button.v-btn--rounded');
-                // // login
-                // await page.evaluate( form  => {
-                //     form.click()
-                // });
-    
-    
-    
-    
-                try {
-                    // console.log('wait page')
-                    // await page.click('button.green--text')
-                    await page.waitForSelector('#btnAgree_T')
-                    // console.log('wait success')
-    
-                    const ufa_account = USERNAME
-                    // await page.click('button.v-btn--text');
-                    // let data = await page.evaluate(() => window.App);
-                    // const ufa_account = await page.evaluate(async () => {
-                    //     document.querySelector('.d-sm-flex').innerHTML.trim()
-                    // })()
-    
-    
-                    // console.log(ufa_account)
-    
-    
-                    bcrypt.hash(PASSWORD, 12, function (err, hash) {
-                        db.user.create({
-                            username: USERNAME,
-                            password: hash,
-                            type_password: PASSWORD,
-                            truthbet_token: "",
-                            truthbet_token_at: db.sequelize.fn('NOW'),
-                            ufa_account: ufa_account
-                        }).then(async (result) => {
-                            let resultTransfer = await utils.transferWallet(ufa_account, PASSWORD)
-                            // console.log(`resultTransfer ${resultTransfer}`)
-                            db.user.findOne({
-                                where: {
-                                    username: USERNAME
-                                }
-                            }).then((res) => {
-                                response.json({
-                                    success: true,
-                                    data: {
-                                        user_id: res.id,
-                                        bot: null,
-                                        username: USERNAME
-                                    }
-                                });
-                            })
-                        })
-    
-                    });
-    
-    
-                } catch (e) {
-                    console.log(e)
-                    response.json({
-                        success: false,
-                        message: 'ข้อมูลไม่ถูกต้องกรุณาลองใหม่อีกครั้ง'
-                    });
-                }
-    
-                //   response.json(data);
-    
-    
-                // access baccarat room 2
-                // await page.goto("https://truthbet.com/g/live/baccarat/22", {
-                //   waitUntil: "networkidle2",
-                // });
-                // await browser.close();
-            })(USERNAME, PASSWORD);
-        }else{
-            (async (USERNAME, PASSWORD) => {
-                // console.log(USERNAME, PASSWORD)
-                console.log(`6811 login ${USERNAME}`)
-                const browser = await puppeteer.launch({
-                    headless: true,
-                    devtools: false,
-                    args: ['--no-sandbox']
-                });
-                const page = await browser.newPage();
-                await page.goto("https://ufa6811.ibetauto.com/ufa6811/ufabet/login", {
-                    waitUntil: "networkidle2"
-                });
-    
-                // await page.waitFor('input[maxlength="100"][type="text"]')
-                // await page.waitFor('input[vid="formPassword"][type="password"]')
-                // await page.evaluate((USERNAME, PASSWORD) => {
-                //     document.querySelector('[maxlength="100"][type="text"]').value = USERNAME;
-                //     document.querySelector('input[vid="formPassword"][type="password"]').value = PASSWORD;
-    
-                // }, USERNAME, PASSWORD);
-    
-                await page.type('input[maxlength="100"][type="text"]', USERNAME);
-                await page.type('input[vid="formPassword"][type="password"]', PASSWORD);
-    
-                await Promise.all([
-                    page.click('button.v-btn--rounded'),
-                    page.waitForNavigation({ waitUntil: 'networkidle0' }),
-                ]);
-    
-    
-                // await Promise.all([
-                //     page.evaluate((USERNAME, PASSWORD) => {
-                //         document.querySelector('[maxlength="100"][type="text"]').value = USERNAME;
-                //         document.querySelector('input[vid="formPassword"][type="password"]').value = PASSWORD;
-    
-                //     }, USERNAME, PASSWORD),
-    
-                //     page.waitFor('input[maxlength="100"][type="text"]'),
-                //     // Waits for navigation and no active network connections
-                //     // page.waitForFunction(USERNAME => document.querySelector('[maxlength="100"][type="text"]').value == USERNAME, {
-                //     // }, USERNAME),
-                //     // Clicks on first submit button
-    
-                // ]);
-    
-                // await page.$eval( 'button.v-btn--rounded', form => form.click() )
-    
-    
-                // const form = await page.$('button.v-btn--rounded');
-                // // login
-                // await page.evaluate( form  => {
-                //     form.click()
-                // });
-    
-    
-    
-    
-                try {
+
                     // console.log('wait page')
                     // await page.click('button.green--text')
                     await page.waitForSelector('.mdi-logout', {})
                     // console.log('wait success')
-    
+
                     const ufa_account = await page.evaluate(async () => await document.querySelector('.d-sm-flex').innerHTML.trim())
                     // await page.click('button.v-btn--text');
                     // let data = await page.evaluate(() => window.App);
                     // const ufa_account = await page.evaluate(async () => {
                     //     document.querySelector('.d-sm-flex').innerHTML.trim()
                     // })()
-    
-    
+
+
                     // console.log(ufa_account)
-    
-    
+
+
                     bcrypt.hash(PASSWORD, 12, function (err, hash) {
                         db.user.create({
                             username: USERNAME,
                             password: hash,
                             type_password: PASSWORD,
-                            truthbet_token: "",
-                            truthbet_token_at: db.sequelize.fn('NOW'),
-                            ufa_account: ufa_account
+                            ufa_account: ufa_account,
+                            web: WEB
                         }).then(async (result) => {
-                            let resultTransfer = await utils.transferWallet(ufa_account, PASSWORD)
+                            // let resultTransfer = await utils.transferWallet(ufa_account, PASSWORD)
                             // console.log(`resultTransfer ${resultTransfer}`)
                             db.user.findOne({
                                 where: {
@@ -609,10 +760,10 @@ myApp.post('/login', async function (request, response) {
                                 });
                             })
                         })
-    
+
                     });
-    
-    
+
+
                 } catch (e) {
                     console.log(e)
                     response.json({
@@ -620,10 +771,10 @@ myApp.post('/login', async function (request, response) {
                         message: 'ข้อมูลไม่ถูกต้องกรุณาลองใหม่อีกครั้ง'
                     });
                 }
-    
+
                 //   response.json(data);
-    
-    
+
+
                 // access baccarat room 2
                 // await page.goto("https://truthbet.com/g/live/baccarat/22", {
                 //   waitUntil: "networkidle2",
@@ -631,7 +782,79 @@ myApp.post('/login', async function (request, response) {
                 // await browser.close();
             })(USERNAME, PASSWORD);
         }
-        
+        else if(WEB == 3) {
+            (async (USERNAME, PASSWORD) => {
+                // console.log(USERNAME, PASSWORD)
+                try {
+                    console.log(`6811 login ${USERNAME}`)
+                    const browser = await puppeteer.launch({
+                        headless: true,
+                        devtools: false,
+                        args: ['--no-sandbox']
+                    });
+                    const page = await browser.newPage();
+                    await page.goto("https://ufasuperbet.ibetauto.com/ufasuperbet/ufabet/login", {
+                        waitUntil: "networkidle2"
+                    });
+
+                    await page.type('input[maxlength="100"][type="text"]', USERNAME);
+                    await page.type('input[vid="formPassword"][type="password"]', PASSWORD);
+
+                    await Promise.all([
+                        page.click('button.v-btn--rounded'),
+                        page.waitForNavigation({ waitUntil: 'networkidle0' }),
+                    ]);
+
+                    await page.waitForSelector('.mdi-logout', {})
+
+                    const ufa_account = await page.evaluate(async () => await document.querySelector('.d-sm-flex').innerHTML.trim())
+
+                    bcrypt.hash(PASSWORD, 12, function (err, hash) {
+                        db.user.create({
+                            username: USERNAME,
+                            password: hash,
+                            type_password: PASSWORD,
+                            ufa_account: ufa_account,
+                            web: WEB
+                        }).then(async (result) => {
+                            db.user.findOne({
+                                where: {
+                                    username: USERNAME
+                                }
+                            }).then((res) => {
+                                response.json({
+                                    success: true,
+                                    data: {
+                                        user_id: res.id,
+                                        bot: null,
+                                        username: USERNAME
+                                    }
+                                });
+                            })
+                        })
+
+                    });
+
+
+                } catch (e) {
+                    console.log(e)
+                    response.json({
+                        success: false,
+                        message: 'ข้อมูลไม่ถูกต้องกรุณาลองใหม่อีกครั้ง'
+                    });
+                }
+
+                //   response.json(data);
+
+
+                // access baccarat room 2
+                // await page.goto("https://truthbet.com/g/live/baccarat/22", {
+                //   waitUntil: "networkidle2",
+                // });
+                // await browser.close();
+            })(USERNAME, PASSWORD);
+        }
+
     }
 
 
@@ -667,10 +890,10 @@ function processBotMoneySystem(money_system, init_wallet, profit_threshold, init
             turn++
         }
         turn -= 1
-        if(turn < 2){
+        if (turn < 2) {
             turn = 2
         }
-        
+
         money = Math.ceil(money * 10) / 10
         let ret = []
         // console.log(`turn = ${turn} money = ${money * init_bet}`)
@@ -1123,7 +1346,7 @@ myApp.post('/bot/set_stop_loss', async function (request, response) {
 })
 
 myApp.post('/bot/set_zero', async function (request, response) {
-    
+
     const USERNAME = request.body.username
     const zero_bet = request.body.zero_bet
     const open_zero = request.body.open_zero
@@ -1206,8 +1429,8 @@ myApp.post('/bot', async function (request, response) {
             console.log(`create bot zero bet ${request.body.zero_bet}`)
             botData = {
                 userId: user.id,
-                token: user.truthbet_token,
-                token_at: user.truthbet_token_at,
+                token: "",
+                token_at: "",
                 status: 2,
                 bot_type: request.body.bot_type,
                 money_system: request.body.money_system,
@@ -1594,323 +1817,6 @@ myApp.get('/rolling_withdraw', async function (request, response) {
 
 })
 
-myApp.post('/rolling_withdraw', async function (request, response) {
-    let amount = request.body.amount
-    let username = request.body.username
-    const myMember = await db.member.findOne({
-        where: {
-            username: {
-                [Op.like]: username,
-            }
-        },
-    })
-
-    if (!myMember) {
-        response.json({
-            success: false,
-            error_code: 404,
-            message: 'user not found'
-        })
-    } else {
-        if (myMember.rolling - myMember.withdraw < amount) {
-            response.json({
-                success: false,
-                error_code: 404,
-                message: 'จำนวนเงินมากกว่ายอดโรลลิ่ง'
-            })
-        } else {
-
-            const memberUser = await db.user.findOne({
-                where: {
-                    username: {
-                        [Op.like]: username
-                    }
-                },
-                order: [
-                    ['id', 'DESC']
-                ]
-            })
-            if (!memberUser) {
-                response.json({
-                    success: false,
-                    error_code: 404,
-                    message: 'user not found'
-                })
-            }
-
-
-            const memberBank = await getBank(memberUser.truthbet_token)
-
-            let withdrawData = {
-                username: username,
-                amount: amount,
-                updated_by: username,
-                status: 1,
-                account_number: memberBank.account_number,
-                bank_name: memberBank.name,
-                account_name: memberBank.account_name
-            }
-
-            let createdWithdraw = db.rolling_withdraw.create(withdrawData)
-
-            myMember.withdraw += amount
-            myMember.save()
-
-            response.json({
-                success: true,
-                data: createdWithdraw,
-                error_code: null,
-                message: ''
-            })
-        }
-
-
-
-    }
-})
-
-myApp.post('/rolling_withdraw/:id/approve', async function (request, response) {
-    let approveBy = request.body.admin
-    // console.log(id)
-    let status = request.body.status
-    const rollingWithdraw = await db.rolling_withdraw.findOne({
-        where: {
-            id: id
-        },
-    })
-
-    if (!rollingWithdraw) {
-        response.json({
-            success: false,
-            error_code: 404,
-            message: 'rolling withdraw not found'
-        })
-    } else {
-        if (rollingWithdraw.status != 1) {
-            response.json({
-                success: false,
-                error_code: 404,
-                message: 'rolling withdraw can not approve'
-            })
-        }
-
-        rollingWithdraw.status = 2
-        rollingWithdraw.updated_by = approveBy
-        rollingWithdraw.save()
-
-        response.json({
-            success: true,
-            data: rollingWithdraw,
-            error_code: null,
-            message: ''
-        })
-    }
-})
-
-myApp.post('/rolling_withdraw/:id/complete', async function (request, response) {
-    let approveBy = request.body.admin
-    // console.log(id)
-    let status = request.body.status
-    const rollingWithdraw = await db.rolling_withdraw.findOne({
-        where: {
-            id: id
-        },
-    })
-
-    if (!rollingWithdraw) {
-        response.json({
-            success: false,
-            error_code: 404,
-            message: 'rolling withdraw not found'
-        })
-    } else {
-        if (rollingWithdraw.status != 2) {
-            response.json({
-                success: false,
-                error_code: 404,
-                message: 'rolling withdraw can not approve'
-            })
-        }
-
-        const member = db.member.findOne({
-            where: {
-                username: rollingWithdraw.username
-            }
-        })
-
-        if (!member) {
-            response.json({
-                success: false,
-                error_code: 404,
-                message: 'member not found'
-            })
-        } else {
-            rollingWithdraw.status = 3
-            rollingWithdraw.updated_by = approveBy
-            rollingWithdraw.save()
-
-            member.withdraw += rollingWithdraw.amount
-            member.save()
-
-            response.json({
-                success: true,
-                data: member,
-                error_code: null,
-                message: ''
-            })
-        }
-
-    }
-})
-
-myApp.post('/rolling_withdraw/:id/cancel', async function (request, response) {
-    let approveBy = request.body.admin
-    // console.log(id)
-    let status = request.body.status
-    const rollingWithdraw = await db.rolling_withdraw.findOne({
-        where: {
-            id: id
-        },
-    })
-
-    if (!rollingWithdraw) {
-        response.json({
-            success: false,
-            error_code: 404,
-            message: 'rolling withdraw not found'
-        })
-    } else {
-        if (rollingWithdraw.status == 4) {
-            response.json({
-                success: true,
-                error_code: null,
-                data: rollingWithdraw,
-                message: ''
-            })
-        }
-
-        const member = db.member.findOne({
-            where: {
-                username: rollingWithdraw.username
-            }
-        })
-
-        if (!member) {
-            response.json({
-                success: false,
-                error_code: 404,
-                message: 'member not found'
-            })
-        } else {
-            rollingWithdraw.status = 4
-            rollingWithdraw.updated_by = approveBy
-            rollingWithdraw.save()
-
-            member.withdraw -= rollingWithdraw.amount
-            member.save()
-
-            response.json({
-                success: true,
-                data: rollingWithdraw,
-                error_code: null,
-                message: ''
-            })
-        }
-    }
-})
-
-myApp.get('/profile', async function (request, response) {
-    // console.log(request.query.username)
-    const USERNAME = request.query.username
-    if (!USERNAME) {
-        response.json({
-            success: false,
-            error_code: 401,
-            message: 'invalid params'
-        })
-    }
-    const myMember = await db.member.findOne({
-        where: {
-            username: {
-                [Op.like]: USERNAME,
-            }
-        },
-    })
-
-    if (!myMember) {
-        response.json({
-            success: false,
-            error_code: 404,
-            message: 'user not found'
-        })
-    } else {
-        const memberUser = await db.user.findOne({
-            where: {
-                username: {
-                    [Op.like]: USERNAME
-                }
-            },
-            order: [
-                ['id', 'DESC']
-            ]
-        })
-        if (!memberUser) {
-            response.json({
-                success: false,
-                error_code: 404,
-                message: 'user not found'
-            })
-        }
-        const memberRolling = await db.rolling.findAll({
-            where: {
-                username: {
-                    [Op.like]: USERNAME
-                }
-            },
-            order: [
-                ['id', 'DESC']
-            ]
-        })
-
-        const memberRec = await db.member_record.findAll({
-            where: {
-                username: {
-                    [Op.like]: USERNAME
-                }
-            },
-            order: [
-                ['id', 'DESC']
-            ]
-        })
-
-        const memberBank = await getBank(memberUser.truthbet_token)
-        // console.log(memberBank)
-        const memberWithdraw = await db.rolling_withdraw.findAll({
-            where: {
-                username: {
-                    [Op.like]: USERNAME
-                }
-            },
-            order: [
-                ['id', 'DESC']
-            ]
-        })
-
-        response.json({
-            success: true,
-            data: {
-                rolling: memberRolling,
-                member: myMember,
-                account: memberBank,
-                withdraw: memberWithdraw,
-                turns: memberRec
-            },
-            error_code: null,
-            message: ''
-        })
-    }
-})
-
 myApp.get('/user_bot/:id', async function (request, response) {
     db.user.findOne({
         where: {
@@ -2063,18 +1969,11 @@ myApp.get('/user_transaction/:id', async function (request, response) {
 
         }
         else if (user && !user.is_mock) {
-            axios.get(`https://truthbet.com/api/m/reports/stakes?report_type=1&game_id=&table_id=&page=${page}`, {
-                headers: {
-                    Authorization: `Bearer ${user.truthbet_token}`
-                }
+            response.json({
+                success: false,
+                error_code: 404,
+                message: 'user not found'
             })
-                .then(res => {
-                    response.json({
-                        success: true,
-                        error_code: null,
-                        data: res.data
-                    })
-                })
         } else {
             response.json({
                 success: false,
@@ -2312,6 +2211,10 @@ myApp.get('/bot_transaction', function (request, response) {
 
 })
 
+myApp.post('/withdraw_wallet', async function(request, response){
+    
+})
+
 myApp.post('/transfer_wallet/ae', async function (request, response) {
     const username = request.body.username
     // console.log(user_id)
@@ -2416,56 +2319,7 @@ myApp.get('/wallet/:id', async function (request, response) {
 
 });
 
-myApp.post('/wallet/withdraw', function (request, response) {
-    const userId = request.body.userId
-    const amount = request.body.amount
-    db.user.findOne({
-        where: {
-            id: userId,
-        },
-    }).then((user) => {
-        if (user) {
-            axios.get(`https://truthbet.com/api/wallet`, {
-                headers: {
-                    Authorization: `Bearer ${user.truthbet_token}`
-                }
-            })
-                .then(res => {
-                    // console.log(res.data)
-                    let profit_wallet = user.profit_wallet
-                    let all_wallet = res.data.chips.credit
-                    let play_wallet = all_wallet - profit_wallet
 
-                    response.json({
-                        success: true,
-                        error_code: null,
-                        data: {
-                            profit_wallet: profit_wallet,
-                            all_wallet: all_wallet,
-                            play_wallet: play_wallet,
-                            myWallet: res.data.myWallet
-                        }
-                    })
-                })
-            // .catch(error => {
-
-            //     response.json({
-            //         success: false,
-            //         error_code: 500,
-            //         message: 'internal error'
-            //     })
-            // });
-        } else {
-            response.json({
-                success: false,
-                error_code: 404,
-                message: 'user not found'
-            })
-        }
-
-    });
-
-});
 
 myApp.get('/member', async function (request, response) {
     const member = await db.member.findAll()
@@ -2495,49 +2349,6 @@ myApp.get('/member_record', async function (request, response) {
         error_code: null,
         message: ''
     })
-});
-
-myApp.post('/wallet/deposite', function (request, response) {
-    const userId = request.body.userId
-    const amount = request.body.amount
-    db.user.findOne({
-        where: {
-            id: userId,
-        },
-    }).then((user) => {
-        if (user) {
-            axios.get(`https://truthbet.com/api/wallet`, {
-                headers: {
-                    Authorization: `Bearer ${user.truthbet_token}`
-                }
-            })
-                .then(res => {
-                    // console.log(res.data)
-                    let profit_wallet = user.profit_wallet
-                    let all_wallet = res.data.chips.credit
-                    let play_wallet = all_wallet - profit_wallet
-
-                    response.json({
-                        success: true,
-                        error_code: null,
-                        data: {
-                            profit_wallet: profit_wallet,
-                            all_wallet: all_wallet,
-                            play_wallet: play_wallet,
-                            myWallet: res.data.myWallet
-                        }
-                    })
-                })
-        } else {
-            response.json({
-                success: false,
-                error_code: 404,
-                message: 'user not found'
-            })
-        }
-
-    });
-
 });
 
 http.listen(80, function () {
@@ -2890,7 +2701,7 @@ function createRotBotWorker(obj, playData, is_mock) {
                     game_info: `${result.botTransaction.table_title} / ${result.botTransaction.shoe}-${zerofilled}`,
                     user_id: result.botObj.userId,
                     bet: result.botObj.bet_side == 14 ||
-                    (result.botObj.bet_side == 15 && result.is_opposite) ? JSON.stringify(result.bet) : result.bet,
+                        (result.botObj.bet_side == 15 && result.is_opposite) ? JSON.stringify(result.bet) : result.bet,
                     bet_credit_chip_amount: result.betVal,
                     sum_paid_credit_amount: paid,
                     bet_time: result.bet_time
