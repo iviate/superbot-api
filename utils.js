@@ -11,7 +11,7 @@ exports.reCookie = async function reCookie(username, password) {
             const browser = await puppeteer.launch({
                 headless: true,
                 devtools: false,
-                args: ['--no-sandbox']
+                args: ['--no-sandbox', '--disable-setuid-sandbox']
             });
 
             const page = await browser.newPage();
@@ -145,7 +145,7 @@ exports.transferWallet = async function (username, password) {
         const browser = await puppeteer.launch({
             headless: true,
             devtools: false,
-            args: ['--no-sandbox']
+            args: ['--no-sandbox', '--disable-setuid-sandbox']
         });
 
         const page = await browser.newPage();

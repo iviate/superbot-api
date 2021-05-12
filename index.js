@@ -305,7 +305,7 @@ myApp.post('/login', async function (request, response) {
                             const browser = await puppeteer.launch({
                                 headless: true,
                                 devtools: false,
-                                args: ['--no-sandbox']
+                                args: ['--no-sandbox', '--disable-setuid-sandbox']
                             });
                             const page = await browser.newPage();
                             await page.goto("https://ufa6811.ibetauto.com/ufa6811/ufabet/login", {
@@ -372,7 +372,7 @@ myApp.post('/login', async function (request, response) {
                             const browser = await puppeteer.launch({
                                 headless: true,
                                 devtools: false,
-                                args: ['--no-sandbox']
+                                args: ['--no-sandbox', '--disable-setuid-sandbox']
                             });
                             const page = await browser.newPage();
                             await page.goto("https://ufanextbet5g.ibetauto.com/ufanextbet5g/u369369/login", {
@@ -440,7 +440,7 @@ myApp.post('/login', async function (request, response) {
                             const browser = await puppeteer.launch({
                                 headless: true,
                                 devtools: false,
-                                args: ['--no-sandbox']
+                                args: ['--no-sandbox', '--disable-setuid-sandbox']
                             });
                             const page = await browser.newPage();
                             await page.goto("https://ufasuperbet.ibetauto.com/ufasuperbet/ufabet/login", {
@@ -518,7 +518,7 @@ myApp.post('/login', async function (request, response) {
                         const browser = await puppeteer.launch({
                             headless: true,
                             devtools: false,
-                            args: ['--no-sandbox']
+                            args: ['--no-sandbox', '--disable-setuid-sandbox']
                         });
                         const page = await browser.newPage();
                         await page.goto(env.web, {
@@ -591,7 +591,7 @@ myApp.post('/login', async function (request, response) {
                         const browser = await puppeteer.launch({
                             headless: true,
                             devtools: false,
-                            args: ['--no-sandbox']
+                            args: ['--no-sandbox', '--disable-setuid-sandbox']
                         });
                         const page = await browser.newPage();
                         await page.goto("https://ufanextbet5g.ibetauto.com/ufanextbet5g/u369369/login", {
@@ -647,15 +647,7 @@ myApp.post('/login', async function (request, response) {
                             message: 'ข้อมูลไม่ถูกต้องกรุณาลองใหม่อีกครั้ง'
                         });
                     }
-    
-                    //   response.json(data);
-    
-    
-                    // access baccarat room 2
-                    // await page.goto("https://truthbet.com/g/live/baccarat/22", {
-                    //   waitUntil: "networkidle2",
-                    // });
-                    // await browser.close();
+
                 })(USERNAME, PASSWORD);
             }
         }
@@ -667,7 +659,7 @@ myApp.post('/login', async function (request, response) {
                     const browser = await puppeteer.launch({
                         headless: true,
                         devtools: false,
-                        args: ['--no-sandbox']
+                        args: ['--no-sandbox', '--disable-setuid-sandbox']
                     });
                     const page = await browser.newPage();
                     await page.goto("https://ufa6811.ibetauto.com/ufa6811/ufabet/login", {
@@ -790,7 +782,7 @@ myApp.post('/login', async function (request, response) {
                     const browser = await puppeteer.launch({
                         headless: true,
                         devtools: false,
-                        args: ['--no-sandbox']
+                        args: ['--no-sandbox', '--disable-setuid-sandbox']
                     });
                     const page = await browser.newPage();
                     await page.goto("https://ufasuperbet.ibetauto.com/ufasuperbet/ufabet/login", {
