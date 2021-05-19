@@ -726,79 +726,82 @@ function processBotMoneySystem(money_system, init_wallet, profit_threshold, init
         }
 
         return ret
-    } else if (money_system == 6) {
-        let rotOneZoneMartingel = [50, 80, 130, 210, 335, 535, 850, 1300, 2000, 3200, 5000, 8000]
-        let ret = []
-        if (init_bet >= 8000) {
-            return rotOneZoneMartingel
-        } else {
-            for (let i = 0; i < rotOneZoneMartingel.length; i++) {
-                if (init_bet > rotOneZoneMartingel[i]) {
-                    continue
-                } else {
-                    ret.push(rotOneZoneMartingel[i])
-                }
-            }
-        }
-        return ret
-    } else if (money_system == 7) {
-        let ret = [init_bet, init_bet]
-        for (let i = 0; i < 7; i++) {
-            let nextVal = ret[ret.length - 1] + ret[ret.length - 2]
-            ret.push(nextVal)
-        }
-        // console.log('3 in 9')
-        // console.log(ret)
-        return ret
-    } else if (money_system == 8) {
+    } 
+    
+    // else if (money_system == 6) {
+    //     let rotOneZoneMartingel = [50, 80, 130, 210, 335, 535, 850, 1300, 2000, 3200, 5000, 8000]
+    //     let ret = []
+    //     if (init_bet >= 8000) {
+    //         return rotOneZoneMartingel
+    //     } else {
+    //         for (let i = 0; i < rotOneZoneMartingel.length; i++) {
+    //             if (init_bet > rotOneZoneMartingel[i]) {
+    //                 continue
+    //             } else {
+    //                 ret.push(rotOneZoneMartingel[i])
+    //             }
+    //         }
+    //     }
+    //     return ret
+    // } 
+    // else if (money_system == 7) {
+    //     let ret = [init_bet, init_bet]
+    //     for (let i = 0; i < 7; i++) {
+    //         let nextVal = ret[ret.length - 1] + ret[ret.length - 2]
+    //         ret.push(nextVal)
+    //     }
+    //     // console.log('3 in 9')
+    //     // console.log(ret)
+    //     return ret
+    // } else if (money_system == 8) {
 
-        // console.log('3 in 9')
-        // console.log(ret)
+    //     // console.log('3 in 9')
+    //     // console.log(ret)
 
-        let initSet = [50, 50, 50,
-            100, 100, 100,
-            200, 200, 200,
-            400, 400, 400,
-            800, 800, 800,
-            1600, 1600, 1600,
-            3200, 3200, 3200,
-            6400, 6400, 6400]
+    //     let initSet = [50, 50, 50,
+    //         100, 100, 100,
+    //         200, 200, 200,
+    //         400, 400, 400,
+    //         800, 800, 800,
+    //         1600, 1600, 1600,
+    //         3200, 3200, 3200,
+    //         6400, 6400, 6400]
 
-        let ret = []
-        for (let i = 0; i < initSet.length; i++) {
-            if (init_bet > initSet[i]) {
-                continue
-            } else {
-                ret.push(initSet[i])
-            }
-        }
-        // console.log(ret)
-        return ret
-    }
-    else if (money_system == 9) {
+    //     let ret = []
+    //     for (let i = 0; i < initSet.length; i++) {
+    //         if (init_bet > initSet[i]) {
+    //             continue
+    //         } else {
+    //             ret.push(initSet[i])
+    //         }
+    //     }
+    //     // console.log(ret)
+    //     return ret
+    // }
+    // else if (money_system == 9) {
 
-        // console.log('3 in 9')
-        // console.log(ret)
+    //     // console.log('3 in 9')
+    //     // console.log(ret)
 
-        let initSet = [1, 2, 3,
-            5, 8, 13,
-            21, 34, 55,
-            89, 144, 233]
+    //     let initSet = [1, 2, 3,
+    //         5, 8, 13,
+    //         21, 34, 55,
+    //         89, 144, 233]
 
-        let ret = []
-        for (let i = 0; i < initSet.length; i++) {
-            let bVal = initSet[i] * init_bet
-            if (bVal < 5000) {
-                ret.push(bVal)
-            } else {
-                ret.push(5000)
-                break;
-            }
+    //     let ret = []
+    //     for (let i = 0; i < initSet.length; i++) {
+    //         let bVal = initSet[i] * init_bet
+    //         if (bVal < 5000) {
+    //             ret.push(bVal)
+    //         } else {
+    //             ret.push(5000)
+    //             break;
+    //         }
 
-        }
-        // console.log(ret)
-        return ret
-    }
+    //     }
+    //     // console.log(ret)
+    //     return ret
+    // }
 }
 
 myApp.post('/bot/set_opposite', async function (request, response) {
@@ -1228,7 +1231,8 @@ myApp.post('/bot', async function (request, response) {
             }
             // console.log(botData)
             let playData = []
-            if (request.body.money_system != 5) {
+            // 5 => martingel 6 => reverse martingel
+            if (request.body.money_system != 5 && request.body.money_system != 6) {
                 playData = processBotMoneySystem(botData.money_system, botData.init_wallet, botData.profit_threshold, botData.init_bet)
                 botData.data = JSON.stringify(playData)
             } else {

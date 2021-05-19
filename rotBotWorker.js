@@ -666,7 +666,7 @@ async function processResultBet(betStatus, botTransactionId, botTransaction, gam
     let score = JSON.parse(gameResultObj.data.message).tableCards[0]
     // console.log(gameResultObj.winner)
     if (botObj.money_system == 1) { }
-    else if (botObj.money_system == 6 || botObj.money_system == 5) {
+    else if (botObj.money_system == 5) {
         // console.log(betStatus, botTransactionId, botTransaction, current.is_opposite)
         if (score == 0) {
             playTurn++
@@ -791,6 +791,20 @@ async function processResultBet(betStatus, botTransactionId, botTransaction, gam
             }
         } else if ((betStatus == 'LOSE' && current.is_opposite == false) || (betStatus == 'WIN' && current.is_opposite == true)) {
             playTurn += 1
+        }
+    }else if (botObj.money_system == 6) {
+        if (score == 0) {
+            playTurn = 1
+            // if (playTurn > playData.length) {
+            //     playTurn = 1
+            // }
+        } else if ((betStatus == 'WIN' && current.is_opposite == false) || (betStatus == 'LOSE' && current.is_opposite == true)) {
+            playTurn++
+            if (playTurn > playData.length) {
+                playTurn = 1
+            }
+        } else if ((betStatus == 'LOSE' && current.is_opposite == false) || (betStatus == 'WIN' && current.is_opposite == true)) {
+            playTurn = 1
         }
     }
 
