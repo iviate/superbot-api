@@ -1,7 +1,7 @@
 module.exports = {
     HOST: "localhost",
-    USER: "ibot",
-    PASSWORD: "ibotx4k",
-    DB: "ibot",
+    USER: "superbot",
+    PASSWORD: "superbot55++",
+    DB: "superbot",
     dialect: "mysql",
   };
