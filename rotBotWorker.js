@@ -521,10 +521,30 @@ async function bet(data) {
                 data: pData
             };
 
-            let res = await axios(config)
-            // console.log(res.data)
+            let res = null
+            try{
+                res = await axios(config)
+            }catch (e){
 
-            if (res.data.status == 200) {
+            }
+            // console.log(res.data)
+            if(res == null || res.data.status != 200) {
+                parentPort.postMessage({ action: 'bet_failed', botObj: botObj, error: res.data })
+                betFailed = false
+                let cTime = parseFloat(user.cookieTime) || 0
+                let cookieAge = Math.round((moment() - cTime) / 1000)
+                // console.log(cookieAge)
+                if (cookieAge > 1400 || !user.cookie) {
+                    isRecookie = true
+                    let c = await utils.reCookie(user.ufa_account, user.type_password)
+                    currentWallet = await utils.getUserWallet(c)
+                    user.cookie = c
+                    user.cookieTime = moment().valueOf()
+                    user.save()
+                    isRecookie = false
+                }
+            }
+            else if (res.data.status == 200) {
                 if (botObj.open_zero) {
                     turnover += zeroVal
                 }
@@ -556,7 +576,7 @@ async function bet(data) {
                     isRecookie = false
                     
                 }
-            } else {
+            }else {
                 parentPort.postMessage({ action: 'bet_failed', botObj: botObj, error: res.data })
                 betFailed = false
                 let cTime = parseFloat(user.cookieTime) || 0
@@ -956,14 +976,19 @@ async function processResultBet(betStatus, botTransactionId, botTransaction, gam
                 u.mock_wallet -= current.betVal
             }
             if ((betStatus == 'WIN' && current.is_opposite == false) || (betStatus == 'LOSE' && current.is_opposite == true)) {
-                if ((botObj.bet_side == 14 && current.is_opposite == false) || (botObj.bet_side == 15 && current.is_opposite == true)) {
+                if ((botObj.bet_side == 14 && current.is_opposite == true) || (botObj.bet_side == 15 && current.is_opposite == false)) {
                     u.mock_wallet += (current.betVal * 2)
                 } else {
                     u.mock_wallet += current.betVal
                 }
 
             } else if ((betStatus == 'LOSE' && current.is_opposite == false) || (betStatus == 'WIN' && current.is_opposite == true)) {
-                u.mock_wallet -= current.betVal
+                if ((botObj.bet_side == 14 && current.is_opposite == false) || (botObj.bet_side == 15 && current.is_opposite == true)) {
+                    u.mock_wallet -= (current.betVal * 2)
+                } else {
+                    u.mock_wallet -= current.betVal
+                }
+                
             } else if (betStatus == 'TIE') {
             }
             let currentWallet = u.mock_wallet

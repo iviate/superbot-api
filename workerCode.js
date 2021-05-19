@@ -202,23 +202,28 @@ async function predictPlay() {
 
         return
     }
+    let res = null
+    try{
+        let balanceAPI = "https://bpweb.bikimex.net/player/query/queryDealerEventV2"
+        const ps = new URLSearchParams()
+        ps.append('domainType', 1)
+        ps.append('queryTableID', tableId)
+        ps.append('dealerEventStampTime', 0)
 
-    let balanceAPI = "https://bpweb.bikimex.net/player/query/queryDealerEventV2"
-    const ps = new URLSearchParams()
-    ps.append('domainType', 1)
-    ps.append('queryTableID', tableId)
-    ps.append('dealerEventStampTime', 0)
-
-    const config = {
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'Cookie': cookie
+        const config = {
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'Cookie': cookie
+            }
         }
+
+
+
+        res = await axios.post(balanceAPI, ps, config)
+    }catch (e) {
+        return
     }
-
-
-
-    let res = await axios.post(balanceAPI, ps, config)
+    
     if (typeof res.data === 'object' && res !== null) {
         livePlaying(res.data)
     } else {

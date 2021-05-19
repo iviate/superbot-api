@@ -67,7 +67,7 @@ registerForEventListening();
 function getCurrent() {
     // console.log(current)
     let sum = predictStats.correct + predictStats.wrong + predictStats.tie
-    
+
     let winner_percent = 0
     if (sum != 0) {
         winner_percent = ((predictStats.correct + predictStats.tie) / sum) * 100
@@ -103,7 +103,7 @@ function getCurrent() {
 }
 
 function registerForEventListening() {
-    
+
     tableId = workerData.table
     username = workerData.username
     console.log(`start table ${tableId} - ${username}`)
@@ -136,9 +136,8 @@ function registerForEventListening() {
 }
 
 async function inititalInfo() {
-    while(cookie == null)
-    {
-        try{
+    while (cookie == null) {
+        try {
             cookie = await utils.reCookie(username, password)
             console.log(cookie)
             cookieTime = moment()
@@ -149,14 +148,14 @@ async function inititalInfo() {
                     }
                 })
             isReCookie = false
-        }catch(e){
+        } catch (e) {
             cookie = null
             isReCookie = true
 
         }
-        
+
     }
-    
+
     interval = setInterval(predictPlay, 1500);
 
 
@@ -198,71 +197,75 @@ async function inititalInfo() {
 
 
 async function predictPlay() {
-    if(isReCookie){
+    if (isReCookie) {
         console.log("reCookie")
         return
     }
     let cookieAge = Math.round((moment() - cookieTime) / 1000)
     // console.log(cookieAge)
-    if(previousEventType === 'GP_NEW_GAME_START' && !isPlay && cookieAge > 1120){
-        while(cookie != null){
-            try{
+    if (previousEventType === 'GP_NEW_GAME_START' && !isPlay && cookieAge > 1120) {
+        while (cookie != null) {
+            try {
                 cookie = null
                 isReCookie = true
                 cookie = await utils.reCookie(username, password)
                 cookieTime = moment()
                 await axios.get(`https://bpweb.bikimex.net/player/singleTable4.jsp?dm=1&t=${tableId}&title=1&sgt=0&hall=1`,
-                {
-                    headers: {
-                        Cookie: cookie
-                    }
-                })
+                    {
+                        headers: {
+                            Cookie: cookie
+                        }
+                    })
                 isReCookie = false
-            }catch(e){
+            } catch (e) {
                 cookie = null
                 continue
             }
 
             return
         }
-        
-        
+
+
     }
+    let res = null
+    try {
+        let balanceAPI = "https://bpweb.bikimex.net/player/query/queryDealerEventV2"
+        const ps = new URLSearchParams()
+        ps.append('domainType', 1)
+        ps.append('queryTableID', tableId)
+        ps.append('dealerEventStampTime', 0)
 
-    let balanceAPI = "https://bpweb.bikimex.net/player/query/queryDealerEventV2"
-    const ps = new URLSearchParams()
-    ps.append('domainType', 1)
-    ps.append('queryTableID', tableId)
-    ps.append('dealerEventStampTime', 0)
-
-    const config = {
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'Cookie': cookie
+        const config = {
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'Cookie': cookie
+            }
         }
+
+
+
+        res = await axios.post(balanceAPI, ps, config)
+    } catch (e) {
+        return
     }
 
-
-
-    let res = await axios.post(balanceAPI, ps, config)
     // console.log(res.data)
-    if(typeof res.data === 'object' && res !== null)
-    {
+    if (typeof res.data === 'object' && res !== null) {
         livePlaying(res.data)
-    }else{
+    } else {
         isReCookie = true
         cookie = await utils.reCookie(username, password)
         cookieTime = moment()
         await axios.get(`https://bpweb.bikimex.net/player/singleTable4.jsp?dm=1&t=${tableId}&title=1&sgt=6&hall=1`,
-        {
-            headers: {
-                Cookie: cookie
-            }
-        })
+            {
+                headers: {
+                    Cookie: cookie
+                }
+            })
         isReCookie = false
         return
     }
-    
+
     // let current = new Date().getTime()
     // console.log(current)
 
@@ -422,7 +425,7 @@ function getOnezoneWinerPercent() {
     return win_percent
 }
 
-async function livePlaying(data){
+async function livePlaying(data) {
 
     // const APP_KEY = 'ef1bd779bdd77aad75f8'
     // const pusher = new Pusher(APP_KEY, {
@@ -456,7 +459,7 @@ async function livePlaying(data){
     // console.log(data.message)
     let dataJson = JSON.parse(data.message)
     // console.log(dataJson)
-    if(dataJson.eventType === "GP_NEW_GAME_START" && previousEventType !== "GP_NEW_GAME_START"){
+    if (dataJson.eventType === "GP_NEW_GAME_START" && previousEventType !== "GP_NEW_GAME_START") {
         previousEventType = "GP_NEW_GAME_START"
 
         let playCount = predictStats.predict.length
@@ -479,7 +482,7 @@ async function livePlaying(data){
         previousGameStartAt = dataJson.roundStartTime
 
         if (shoe != dataJson.gameShoe) {
-            shoe =  dataJson.gameShoe
+            shoe = dataJson.gameShoe
             round = dataJson.gameRound
             // predictStatsHistory.push({ ...predictStats })
             predictStats = { shoe: shoe, correct: 0, wrong: 0, tie: 0, info: {}, predict: [] }
@@ -510,9 +513,9 @@ async function livePlaying(data){
         // }
         let remainBet = Math.max(WAITNG_TIME - Math.round((moment() - previousGameStartAt) / 1000), 0)
         setTimeout(function () {
-            parentPort.postMessage({ action: 'start', remaining : remainBet, data: dataJson })
+            parentPort.postMessage({ action: 'start', remaining: remainBet, data: dataJson })
         }, 9000)
-        
+
         let twozone = randomTwoZone()
         bot = {
             RB: randomHalfRB(),
@@ -554,7 +557,7 @@ async function livePlaying(data){
                         }
                     })
                 }, 10000)
-               
+
             } else {
                 // parentPort.postMessage({ action: 'played', status: 'FAILEO', playList: ['RB', 'EO', 'SB', 'ZONE'], table: workerData })
             }
@@ -563,7 +566,7 @@ async function livePlaying(data){
 
         }
     }
-    else if(dataJson.eventType === "GP_WINNER" && previousEventType !== "GP_WINNER"){
+    else if (dataJson.eventType === "GP_WINNER" && previousEventType !== "GP_WINNER") {
         previousEventType = "GP_WINNER"
         // console.log(`${tableId}-baccarat-result`)
         console.log(`${tableId}-routlette-result`)
@@ -587,7 +590,7 @@ async function livePlaying(data){
             }
 
             let addition = rotConfig[score]
-            parentPort.postMessage({ action: 'point', data: dataJson, result: addition, score: score})
+            parentPort.postMessage({ action: 'point', data: dataJson, result: addition, score: score })
             if (addition.findIndex((item) => item == bot.RB) != -1) {
                 statCount.rbCorrect++;
                 status.RB = 'WIN'
@@ -625,7 +628,7 @@ async function livePlaying(data){
             }
             console.log(status)
 
-            
+
             parentPort.postMessage({
                 action: 'played',
                 status: status,
@@ -636,7 +639,7 @@ async function livePlaying(data){
                 playList: ['RB', 'EO', 'SB', 'ZONE']
             })
 
-            
+
             bot = null
         }
         // liveData.winner = winner;
@@ -648,23 +651,23 @@ async function livePlaying(data){
         // setTimeout(() => {
         //     liveData.status = "WAITING"
         // }, 2000);
-    }else if(dataJson === 'GP_ONE_CARD_DRAWN'){
-        if(isPlay){
+    } else if (dataJson === 'GP_ONE_CARD_DRAWN') {
+        if (isPlay) {
             parentPort.postMessage({ action: 'point', data: dataJson })
         }
-        
+
     }
 
     // channel.bind('deal', async (data) => {
-        // console.log(`${tableId}-baccarat-deal`)
+    // console.log(`${tableId}-baccarat-deal`)
 
-        // liveData.status = "OPEN";
+    // liveData.status = "OPEN";
 
-        // liveData.score.player = data.score.total.p % 10;
-        // liveData.score.banker = data.score.total.b % 10;
+    // liveData.score.player = data.score.total.p % 10;
+    // liveData.score.banker = data.score.total.b % 10;
 
-        // liveData.cards.player = data.histories.p.card;
-        // liveData.cards.banker = data.histories.b.card;
+    // liveData.cards.player = data.histories.p.card;
+    // liveData.cards.banker = data.histories.b.card;
     // });
 
     // setInterval(async () => {
