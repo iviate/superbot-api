@@ -187,8 +187,7 @@ function getBetVal() {
             betval = (playData[0] + playData[playData.length - 1]) * botObj.init_bet
         }
 
-    }
-    else if (botObj.money_system == 9) {
+    }else if (botObj.money_system == 9) {
         betval = playData[playTurn - 1]
     }
 
