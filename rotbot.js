@@ -141,7 +141,7 @@ async function inititalInfo() {
             cookie = await utils.reCookie(username, password)
             console.log(cookie)
             cookieTime = moment()
-            await axios.get(`https://bpweb.bikimex.net/player/singleTable4.jsp?dm=1&t=${tableId}&title=1&sgt=6&hall=1`,
+            await axios.get(`https://bpweb.bikimex.net/player/singleRouTable.jsp?dm=1&t=${tableId}&title=1&sgt=6&hall=1`,
                 {
                     headers: {
                         Cookie: cookie
@@ -210,7 +210,7 @@ async function predictPlay() {
                 isReCookie = true
                 cookie = await utils.reCookie(username, password)
                 cookieTime = moment()
-                await axios.get(`https://bpweb.bikimex.net/player/singleTable4.jsp?dm=1&t=${tableId}&title=1&sgt=0&hall=1`,
+                await axios.get(`https://bpweb.bikimex.net/player/singleRouTable.jsp?dm=1&t=${tableId}&title=1&sgt=6&hall=1`,
                     {
                         headers: {
                             Cookie: cookie
@@ -225,7 +225,7 @@ async function predictPlay() {
             return
         }
 
-
+        return
     }
     let res = null
     try {
