@@ -99,6 +99,11 @@ io.on('connection', (socket) => {
             io.emit(`user${userId}`, { action: 'restart_result', data: { success: false, message: 'ยังไม่ได้สร้างบอท', data: null } })
         }
     });
+
+    socket.on('error', function(error) {
+        console.log(error)
+        socket.close()
+    });
 });
 
 async function getBank(token) {
@@ -2406,7 +2411,7 @@ function createBotWorker(obj, playData, is_mock) {
             console.log(`bac bot ${result.data.current.botObj.userId} bet success`)
         }
         if (result.action == 'bet_failed') {
-            console.log(`bac bot ${result.botObj.userId} bet failed ${result.error}`)
+            console.log(`bac bot ${result.botObj.userId} bet failed`)
         }
         if (result.action == 'restart_result') {
             io.emit(`user${result.userId}`, result)
@@ -2579,7 +2584,7 @@ function createRotBotWorker(obj, playData, is_mock) {
             console.log(`rot bot ${result.data.current.botObj.userId} bet success`)
         }
         if (result.action == 'bet_failed') {
-            console.log(`rot bot ${result.botObj.userId} bet failed ${result.error}`)
+            console.log(`rot bot ${result.botObj.userId} bet failed`)
         }
         // if (result.action == 'restart_result') {
         //     io.emit(`user${result.userId}`, result)
@@ -2752,7 +2757,7 @@ function createDtWorker(obj, playData, is_mock) {
             console.log(`dt bot ${result.data.current.botObj.userId} bet success`)
         }
         if (result.action == 'bet_failed') {
-            console.log(`dt bot ${result.botObj.userId} bet failed ${result.error}`)
+            console.log(`dt bot ${result.botObj.userId} bet failed`)
         }
         if (result.action == 'restart_result') {
             io.emit(`user${result.userId}`, result)
