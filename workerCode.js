@@ -180,7 +180,7 @@ async function predictPlay() {
     }
     let cookieAge = Math.round((moment() - cookieTime) / 1000)
     // console.log(cookieAge)
-    if (previousEventType === 'GP_NEW_GAME_START' && !isPlay && cookieAge > 1120) {
+    if (previousEventType === 'GP_NEW_GAME_START' && !isPlay && cookieAge > 1620) {
         cookie = null
         while (cookie == null) {
             try {

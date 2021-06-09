@@ -534,7 +534,7 @@ async function bet(data) {
                 let cTime = parseFloat(user.cookieTime) || 0
                 let cookieAge = Math.round((moment() - cTime) / 1000)
                 // console.log(cookieAge)
-                if (cookieAge > 1400 || !user.cookie) {
+                if (cookieAge > 1580 || !user.cookie) {
                     isRecookie = true
                     let c = await utils.reCookie(user.ufa_account, user.type_password)
                     currentWallet = await utils.getUserWallet(c)
@@ -566,7 +566,7 @@ async function bet(data) {
                 let cTime = parseFloat(user.cookieTime) || 0
                 let cookieAge = Math.round((moment() - cTime) / 1000)
                 // console.log(cookieAge)
-                if (cookieAge > 1400 || !user.cookie) {
+                if (cookieAge > 1600 || !user.cookie) {
                     isRecookie = true
                     let c = await utils.reCookie(user.ufa_account, user.type_password)
                     currentWallet = await utils.getUserWallet(c)
@@ -582,7 +582,7 @@ async function bet(data) {
                 let cTime = parseFloat(user.cookieTime) || 0
                 let cookieAge = Math.round((moment() - cTime) / 1000)
                 // console.log(cookieAge)
-                if (cookieAge > 1400 || !user.cookie) {
+                if (cookieAge > 1630 || !user.cookie) {
                     isRecookie = true
                     let c = await utils.reCookie(user.ufa_account, user.type_password)
                     currentWallet = await utils.getUserWallet(c)

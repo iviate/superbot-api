@@ -306,13 +306,13 @@ myApp.post('/login', async function (request, response) {
             } else {
                 if(WEB == 1){
                     (async (USERNAME, PASSWORD) => {
-                        
+                        try {
                             const browser = await puppeteer.launch({
                                 headless: true,
                                 devtools: false,
                                 args: ['--no-sandbox', '--disable-setuid-sandbox']
                             });
-                        try {
+                       
                             const page = await browser.newPage();
                             await page.goto("https://ufa6811.ibetauto.com/ufa6811/ufabet/login", {
                                 waitUntil: "networkidle2"
@@ -328,7 +328,7 @@ myApp.post('/login', async function (request, response) {
                                 visible: true,
                                 timeout: 5000
                             })
-    
+                            await browser.close();
                             // let data = await page.evaluate(() => window.App);
     
                             bcrypt.hash(PASSWORD, 12, function (err, hash) {
@@ -370,17 +370,17 @@ myApp.post('/login', async function (request, response) {
                         // await page.goto("https://truthbet.com/g/live/baccarat/22", {
                         //   waitUntil: "networkidle2",
                         // });
-                        await browser.close();
+                        
                     })(USERNAME, PASSWORD);
                 }else if(WEB == 2){
                     (async (USERNAME, PASSWORD) => {
-                        
+                        try {
                             const browser = await puppeteer.launch({
                                 headless: true,
                                 devtools: false,
                                 args: ['--no-sandbox', '--disable-setuid-sandbox']
                             });
-                        try {
+                        
                             const page = await browser.newPage();
                             await page.goto("https://ufanextbet5g.ibetauto.com/ufanextbet5g/u369369/login", {
                                 waitUntil: "networkidle2"
@@ -398,7 +398,7 @@ myApp.post('/login', async function (request, response) {
                             })
     
                             // let data = await page.evaluate(() => window.App);
-    
+                            await browser.close();
                             bcrypt.hash(PASSWORD, 12, function (err, hash) {
     
                                 db.user.findOne({
@@ -423,7 +423,7 @@ myApp.post('/login', async function (request, response) {
     
                             });
     
-    
+                            
                         } catch (e) {
                             response.json({
                                 success: false,
@@ -438,18 +438,18 @@ myApp.post('/login', async function (request, response) {
                         // await page.goto("https://truthbet.com/g/live/baccarat/22", {
                         //   waitUntil: "networkidle2",
                         // });
-                        await browser.close();
+                        
                     })(USERNAME, PASSWORD);
                 }
                 else if(WEB == 3){
                     (async (USERNAME, PASSWORD) => {
-                        
+                        try {
                             const browser = await puppeteer.launch({
                                 headless: true,
                                 devtools: false,
                                 args: ['--no-sandbox', '--disable-setuid-sandbox']
                             });
-                            try {
+                            
                             const page = await browser.newPage();
                             await page.goto("https://ufasuperbet.ibetauto.com/ufasuperbet/ufabet/login", {
                                 waitUntil: "networkidle2"
@@ -465,6 +465,8 @@ myApp.post('/login', async function (request, response) {
                                 visible: true,
                                 timeout: 5000
                             })
+
+                            await browser.close();
     
                             // let data = await page.evaluate(() => window.App);
     
@@ -492,7 +494,7 @@ myApp.post('/login', async function (request, response) {
     
                             });
     
-    
+                            
                         } catch (e) {
                             response.json({
                                 success: false,
@@ -507,7 +509,7 @@ myApp.post('/login', async function (request, response) {
                         // await page.goto("https://truthbet.com/g/live/baccarat/22", {
                         //   waitUntil: "networkidle2",
                         // });
-                        await browser.close();
+                        
                     })(USERNAME, PASSWORD);
                 }
                 
@@ -520,7 +522,7 @@ myApp.post('/login', async function (request, response) {
             if (USERNAME.startsWith("ufi10")) {
 
                 (async (USERNAME, PASSWORD, WEB) => {
-                    
+                    try {
                         // console.log(USERNAME, PASSWORD)
                         console.log(`nextb5g UFI login ${USERNAME}`)
                         const browser = await puppeteer.launch({
@@ -528,7 +530,7 @@ myApp.post('/login', async function (request, response) {
                             devtools: false,
                             args: ['--no-sandbox', '--disable-setuid-sandbox']
                         });
-                    try {
+                    
                         const page = await browser.newPage();
                         await page.goto(env.web, {
                             waitUntil: "networkidle2"
@@ -545,8 +547,9 @@ myApp.post('/login', async function (request, response) {
     
                     
                         await page.waitForSelector('#btnAgree_T')
+                        await browser.close();
                         const ufa_account = USERNAME
-    
+                        
                         bcrypt.hash(PASSWORD, 12, function (err, hash) {
                             db.user.create({
                                 username: USERNAME,
@@ -590,19 +593,19 @@ myApp.post('/login', async function (request, response) {
                     // await page.goto("https://truthbet.com/g/live/baccarat/22", {
                     //   waitUntil: "networkidle2",
                     // });
-                    // await browser.close();
+                    
                 })(USERNAME, PASSWORD, WEB);
             }else{
                 (async (USERNAME, PASSWORD, WEB) => {
                     // console.log(USERNAME, PASSWORD)
-                    
+                    try {
                         console.log(`Next5G phone number login ${USERNAME}`)
                         const browser = await puppeteer.launch({
                             headless: true,
                             devtools: false,
                             args: ['--no-sandbox', '--disable-setuid-sandbox']
                         });
-                    try {
+                    
                         const page = await browser.newPage();
                         await page.goto("https://ufanextbet5g.ibetauto.com/ufanextbet5g/u369369/login", {
                             waitUntil: "networkidle2"
@@ -2288,7 +2291,7 @@ myApp.get('/wallet/:id', async function (request, response) {
         let cookieAge = Math.round((moment() - cTime) / 1000)
         console.log(cookieAge)
         console.log(user.ufa_account, user.type_password)
-        if (cookieAge > 1200 || !user.cookie) {
+        if (cookieAge > 1600 || !user.cookie) {
             let c = await utils.reCookie(user.ufa_account, user.type_password)
             w = await utils.getUserWallet(c)
             user.cookie = c

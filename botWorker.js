@@ -548,7 +548,7 @@ async function processResultBet(betStatus, botTransactionId, botTransaction) {
         let cTime = parseFloat(user.cookieTime) || 0
         let cookieAge = Math.round((moment() - cTime) / 1000)
         // console.log(cookieAge)
-        if (cookieAge > 1300 || !user.cookie) {
+        if (cookieAge > 1500 || !user.cookie) {
             let c = await utils.reCookie(user.ufa_account, user.type_password)
             currentWallet = await utils.getUserWallet(c)
             user.cookie = c
