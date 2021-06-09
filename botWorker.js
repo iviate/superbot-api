@@ -329,7 +329,7 @@ async function bet(data) {
             try{
                 res = await axios(config)
             }catch (e){
-
+                console.log("")
             }
            
             if(res == null || res.data.status != 200){
