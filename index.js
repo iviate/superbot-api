@@ -81,6 +81,11 @@ var myApp = require('express')();
 myApp.use(bodyParser.json())
 myApp.use(cors())
 
+process.on('uncaughtException', function (err) {
+    console.error(err);
+    console.log("...BOT DO NOT EXITING...");
+});
+
 var http = require('http').Server(myApp);
 var io = require('socket.io')(http);
 
@@ -1457,7 +1462,8 @@ myApp.post('/bot', async function (request, response) {
                 profit_wallet: 0,
                 is_opposite: false,
                 zero_bet: request.body.zero_bet | 0,
-                open_zero: false
+                open_zero: false,
+                bet_limit: request.body.bet_limit | '110901'
             }
             // console.log(botData)
             let playData = []
