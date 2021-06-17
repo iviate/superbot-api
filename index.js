@@ -1463,7 +1463,7 @@ myApp.post('/bot', async function (request, response) {
                 is_opposite: false,
                 zero_bet: request.body.zero_bet | 0,
                 open_zero: false,
-                bet_limit: request.body.bet_limit | '110901'
+                // bet_limit: request.body.bet_limit | '110901'
             }
             // console.log(botData)
             let playData = []
@@ -3006,7 +3006,7 @@ async function mainBody() {
     initiateWorker(5);
     initiateWorker(6);
     initiateDtWorker(31)
-    initiateDtWorker(32)
+    // initiateDtWorker(32)
     initiateRotWorker(71)
 
     // console.log(response.data);
