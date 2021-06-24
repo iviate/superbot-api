@@ -507,7 +507,7 @@ async function bet(data) {
                 'gameShoe': data.shoe.toString(),
                 'gameRound': data.round.toString(),
                 'data': JSON.stringify(bPayload),
-                'betLimitID': '110901',
+                'betLimitID': botObj.bet_limit ,// 11901 20 - 5000, 110902 100 - 10000
                 'f': '-1',
                 'c': 'A'
             });

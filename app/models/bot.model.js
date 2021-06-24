@@ -2,10 +2,10 @@
 module.exports = (sequelize, Sequelize, DataTypes) => {
     const Bot = sequelize.define("bot", {
       token: {
-          type: DataTypes.STRING
+        type: DataTypes.STRING
       },
       token_at: {
-           type: DataTypes.DATE,
+        type: DataTypes.DATE,
       },
       status: {
         type: DataTypes.INTEGER // 1 open, 2 pasuse, 3 closed
@@ -87,6 +87,17 @@ module.exports = (sequelize, Sequelize, DataTypes) => {
       open_zero: {
         type: DataTypes.BOOLEAN,
         defaultValue: false
+      },
+      bet_limit: {
+        type: DataTypes.STRING
+      },
+      b_tie: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false
+      },
+      b_tie_val: {
+        type: DataTypes.FLOAT,
+        defaultValue: 0
       }
     });
 

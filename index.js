@@ -1380,7 +1380,7 @@ myApp.post('/bot/set_zero', async function (request, response) {
                 },
             }).then((botObj) => {
                 if (botObj) {
-                    if (botObj.bot_type == 1) {
+                    if (botObj.bot_type == 1 || botObj.bot_type == 3) {
                         response.json({
                             success: false,
                             error_code: null
@@ -1399,12 +1399,69 @@ myApp.post('/bot/set_zero', async function (request, response) {
                         }
                     }
 
-                    if (dtBotWorkerDict[user.id] != undefined) {
-                        dtBotWorkerDict[user.id].postMessage({
-                            action: 'set_bet_side',
-                            bet_side: bet_side
+                    response.json({
+                        success: true,
+                        error_code: null
+                    })
+
+                } else {
+                    response.json({
+                        success: false,
+                        error_code: null,
+                        message: 'bot dose not pause'
+                    })
+                }
+            })
+        } else {
+            response.json({
+                success: false,
+                error_code: 404,
+                message: 'user not found'
+            })
+        }
+
+    });
+})
+
+myApp.post('/bot/set_tie', async function (request, response) {
+
+    const USERNAME = request.body.username
+    const b_tie_val = request.body.b_tie_val
+    const b_tie = request.body.b_tie
+    console.log(`set tie ${USERNAME} b_tie_val ${b_tie_val} b_tie ${b_tie}`)
+    // console.log(USERNAME, is_opposite)
+    db.user.findOne({
+        where: {
+            username: USERNAME,
+        },
+    }).then((user) => {
+        if (user) {
+            db.bot.findOne({
+                where: {
+                    userId: user.id,
+                    status: 2
+                },
+            }).then((botObj) => {
+                if (botObj) {
+                    if (botObj.bot_type == 2 || botObj.bot_type == 3) {
+                        response.json({
+                            success: false,
+                            error_code: null
                         })
+
+                    } else if (botObj.bot_type == 1) {
+                        botObj.b_tie_val = b_tie_val
+                        botObj.b_tie = b_tie
+                        botObj.save()
+                        if (botWorkerDict[user.id] != undefined) {
+                            botWorkerDict[user.id].postMessage({
+                                action: 'set_tie',
+                                b_tie_val: b_tie_val,
+                                b_tie: b_tie
+                            })
+                        }
                     }
+
 
                     response.json({
                         success: true,
@@ -1432,6 +1489,7 @@ myApp.post('/bot/set_zero', async function (request, response) {
 
 myApp.post('/bot', async function (request, response) {
     // console.log(`zero_bet : ${request.body.zero_bet}`)
+    console.log('create bot', request.body.bet_limit)
     const USERNAME = request.body.username
     console.log(`create bot ${USERNAME}`)
     db.user.findOne({
@@ -1463,7 +1521,9 @@ myApp.post('/bot', async function (request, response) {
                 is_opposite: false,
                 zero_bet: request.body.zero_bet | 0,
                 open_zero: false,
-                // bet_limit: request.body.bet_limit | '110901'
+                b_tie_val: request.body.b_tie_val | 0,
+                b_tie: false,
+                bet_limit: request.body.bet_limit
             }
             // console.log(botData)
             let playData = []
@@ -2337,6 +2397,74 @@ myApp.get('/wallet/:id', async function (request, response) {
 });
 
 
+myApp.get('/history/:id', async function (request, response) {
+    const user_id = request.params.id
+    // console.log(user_id)
+    const user = await db.user.findOne({
+        where: {
+            id: user_id,
+        },
+    })
+    // console.log(user)
+    if (user && user.is_mock) {
+        // console.log(user.mock_wallet)
+
+        response.json({
+            success: true,
+            error_code: null,
+            data: {
+                profit_wallet: 0,
+                all_wallet: user.mock_wallet,
+                play_wallet: user.mock_wallet,
+                myWallet: {}
+            }
+        })
+    }
+    else if (user) {
+        // console.log('history')
+        let w = 0
+        let cTime = parseFloat(user.cookieTime) || 0
+        // console.log(cTime)
+        let cookieAge = Math.round((moment() - cTime) / 1000)
+        // console.log(cookieAge)
+        // console.log(user.ufa_account, user.type_password)
+        if (cookieAge > 1600 || !user.cookie) {
+            let c = await utils.reCookie(user.ufa_account, user.type_password)
+            w = await utils.getUserHistory(c)
+            user.cookie = c
+            user.cookieTime = moment().valueOf()
+            user.save()
+        } else {
+            w = await utils.getUserHistory(user.cookie)
+            // console.log(w)
+            if (w == null) {
+                let c = await utils.reCookie(user.ufa_account, user.type_password)
+                w = await utils.getUserHistory(c)
+                user.cookie = c
+                user.cookieTime = moment().valueOf()
+                user.save()
+            }
+        }
+
+        // console.log('history', w)
+        response.json({
+            success: true,
+            error_code: null,
+            data: {
+               hitory: w
+            }
+        })
+    } else {
+        response.json({
+            success: false,
+            error_code: 404,
+            message: 'user not found'
+        })
+    }
+
+});
+
+
 
 myApp.get('/member', async function (request, response) {
     const member = await db.member.findAll()
@@ -3006,7 +3134,7 @@ async function mainBody() {
     initiateWorker(5);
     initiateWorker(6);
     initiateDtWorker(31)
-    // initiateDtWorker(32)
+    initiateDtWorker(32)
     initiateRotWorker(71)
 
     // console.log(response.data);

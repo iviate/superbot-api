@@ -325,3 +325,59 @@ exports.getUserWallet = async function getUserWallet(cookie) {
 
     return wallet
 }
+
+exports.getUserHistory = async function getUserHistory(cookie) {
+    let history = await (async (cookie) => {
+
+        let historyAPI = "https://bpweb.bikimex.net/player/query/queryTxnHistory"
+        let startTime = new Date();
+        let endTime = new Date();
+        startTime.setHours(0, 0, 0, 0)
+        endTime.setHours(23, 59, 59, 999)
+        const ps = new URLSearchParams()
+        ps.append('dealerDomain', '1')
+        ps.append('strDateTime',startTime.getTime() )
+        ps.append('endDateTime', endTime.getTime())
+        ps.append('filterBacCls', false)
+        ps.append('filterBacSpd', true)
+        ps.append('filterBacIns', false)
+        ps.append('filterDra', false)
+        ps.append('filterSic', false)
+        ps.append('filterFpc', true)
+        ps.append('filterRou', false)
+        ps.append('filterTpt', false)
+        ps.append('filterRBSic', false)
+        ps.append('filterTpa', false)
+        ps.append('filterTpo', false)
+
+        const config = {
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'Cookie': cookie
+            }
+        }
+
+
+
+        let res = await axios.post(historyAPI, ps, config)
+
+        // console.log(res.data.status)
+
+        if (res.data.txnHistory) {
+            return res.data.txnHistory
+        } else {
+            return null
+        }
+
+        //   response.json(data);
+
+
+        // access baccarat room 2
+        // await page.goto("https://truthbet.com/g/live/baccarat/22", {
+        //   waitUntil: "networkidle2",
+        // });
+        // await browser.close();
+    })(cookie);
+
+    return history
+}

@@ -31,6 +31,8 @@ var latestBetSuccess = {
     shoe: null,
     round: null
 }
+var b_tie = false
+var b_tie_val = 0
 
 var bet_time = null
 registerForEventListening();
@@ -305,14 +307,17 @@ async function bet(data) {
                 },
             })
             let bData = [{ "categoryIdx": categoryId, "categoryName": realBet, "stake": betVal }]
-            console.log(botObj.userId, bData)
+            if(b_tie){
+                bData.push({"categoryIdx":2,"categoryName":"Tie","stake": b_tie_val})
+            }
+            console.log(botObj.userId, bData, botObj.bet_limit)
             var pData = qs.stringify({
                 'domainType': '1',
                 'tableID': data.table.toString(),
                 'gameShoe': data.shoe.toString(),
                 'gameRound': data.round.toString(),
                 'data': JSON.stringify(bData),
-                'betLimitID': '110901',
+                'betLimitID': botObj.bet_limit ,// 11901 20 - 5000, 110902 100 - 10000
                 'f': '-1',
                 'c': 'A'
             });
@@ -851,6 +856,8 @@ function registerForEventListening() {
     is_mock = workerData.is_mock
     playData = workerData.playData
     botObj = workerData.obj
+    b_tie_val = botObj.b_tie_val
+    b_tie = botObj.b_tie
     stopLoss = botObj.init_wallet - botObj.loss_threshold
     stopLossPercent = botObj.loss_percent
     token = workerData.obj.token
@@ -905,6 +912,17 @@ function registerForEventListening() {
             parentPort.postMessage({ action: 'info', botObj: botObj, playData: playData, turnover: turnover, userId: botObj.userId, table: table, current: current })
             // bet_side = result.bet_side
         }
+
+        if (result.action == 'set_tie') {
+            // console.log(`set_opposite ${result.is_opposite}`)
+            botObj.b_tie = result.b_tie
+            botObj.b_tie_val = result.b_tie_val
+            b_tie = result.b_tie
+            b_tie_val = result.b_tie_val
+            parentPort.postMessage({ action: 'info', botObj: botObj, playData: playData, turnover: turnover, userId: botObj.userId, table: table, current: current })
+            // bet_side = result.bet_side
+        }
+
         if (result.action == 'pause') {
             botObj.status = 2
             status = 2
