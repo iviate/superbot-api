@@ -9,7 +9,7 @@ exports.reCookie = async function reCookie(username, password) {
 
         
             const browser = await puppeteer.launch({
-                headless: true,
+                headless: false,
                 devtools: false,
                 args: ['--no-sandbox', '--disable-setuid-sandbox']
             });
@@ -30,11 +30,11 @@ exports.reCookie = async function reCookie(username, password) {
                 page.waitForNavigation({ waitUntil: 'networkidle0' }),
             ]);
             // await page.type('input[name="txtUserName"]', username);
-            await page.type('input[name="password"]', password);
-            await Promise.all([
-                page.click('#btnLogin'),
-                page.waitForNavigation({ waitUntil: 'networkidle0' }),
-            ]);
+            // await page.type('input[name="password"]', password);
+            // await Promise.all([
+            //     page.click('#btnLogin'),
+            //     page.waitForNavigation({ waitUntil: 'networkidle0' }),
+            // ]);
 
             await page.waitForSelector('#btnAgree_T')
             await Promise.all([
