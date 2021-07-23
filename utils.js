@@ -9,7 +9,7 @@ exports.reCookie = async function reCookie(username, password) {
 
         
             const browser = await puppeteer.launch({
-                headless: false,
+                headless: true,
                 devtools: false,
                 args: ['--no-sandbox', '--disable-setuid-sandbox']
             });
