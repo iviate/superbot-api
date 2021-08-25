@@ -339,6 +339,7 @@ async function bet(data) {
             }
 
             if (res == null || res.data.status != 200) {
+                console.log(res.data)
                 parentPort.postMessage({ action: 'bet_failed', botObj: botObj, error: res.data })
                 betFailed = false
             }
