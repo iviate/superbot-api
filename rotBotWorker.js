@@ -867,7 +867,7 @@ async function processResultBet(betStatus, botTransactionId, botTransaction, gam
             
         } else if (betStatus == 'TIE') {
         }
-        let currentWallet = botObj.init_wallet + botProfit
+        currentWallet = botObj.init_wallet + botProfit
 
         console.log(`rot ${botObj.userId}-${user.ufa_account} wallet ${currentWallet}`)
 

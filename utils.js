@@ -179,14 +179,14 @@ async function reCookieImba(username, password) {
             await page.waitForSelector('.img-shield-sys')
 
             const cookiesImba = await page.cookies()
-            console.log(cookiesImba)
+            // console.log(cookiesImba)
             let cookieHeader = ""
             cookiesImba.forEach((value) => {
                 console.log(value)
                 cookieHeader += value.name + '=' + value.value + '; '
             })
             const ps = new URLSearchParams()
-            console.log(cookieHeader)
+            // console.log(cookieHeader)
             const URL = "https://imba69.com/member/gamelink?vendor=sexy&game_id=undefined&game_code=undefined&mobile=false"
             const config = {
                 headers: {
