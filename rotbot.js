@@ -20,7 +20,7 @@ let info = [];
 let shoe;
 let round;
 let username = null
-let password = "Aa5555++"
+let password = "Aa112233"
 // let stats;
 let predictStats = { shoe: '', correct: 0, wrong: 0, tie: 0, info: {}, predict: [] };
 // let predictStatsHistory = [];
@@ -138,7 +138,7 @@ function registerForEventListening() {
 async function inititalInfo() {
     while (cookie == null) {
         try {
-            cookie = await utils.reCookie(username, password)
+            cookie = await utils.reCookie(username, password, 4)
             console.log(cookie)
             cookieTime = moment()
             await axios.get(`https://bpweb.bikimex.net/player/singleRouTable.jsp?dm=1&t=${tableId}&title=1&sgt=6&hall=1`,
@@ -209,7 +209,7 @@ async function predictPlay() {
             try {
                 cookie = null
                 isReCookie = true
-                cookie = await utils.reCookie(username, password)
+                cookie = await utils.reCookie(username, password, 4)
                 cookieTime = moment()
                 await axios.get(`https://bpweb.bikimex.net/player/singleRouTable.jsp?dm=1&t=${tableId}&title=1&sgt=6&hall=1`,
                     {
@@ -254,7 +254,7 @@ async function predictPlay() {
         livePlaying(res.data)
     } else {
         isReCookie = true
-        cookie = await utils.reCookie(username, password)
+        cookie = await utils.reCookie(username, password, 4)
         cookieTime = moment()
         await axios.get(`https://bpweb.bikimex.net/player/singleTable4.jsp?dm=1&t=${tableId}&title=1&sgt=6&hall=1`,
             {

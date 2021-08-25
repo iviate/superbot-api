@@ -31,6 +31,7 @@ var latestBetSuccess = {
     shoe: null,
     round: null
 }
+var profit = 0
 var b_tie = false
 var b_tie_val = 0
 
@@ -554,7 +555,7 @@ async function processResultBet(betStatus, botTransactionId, botTransaction) {
         let cookieAge = Math.round((moment() - cTime) / 1000)
         // console.log(cookieAge)
         if (cookieAge > 1500 || !user.cookie) {
-            let c = await utils.reCookie(user.ufa_account, user.type_password)
+            let c = await utils.reCookie(user.ufa_account, user.type_password, user.web)
             currentWallet = await utils.getUserWallet(c)
             user.cookie = c
             user.cookieTime = moment().valueOf()

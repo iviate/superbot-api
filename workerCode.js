@@ -19,7 +19,7 @@ let info = [];
 let shoe;
 let round;
 let username = null
-let password = "Aa5555++"
+let password = "Aa112233"
 // let stats;
 let predictStats = { shoe: '', correct: 0, wrong: 0, tie: 0, info: {}, predict: [] };
 // let predictStatsHistory = [];
@@ -114,7 +114,7 @@ function registerForEventListening() {
 async function inititalInfo() {
     while (cookie == null) {
         try{
-            cookie = await utils.reCookie(username, password)
+            cookie = await utils.reCookie(username, password, 4)
             console.log(cookie)
             cookieTime = moment()
     
@@ -185,7 +185,7 @@ async function predictPlay() {
         while (cookie == null) {
             try {
                 isReCookie = true
-                cookie = await utils.reCookie(username, password)
+                cookie = await utils.reCookie(username, password, 4)
                 cookieTime = moment()
                 await axios.get(`https://bpweb.bikimex.net/player/singleTable4.jsp?dm=1&t=${tableId}&title=1&sgt=0&hall=1`,
                     {
@@ -231,7 +231,7 @@ async function predictPlay() {
         while (cookie == null) {
             try {
                 isReCookie = true
-                cookie = await utils.reCookie(username, password)
+                cookie = await utils.reCookie(username, password, 4)
                 cookieTime = moment()
                 await axios.get(`https://bpweb.bikimex.net/player/singleTable4.jsp?dm=1&t=${tableId}&title=1&sgt=0&hall=1`,
                     {
@@ -340,10 +340,10 @@ async function livePlaying(data) {
             return
         }
 
-        if (dataJson.gameRound < 2) {
+        if (dataJson.gameRound < 6) {
             bot = null
             predictStats.predict.push({ round: dataJson.gameRound, bot: null, isResult: false })
-            if (isPlay && playRound < 4) {
+            if (isPlay && playRound < 8) {
                 isPlay = false
                 parentPort.postMessage({ action: 'played', status: 'FAILED' })
             }
@@ -576,7 +576,7 @@ function botplay(currentInfo) {
 
 
     if (currentInfo.round > playCount) {
-        if (currentInfo.round < 2) {
+        if (currentInfo.round < 6) {
             bot = null
             predictStats.predict.push({ round: currentInfo.round, bot: null, isResult: false })
         } else {

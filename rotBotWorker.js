@@ -444,10 +444,23 @@ async function bet(data) {
                 return
             }
         } else if (botObj.bet_side == 14) {
-            realBet = data.bot.TWOZONE
-            realBet.forEach(element => {
+           
+
+            if (!is_opposite) {
+                realBet = data.bot.TWOZONE
+                realBet.forEach(element => {
                 idx.push(mapZone[element])
             });
+            } else {
+                let dozen = ['FIRST', 'SECOND', 'THIRD']
+                let index1 = dozen.indexOf(data.bot.TWOZONE[0])
+                dozen.splice(index1, 1)
+                let index2 = dozen.indexOf(data.bot.TWOZONE[1])
+                dozen.splice(index2, 1)
+                // console.log(dozen[0])
+                realBet = dozen[0]
+                idx.push(mapZone[realBet])
+            }
         } else if (botObj.bet_side == 15) {
             if (!is_opposite) {
                 realBet = data.bot.ONEZONE
@@ -536,7 +549,7 @@ async function bet(data) {
                 // console.log(cookieAge)
                 if (cookieAge > 1580 || !user.cookie) {
                     isRecookie = true
-                    let c = await utils.reCookie(user.ufa_account, user.type_password)
+                    let c = await utils.reCookie(user.ufa_account, user.type_password, user.web)
                     currentWallet = await utils.getUserWallet(c)
                     user.cookie = c
                     user.cookieTime = moment().valueOf()
@@ -568,7 +581,7 @@ async function bet(data) {
                 // console.log(cookieAge)
                 if (cookieAge > 1600 || !user.cookie) {
                     isRecookie = true
-                    let c = await utils.reCookie(user.ufa_account, user.type_password)
+                    let c = await utils.reCookie(user.ufa_account, user.type_password, user.web)
                     currentWallet = await utils.getUserWallet(c)
                     user.cookie = c
                     user.cookieTime = moment().valueOf()
@@ -584,7 +597,7 @@ async function bet(data) {
                 // console.log(cookieAge)
                 if (cookieAge > 1630 || !user.cookie) {
                     isRecookie = true
-                    let c = await utils.reCookie(user.ufa_account, user.type_password)
+                    let c = await utils.reCookie(user.ufa_account, user.type_password, user.web)
                     currentWallet = await utils.getUserWallet(c)
                     user.cookie = c
                     user.cookieTime = moment().valueOf()

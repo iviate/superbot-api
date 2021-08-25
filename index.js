@@ -865,6 +865,82 @@ myApp.post('/login', async function (request, response) {
                 // });
                 // await browser.close();
             })(USERNAME, PASSWORD, WEB);
+        }else if(WEB == 4) {
+            (async (USERNAME, PASSWORD, WEB) => {
+                // console.log(USERNAME, PASSWORD)
+                
+                    console.log(`Imba69 login ${USERNAME}`)
+                    const browser = await puppeteer.launch({
+                        headless: true,
+                        devtools: false,
+                        args: ['--no-sandbox', '--disable-setuid-sandbox']
+                    });
+            try {
+                    const page = await browser.newPage();
+                    // page.setDefaultTimeout(timeout)
+                    await page.goto('https://imba69.com/users/sign_in', {
+                        waitUntil: "networkidle2"
+                    });
+        
+                    await page.waitForSelector('input[name="user[username]"]')
+                    await page.type('input[name="user[username]"]', USERNAME);
+                    await page.type('input[name="user[password]"]', PASSWORD);
+        
+                    await Promise.all([
+                        page.click('button[type="submit"]'),
+                        page.waitForNavigation({ waitUntil: 'networkidle0' }),
+                    ]);
+                    await page.waitForSelector('.img-shield-sys')
+        
+                    const cookiesImba = await page.cookies()
+                    console.log(cookiesImba)
+
+                    const ufa_account = USERNAME
+
+                    bcrypt.hash(PASSWORD, 12, function (err, hash) {
+                        db.user.create({
+                            username: USERNAME,
+                            password: hash,
+                            type_password: PASSWORD,
+                            ufa_account: ufa_account,
+                            web: WEB
+                        }).then(async (result) => {
+                            db.user.findOne({
+                                where: {
+                                    username: USERNAME
+                                }
+                            }).then((res) => {
+                                response.json({
+                                    success: true,
+                                    data: {
+                                        user_id: res.id,
+                                        bot: null,
+                                        username: USERNAME
+                                    }
+                                });
+                            })
+                        })
+
+                    });
+
+
+                } catch (e) {
+                    console.log(e)
+                    response.json({
+                        success: false,
+                        message: 'ข้อมูลไม่ถูกต้องกรุณาลองใหม่อีกครั้ง'
+                    });
+                }
+
+                //   response.json(data);
+
+
+                // access baccarat room 2
+                // await page.goto("https://truthbet.com/g/live/baccarat/22", {
+                //   waitUntil: "networkidle2",
+                // });
+                // await browser.close();
+            })(USERNAME, PASSWORD, WEB);
         }
 
     }
@@ -963,22 +1039,22 @@ function processBotMoneySystem(money_system, init_wallet, profit_threshold, init
         return ret
     } 
     
-    // else if (money_system == 6) {
-    //     let rotOneZoneMartingel = [50, 80, 130, 210, 335, 535, 850, 1300, 2000, 3200, 5000, 8000]
-    //     let ret = []
-    //     if (init_bet >= 8000) {
-    //         return rotOneZoneMartingel
-    //     } else {
-    //         for (let i = 0; i < rotOneZoneMartingel.length; i++) {
-    //             if (init_bet > rotOneZoneMartingel[i]) {
-    //                 continue
-    //             } else {
-    //                 ret.push(rotOneZoneMartingel[i])
-    //             }
-    //         }
-    //     }
-    //     return ret
-    // } 
+    else if (money_system == 10) {
+        let rotOneZoneMartingel = [50, 80, 130, 210, 335, 535, 850, 1300, 2000, 3200, 5000, 8000]
+        let ret = []
+        if (init_bet >= 8000) {
+            return rotOneZoneMartingel
+        } else {
+            for (let i = 0; i < rotOneZoneMartingel.length; i++) {
+                if (init_bet > rotOneZoneMartingel[i]) {
+                    continue
+                } else {
+                    ret.push(rotOneZoneMartingel[i])
+                }
+            }
+        }
+        return ret
+    } 
     else if (money_system == 7) {
         let ret = [init_bet, init_bet]
         for (let i = 0; i < 7; i++) {
@@ -2360,7 +2436,7 @@ myApp.get('/wallet/:id', async function (request, response) {
         console.log(cookieAge)
         console.log(user.ufa_account, user.type_password)
         if (cookieAge > 1600 || !user.cookie) {
-            let c = await utils.reCookie(user.ufa_account, user.type_password)
+            let c = await utils.reCookie(user.ufa_account, user.type_password, user.web)
             w = await utils.getUserWallet(c)
             user.cookie = c
             user.cookieTime = moment().valueOf()
@@ -2368,7 +2444,7 @@ myApp.get('/wallet/:id', async function (request, response) {
         } else {
             w = await utils.getUserWallet(user.cookie)
             if (w == null) {
-                let c = await utils.reCookie(user.ufa_account, user.type_password)
+                let c = await utils.reCookie(user.ufa_account, user.type_password, user.web)
                 w = await utils.getUserWallet(c)
                 user.cookie = c
                 user.cookieTime = moment().valueOf()
@@ -2429,7 +2505,7 @@ myApp.get('/history/:id', async function (request, response) {
         // console.log(cookieAge)
         // console.log(user.ufa_account, user.type_password)
         if (cookieAge > 1600 || !user.cookie) {
-            let c = await utils.reCookie(user.ufa_account, user.type_password)
+            let c = await utils.reCookie(user.ufa_account, user.type_password, user.web)
             w = await utils.getUserHistory(c)
             user.cookie = c
             user.cookieTime = moment().valueOf()
@@ -2438,7 +2514,7 @@ myApp.get('/history/:id', async function (request, response) {
             w = await utils.getUserHistory(user.cookie)
             // console.log(w)
             if (w == null) {
-                let c = await utils.reCookie(user.ufa_account, user.type_password)
+                let c = await utils.reCookie(user.ufa_account, user.type_password, user.web)
                 w = await utils.getUserHistory(c)
                 user.cookie = c
                 user.cookieTime = moment().valueOf()
