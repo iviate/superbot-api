@@ -21,7 +21,7 @@ let playTurn = 1
 let status = 2
 var isStop = false;
 var minBet = 50
-var maxBet = 2500
+var maxBet = 2000
 var turnover = 0
 var is_opposite = false
 var table = null
@@ -234,8 +234,8 @@ async function bet(data) {
         // console.log(`betVal : ${betVal}`)
         if (betVal < botObj.init_bet) {
             betVal = botObj.init_bet
-        } else if (betVal > 10000) {
-            betVal = 10000
+        } else if (betVal > maxBet) {
+            betVal = maxBet
         }
 
         // if(!is_mock){
@@ -318,7 +318,7 @@ async function bet(data) {
                 'gameShoe': data.shoe.toString(),
                 'gameRound': data.round.toString(),
                 'data': JSON.stringify(bData),
-                'betLimitID': botObj.bet_limit,// 11901 20 - 5000, 110902 100 - 10000
+                'betLimitID': botObj.bet_limit,// 11901 20 - 5000, 110902 100 - 10000, 
                 'f': '-1',
                 'c': 'A'
             });
@@ -873,6 +873,9 @@ function registerForEventListening() {
     stopLoss = botObj.init_wallet - botObj.loss_threshold
     stopLossPercent = botObj.loss_percent
     token = workerData.obj.token
+    if(botObj.bet_limit == "260901"){
+        maxBet = 10000
+    }
     // console.log(`${workerData.obj.id} hello`)
 
     axios.get(`https://truthbet.com/api/m/settings/limit`, {

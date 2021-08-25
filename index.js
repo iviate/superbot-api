@@ -1068,23 +1068,16 @@ function processBotMoneySystem(money_system, init_wallet, profit_threshold, init
 
         // console.log('3 in 9')
         // console.log(ret)
-
-        let initSet = [50, 50, 50,
-            100, 100, 100,
-            200, 200, 200,
-            400, 400, 400,
-            800, 800, 800,
-            1600, 1600, 1600,
-            3200, 3200, 3200,
-            6400, 6400, 6400]
-
+        let max = 10000
+        if(init_bet == 10){
+            max = 2000
+        }
         let ret = []
-        for (let i = 0; i < initSet.length; i++) {
-            if (init_bet > initSet[i]) {
-                continue
-            } else {
-                ret.push(initSet[i])
-            }
+        while(init_bet <= max){
+            ret.push(init_bet)
+            ret.push(init_bet)
+            ret.push(init_bet)
+            init_bet = init_bet * 2
         }
         // console.log(ret)
         return ret
@@ -1093,16 +1086,18 @@ function processBotMoneySystem(money_system, init_wallet, profit_threshold, init
 
         // console.log('3 in 9')
         // console.log(ret)
-
+        let max = 10000
         let initSet = [1, 2, 3,
             5, 8, 13,
             21, 34, 55,
-            89, 144, 233]
-
+            89, 144, 233, 377]
+        if(init_bet == 10){
+            max = 2000
+        }
         let ret = []
         for (let i = 0; i < initSet.length; i++) {
             let bVal = initSet[i] * init_bet
-            if (bVal < 5000) {
+            if (bVal <= max) {
                 ret.push(bVal)
             } else {
                 ret.push(5000)
