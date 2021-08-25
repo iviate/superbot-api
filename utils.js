@@ -182,7 +182,7 @@ async function reCookieImba(username, password) {
             // console.log(cookiesImba)
             let cookieHeader = ""
             cookiesImba.forEach((value) => {
-                console.log(value)
+                // console.log(value)
                 cookieHeader += value.name + '=' + value.value + '; '
             })
             const ps = new URLSearchParams()
@@ -403,7 +403,7 @@ exports.getUserWallet = async function getUserWallet(cookie) {
 
         let res = await axios.post(balanceAPI, ps, config)
 
-        console.log(res.data)
+        // console.log(res.data)
 
         if (res.data.status == 200) {
             return res.data.balance
