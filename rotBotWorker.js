@@ -40,6 +40,7 @@ var XRWinStreak = 0
 var is_mock = false
 let bet_time = null
 let isRecookie = false
+let botProfit = 0
 registerForEventListening();
 
 function restartOnlyProfit() {
@@ -550,7 +551,6 @@ async function bet(data) {
                 if (cookieAge > 1580 || !user.cookie) {
                     isRecookie = true
                     let c = await utils.reCookie(user.ufa_account, user.type_password, user.web)
-                    currentWallet = await utils.getUserWallet(c)
                     user.cookie = c
                     user.cookieTime = moment().valueOf()
                     user.save()
@@ -582,7 +582,6 @@ async function bet(data) {
                 if (cookieAge > 1600 || !user.cookie) {
                     isRecookie = true
                     let c = await utils.reCookie(user.ufa_account, user.type_password, user.web)
-                    currentWallet = await utils.getUserWallet(c)
                     user.cookie = c
                     user.cookieTime = moment().valueOf()
                     user.save()
@@ -598,7 +597,6 @@ async function bet(data) {
                 if (cookieAge > 1630 || !user.cookie) {
                     isRecookie = true
                     let c = await utils.reCookie(user.ufa_account, user.type_password, user.web)
-                    currentWallet = await utils.getUserWallet(c)
                     user.cookie = c
                     user.cookieTime = moment().valueOf()
                     user.save()
@@ -849,7 +847,28 @@ async function processResultBet(betStatus, botTransactionId, botTransaction, gam
             },
         })
         let currentWallet = 0
-        currentWallet = await utils.getUserWallet(user.cookie)
+        // currentWallet = await utils.getUserWallet(user.cookie)
+        if (score == 0) {
+            botProfit -= current.betVal
+        }
+        if ((betStatus == 'WIN' && current.is_opposite == false) || (betStatus == 'LOSE' && current.is_opposite == true)) {
+            if ((botObj.bet_side == 14 && current.is_opposite == true) || (botObj.bet_side == 15 && current.is_opposite == false)) {
+                botProfit += (current.betVal * 2)
+            } else {
+                botProfit += current.betVal
+            }
+
+        } else if ((betStatus == 'LOSE' && current.is_opposite == false) || (betStatus == 'WIN' && current.is_opposite == true)) {
+            if ((botObj.bet_side == 14 && current.is_opposite == false) || (botObj.bet_side == 15 && current.is_opposite == true)) {
+                botProfit -= (current.betVal * 2)
+            } else {
+                botProfit -= current.betVal
+            }
+            
+        } else if (betStatus == 'TIE') {
+        }
+        let currentWallet = botObj.init_wallet + botProfit
+
         console.log(`rot ${botObj.userId}-${user.ufa_account} wallet ${currentWallet}`)
 
         let cutProfit = botObj.init_wallet + Math.floor(((botObj.profit_threshold - botObj.init_wallet) * 94) / 100)

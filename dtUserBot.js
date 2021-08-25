@@ -33,6 +33,7 @@ var latestBetSuccess = {
 }
 
 var bet_time = null
+let botProfit = 0
 registerForEventListening();
 
 function restartOnlyProfit() {
@@ -541,17 +542,16 @@ async function processResultBet(betStatus, botTransactionId, botTransaction) {
             },
         })
         let currentWallet = 0
-        let cTime = parseFloat(user.cookieTime) || 0
-        let cookieAge = Math.round((moment() - cTime) / 1000)
-        if (cookieAge > 1560 || !user.cookie) {
-            let c = await utils.reCookie(user.ufa_account, user.type_password, user.web)
-            currentWallet = await utils.getUserWallet(c)
-            user.cookie = c
-            user.cookieTime = moment().valueOf()
-            user.save()
-        } else {
-            currentWallet = await utils.getUserWallet(user.cookie)
+        if ((betStatus == 'WIN' && current.is_opposite == false) || (betStatus == 'LOSE' && current.is_opposite == true)) {
+            if (current.bet == 'PLAYER') {
+                botProfit += current.betVal
+            } else {
+                botProfit += current.betVal * 0.95
+            }
+        } else if ((betStatus == 'LOSE' && current.is_opposite == false) || (betStatus == 'WIN' && current.is_opposite == true)) {
+            botProfit -= current.betVal
         }
+        currentWallet = botObj.init_wallet + botProfit
         console.log(`dt ${botObj.userId}-${user.ufa_account} wallet ${currentWallet}`)
 
         let cutProfit = botObj.init_wallet + Math.floor(((botObj.profit_threshold - botObj.init_wallet) * 94) / 100)
@@ -683,6 +683,14 @@ async function processResultBet(betStatus, botTransactionId, botTransaction) {
 
         }
 
+        let cTime = parseFloat(user.cookieTime) || 0
+        let cookieAge = Math.round((moment() - cTime) / 1000)
+        if (cookieAge > 1560 || !user.cookie) {
+            let c = await utils.reCookie(user.ufa_account, user.type_password, user.web)
+            user.cookie = c
+            user.cookieTime = moment().valueOf()
+            user.save()
+        }
     } else {
         console.log('process result mock')
         db.user.findOne({
