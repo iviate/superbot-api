@@ -190,7 +190,7 @@ function getBetVal() {
             betval = (playData[0] + playData[playData.length - 1]) * botObj.init_bet
         }
 
-    }else if (botObj.money_system == 9) {
+    } else if (botObj.money_system == 9) {
         betval = playData[playTurn - 1]
     }
 
@@ -234,8 +234,8 @@ async function bet(data) {
         // console.log(`betVal : ${betVal}`)
         if (betVal < botObj.init_bet) {
             betVal = botObj.init_bet
-        } else if (betVal > 5000) {
-            betVal = 5000
+        } else if (betVal > 10000) {
+            betVal = 10000
         }
 
         // if(!is_mock){
@@ -308,8 +308,8 @@ async function bet(data) {
                 },
             })
             let bData = [{ "categoryIdx": categoryId, "categoryName": realBet, "stake": betVal }]
-            if(b_tie){
-                bData.push({"categoryIdx":2,"categoryName":"Tie","stake": b_tie_val})
+            if (b_tie) {
+                bData.push({ "categoryIdx": 2, "categoryName": "Tie", "stake": b_tie_val })
             }
             console.log(botObj.userId, bData, botObj.bet_limit)
             var pData = qs.stringify({
@@ -318,7 +318,7 @@ async function bet(data) {
                 'gameShoe': data.shoe.toString(),
                 'gameRound': data.round.toString(),
                 'data': JSON.stringify(bData),
-                'betLimitID': botObj.bet_limit ,// 11901 20 - 5000, 110902 100 - 10000
+                'betLimitID': botObj.bet_limit,// 11901 20 - 5000, 110902 100 - 10000
                 'f': '-1',
                 'c': 'A'
             });
@@ -332,13 +332,13 @@ async function bet(data) {
                 data: pData
             };
             let res = null
-            try{
+            try {
                 res = await axios(config)
-            }catch (e){
+            } catch (e) {
                 console.log("")
             }
-           
-            if(res == null || res.data.status != 200){
+
+            if (res == null || res.data.status != 200) {
                 parentPort.postMessage({ action: 'bet_failed', botObj: botObj, error: res.data })
                 betFailed = false
             }
@@ -347,7 +347,7 @@ async function bet(data) {
                 current = { bot: data.bot, bet: realBet, shoe: data.shoe, round: data.round, table_id: data.table, betVal: betVal, playTurn: playTurn, botObj: botObj, is_opposite: is_opposite }
                 parentPort.postMessage({ action: 'bet_success', data: { ...data, betVal: betVal, current: current, botObj: botObj, turnover: turnover, bet: realBet } })
                 betFailed = true
-            }else {
+            } else {
                 parentPort.postMessage({ action: 'bet_failed', botObj: botObj, error: res.data })
                 betFailed = false
             }
@@ -551,19 +551,19 @@ async function processResultBet(betStatus, botTransactionId, botTransaction) {
             },
         })
         let currentWallet = 0
-        let cTime = parseFloat(user.cookieTime) || 0
-        let cookieAge = Math.round((moment() - cTime) / 1000)
-        // console.log(cookieAge)
-        if (cookieAge > 1500 || !user.cookie) {
-            let c = await utils.reCookie(user.ufa_account, user.type_password, user.web)
-            currentWallet = await utils.getUserWallet(c)
-            user.cookie = c
-            user.cookieTime = moment().valueOf()
-            user.save()
-        } else {
-            currentWallet = await utils.getUserWallet(user.cookie)
-        }
         console.log(`bac ${botObj.userId} wallet ${currentWallet}`)
+
+        if ((betStatus == 'WIN' && current.is_opposite == false) || (betStatus == 'LOSE' && current.is_opposite == true)) {
+            // console.log("process :::: " , current.bet.toLowerCase(), current.betVal)
+            if (current.bet.toLowerCase() == 'player') {
+                profit += current.betVal
+            } else {
+                profit += current.betVal * 0.95
+            }
+        } else if ((betStatus == 'LOSE' && current.is_opposite == false) || (betStatus == 'WIN' && current.is_opposite == true)) {
+            profit -= current.betVal
+        }
+        currentWallet = botObj.init_wallet + profit
 
         let cutProfit = botObj.init_wallet + Math.floor(((botObj.profit_threshold - botObj.init_wallet) * 94) / 100)
         if (playData.length == 0) {
@@ -692,6 +692,17 @@ async function processResultBet(betStatus, botTransactionId, botTransaction) {
 
 
 
+        }
+
+
+        let cTime = parseFloat(user.cookieTime) || 0
+        let cookieAge = Math.round((moment() - cTime) / 1000)
+        // console.log(cookieAge)
+        if (cookieAge > 1500 || !user.cookie) {
+            let c = await utils.reCookie(user.ufa_account, user.type_password, user.web)
+            user.cookie = c
+            user.cookieTime = moment().valueOf()
+            user.save()
         }
 
     } else {
