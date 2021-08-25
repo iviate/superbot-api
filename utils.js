@@ -1,7 +1,7 @@
 const puppeteer = require("puppeteer");
 const axios = require('axios');
 var qs = require('qs');
-const timeout = 40000
+const timeout = 15000
 const env = require('./config/web.config.js')
 
 
