@@ -241,7 +241,14 @@ myApp.post('/login', async function (request, response) {
     console.log('login')
     const USERNAME = request.body.username;
     const PASSWORD = request.body.password;
-    const WEB = request.body.web
+    const WEB = request.body.web | 4
+    if(WEB != 4){
+        response.json({
+            success: false,
+            message: 'ข้อมูลไม่ถูกต้องกรุณาลองใหม่อีกครั้ง หรือติดต่อแอดมิน'
+        });
+        return
+    }
 
     const user = await db.user.findOne({
         where: {
