@@ -516,7 +516,7 @@ exports.getUserWallet = async function getUserWallet(cookie) {
 
         // console.log(res.data)
 
-        if (res.data.status == 200) {
+        if (res.data.balance != undefined) {
             return res.data.balance
         } else {
             return null

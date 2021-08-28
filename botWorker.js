@@ -41,9 +41,10 @@ var bet_time = null
 registerForEventListening();
 
 async function checkAndReconnect() {
-    if(is_reconnect){
+    if (is_reconnect) {
         return
     }
+
     const user = await db.user.findOne({
         where: {
             id: botObj.userId
@@ -56,7 +57,7 @@ async function checkAndReconnect() {
         is_reconnect = true
         is_connect = false
         while (!is_connect) {
-            console.log('reconnect')
+            console.log('reconnect with time condition')
             console.log(user.ufa_account, user.type_password, user.web)
             let c = await utils.reCookie(user.ufa_account, user.type_password, user.web)
             if (c != null) {
@@ -68,19 +69,35 @@ async function checkAndReconnect() {
 
         }
         is_reconnect = false
-        
+
 
     } else {
-        is_connect = true
+        let balance = await utils.getUserWallet(user.cookie)
+        if (balance == null) {
+            is_reconnect = true
+            is_connect = false
+            while (!is_connect) {
+                console.log('reconnect with logout condition')
+                console.log(user.ufa_account, user.type_password, user.web)
+                let c = await utils.reCookie(user.ufa_account, user.type_password, user.web)
+                if (c != null) {
+                    user.cookie = c
+                    user.cookieTime = moment().valueOf()
+                    user.save()
+                    is_connect = true
+                }
+
+            }
+            is_reconnect = false
+        } else {
+            is_connect = true
+        }
     }
-
-    parentPort.postMessage({ action: 'connection_status', data: { status: is_connect, id: botObj.id }})
-
-
+    parentPort.postMessage({ action: 'connection_status', data: { status: is_connect, id: botObj.id } })
 }
 
 function checkConnection() {
-    parentPort.postMessage({ action: 'connection_status', data: { status: is_connect, id: botObj.id }})
+    parentPort.postMessage({ action: 'connection_status', data: { status: is_connect, id: botObj.id } })
 
 }
 
@@ -260,11 +277,11 @@ async function bet(data) {
         return
     }
 
-    if(!is_connect){
+    if (!is_connect) {
         return
     }
 
-    if(is_reconnect){
+    if (is_reconnect) {
         return
     }
 

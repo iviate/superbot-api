@@ -40,9 +40,10 @@ var is_reconnect = false
 registerForEventListening();
 
 async function checkAndReconnect() {
-    if(is_reconnect){
+    if (is_reconnect) {
         return
     }
+
     const user = await db.user.findOne({
         where: {
             id: botObj.userId
@@ -50,11 +51,13 @@ async function checkAndReconnect() {
     })
     let cTime = parseFloat(user.cookieTime) || 0
     let cookieAge = Math.round((moment() - cTime) / 1000)
-    // console.log(cookieAge)
+    console.log(cookieAge)
     if (cookieAge > 1600 || !user.cookie) {
         is_reconnect = true
         is_connect = false
         while (!is_connect) {
+            console.log('reconnect with time condition')
+            console.log(user.ufa_account, user.type_password, user.web)
             let c = await utils.reCookie(user.ufa_account, user.type_password, user.web)
             if (c != null) {
                 user.cookie = c
@@ -66,11 +69,30 @@ async function checkAndReconnect() {
         }
         is_reconnect = false
 
-    } else {
-        is_connect = true
-    }
 
-    parentPort.postMessage({ action: 'connection_status', data: { status: is_connect, id: botObj.id }})
+    } else {
+        let balance = await utils.getUserWallet(user.cookie)
+        if (balance == null) {
+            is_reconnect = true
+            is_connect = false
+            while (!is_connect) {
+                console.log('reconnect with logout condition')
+                console.log(user.ufa_account, user.type_password, user.web)
+                let c = await utils.reCookie(user.ufa_account, user.type_password, user.web)
+                if (c != null) {
+                    user.cookie = c
+                    user.cookieTime = moment().valueOf()
+                    user.save()
+                    is_connect = true
+                }
+
+            }
+            is_reconnect = false
+        } else {
+            is_connect = true
+        }
+    }
+    parentPort.postMessage({ action: 'connection_status', data: { status: is_connect, id: botObj.id } })
 }
 
 function checkConnection() {
