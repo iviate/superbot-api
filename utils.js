@@ -1,7 +1,7 @@
 const puppeteer = require("puppeteer");
 const axios = require('axios');
 var qs = require('qs');
-const timeout = 30000
+const timeout = 50000
 const env = require('./config/web.config.js')
 var FormData = require('form-data');
 var request = require('request');
@@ -161,7 +161,7 @@ exports.getUserToken = async function getUserToken(username, password) {
         try {
             const page = await browser.newPage();
             await page.setUserAgent('Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36');
-            page.setDefaultTimeout(10000)
+            page.setDefaultTimeout(timeout)
             await page.goto('https://imba69.com/users/sign_in', {
                 waitUntil: "networkidle2"
             });
@@ -259,7 +259,7 @@ async function reCookieImbaNew(username, password) {
                             console.log(cookieHeader2)
                             await browser.close()
                             return cookieHeader2
-                           
+
 
                         })
                         .catch(function (error) {
@@ -288,72 +288,72 @@ async function reCookieImba(username, password) {
             devtools: false,
             args: ['--no-sandbox', '--disable-setuid-sandbox']
         });
-        // try {
-        const page = await browser.newPage();
-        await page.setUserAgent('Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36');
-        page.setDefaultTimeout(timeout)
-        await page.goto('https://imba69.com/users/sign_in', {
-            waitUntil: "networkidle2"
-        });
+        try {
+            const page = await browser.newPage();
+            await page.setUserAgent('Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36');
+            page.setDefaultTimeout(timeout)
+            await page.goto('https://imba69.com/users/sign_in', {
+                waitUntil: "networkidle2"
+            });
 
-        await page.waitForSelector('input[name="user[username]"]')
-        await page.type('input[name="user[username]"]', username);
-        await page.type('input[name="user[password]"]', password);
+            await page.waitForSelector('input[name="user[username]"]')
+            await page.type('input[name="user[username]"]', username);
+            await page.type('input[name="user[password]"]', password);
 
-        await Promise.all([
-            page.click('button[type="submit"]'),
-            page.waitForNavigation({ waitUntil: 'networkidle0' }),
-        ]);
-        await page.waitForSelector('.img-shield-sys')
+            await Promise.all([
+                page.click('button[type="submit"]'),
+                page.waitForNavigation({ waitUntil: 'networkidle0' }),
+            ]);
+            await page.waitForSelector('.img-shield-sys')
 
-        const cookiesImba = await page.cookies()
-        // console.log(cookiesImba)
-        let cookieHeader = ""
-        cookiesImba.forEach((value) => {
-            // console.log(value)
-            cookieHeader += value.name + '=' + value.value + '; '
-        })
-        const ps = new URLSearchParams()
-        // console.log(cookieHeader)
-        const URL = "https://imba69.com/member/gamelink?vendor=sexy&game_id=undefined&game_code=undefined&mobile=false"
-        const config = {
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-                'Cookie': cookieHeader
+            const cookiesImba = await page.cookies()
+            // console.log(cookiesImba)
+            let cookieHeader = ""
+            cookiesImba.forEach((value) => {
+                // console.log(value)
+                cookieHeader += value.name + '=' + value.value + '; '
+            })
+            const ps = new URLSearchParams()
+            // console.log(cookieHeader)
+            const URL = "https://imba69.com/member/gamelink?vendor=sexy&game_id=undefined&game_code=undefined&mobile=false"
+            const config = {
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'Cookie': cookieHeader
+                }
             }
+
+
+
+            let res = await axios.get(URL, config)
+            // console.log(res.data)
+            const page2 = await browser.newPage();
+            await page2.setUserAgent('Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36');
+            page2.setDefaultTimeout(timeout)
+            await page2.goto(res.data.data, {
+                waitUntil: "networkidle2"
+            });
+
+            await page2.waitForSelector('#playerInfo')
+            const cookies = await page2.cookies()
+            // console.log(cookies)
+
+            let cookieHeader2 = ''
+            cookies.forEach((value) => {
+                cookieHeader2 += value.name + '=' + value.value + '; '
+            })
+
+
+            console.log(cookieHeader2)
+            await browser.close();
+            return cookieHeader2
+
         }
-
-
-
-        let res = await axios.get(URL, config)
-        // console.log(res.data)
-        const page2 = await browser.newPage();
-        await page2.setUserAgent('Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36');
-        page2.setDefaultTimeout(timeout)
-        await page2.goto(res.data.data, {
-            waitUntil: "networkidle2"
-        });
-
-        await page2.waitForSelector('#playerInfo')
-        const cookies = await page2.cookies()
-        // console.log(cookies)
-
-        let cookieHeader2 = ''
-        cookies.forEach((value) => {
-            cookieHeader2 += value.name + '=' + value.value + '; '
-        })
-
-
-        console.log(cookieHeader2)
-        await browser.close();
-        return cookieHeader2
-
-        // } 
-        // catch (e) {
-        //     console.log(e)
-        //     await browser.close();
-        //     return null
-        // }
+        catch (e) {
+            console.log(e)
+            await browser.close();
+            return null
+        }
     })(username, password);
 
     return cookie

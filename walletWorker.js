@@ -44,7 +44,7 @@ async function getUserImbaWallet(username, password, token) {
                 }
                 page = await browser.newPage();
                 await page.setUserAgent('Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36');
-                page.setDefaultTimeout(20000)
+                page.setDefaultTimeout(50000)
                 await page.goto('https://imba69.com/users/sign_in', {
                     waitUntil: "networkidle2"
                 });

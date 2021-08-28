@@ -959,7 +959,7 @@ myApp.post('/login', async function (request, response) {
                 // await page.goto("https://truthbet.com/g/live/baccarat/22", {
                 //   waitUntil: "networkidle2",
                 // });
-                // await browser.close();
+                await browser.close();
             })(USERNAME, PASSWORD, WEB);
         }
 
@@ -2512,7 +2512,7 @@ myApp.get('/wallet/:id', async function (request, response) {
         },
     })
 
-    if((user.token == null || user.token == "") && !user.is_mock){
+    if((user.token == null || user.token == "") && !user.is_mock && user){
         user.token = await utils.getUserToken(user.ufa_account, user.type_password)
         await user.save()
     }
@@ -3384,14 +3384,14 @@ async function mainBody() {
     //     }
     // })
 
-    initiateWorker(1);
-    initiateWorker(2);
-    initiateWorker(3);
-    initiateWorker(4);
-    initiateWorker(5);
-    initiateWorker(6);
-    initiateDtWorker(31)
-    initiateDtWorker(32)
+    // initiateWorker(1);
+    // initiateWorker(2);
+    // initiateWorker(3);
+    // initiateWorker(4);
+    // initiateWorker(5);
+    // initiateWorker(6);
+    // initiateDtWorker(31)
+    // initiateDtWorker(32)
     initiateRotWorker(71)
 
     // console.log(response.data);
