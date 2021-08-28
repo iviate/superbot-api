@@ -10,7 +10,6 @@ exports.reCookie = async function reCookie(username, password, web) {
     if (web == 4) {
         cookie = await reCookieImba(username, password)
     } else {
-        
     }
     return cookie
 }
