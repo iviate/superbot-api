@@ -168,7 +168,17 @@ async function registerForEventListening() {
     //     devtools: false,
     //     args: ['--no-sandbox', '--disable-setuid-sandbox']
     // });
-    test(userData.username, userData.password, userData.token)
+    if (userData.is_mock) {
+        const user = await db.user.findOne({
+            where: {
+                id: userData.id,
+            },
+        })
+        parentPort.postMessage({ action: 'credit', data: { userId: userData.id, wallet: parseFloat(user.mock_wallet).toFixed(2) } })
+    }else{
+        test(userData.username, userData.password, userData.token)
+    }   
+    
 
 
     // callback method is defined to receive data from main thread
