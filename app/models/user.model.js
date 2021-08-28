@@ -66,6 +66,9 @@ module.exports = (sequelize, Sequelize, DataTypes) => {
       web: {
         type: DataTypes.INTEGER,
         defaultValue: 2,
+      },
+      imbaCookie: {
+        type: DataTypes.STRING,
       }
       
     });

@@ -20,7 +20,7 @@ let info = [];
 let shoe;
 let round;
 let username = null
-let password = "Aa112233"
+let password = "ฤฟ696969"
 // let stats;
 let predictStats = { shoe: '', correct: 0, wrong: 0, tie: 0, info: {}, predict: [] };
 // let predictStatsHistory = [];
@@ -121,6 +121,7 @@ function registerForEventListening() {
             playRound = round + 1
             // betting(result.current)
         }
+        
 
 
         // //  setting up interval to call method to multiple with factor

@@ -42,6 +42,47 @@ let bet_time = null
 let isRecookie = false
 let botProfit = 0
 registerForEventListening();
+var is_connect = false
+var is_reconnect = false
+
+async function checkAndReconnect() {
+    const user = await db.user.findOne({
+        where: {
+            id: botObj.userId
+        },
+    })
+    let cTime = parseFloat(user.cookieTime) || 0
+    let cookieAge = Math.round((moment() - cTime) / 1000)
+    // console.log(cookieAge)
+    if (cookieAge > 1600 || !user.cookie) {
+        is_reconnect = true
+        is_connect = false
+        while (!is_connect) {
+            let c = await utils.reCookie(user.ufa_account, user.type_password, user.web)
+            if (c != null) {
+                user.cookie = c
+                user.cookieTime = moment().valueOf()
+                user.save()
+                is_connect = true
+            }
+
+        }
+        is_reconnect = false
+        
+
+    } else {
+        is_connect = true
+    }
+
+    parentPort.postMessage({ action: 'connection_status', data: { status: is_connect, id: botObj.id }})
+
+
+}
+
+function checkConnection() {
+    parentPort.postMessage({ action: 'connection_status', data: { status: is_connect, id: botObj.id }})
+
+}
 
 function restartOnlyProfit() {
     axios.get(`https://truthbet.com/api/wallet`, {
@@ -299,6 +340,13 @@ async function bet(data) {
     if(isRecookie){
         return
     }
+    if(is_reconnect){
+        return
+    }
+
+    if(!is_connect){
+        return
+    }
 
     if (betFailed) {
         return
@@ -545,17 +593,6 @@ async function bet(data) {
             if(res == null || res.data.status != 200) {
                 parentPort.postMessage({ action: 'bet_failed', botObj: botObj, error: res.data })
                 betFailed = false
-                let cTime = parseFloat(user.cookieTime) || 0
-                let cookieAge = Math.round((moment() - cTime) / 1000)
-                // console.log(cookieAge)
-                if (cookieAge > 1580 || !user.cookie) {
-                    isRecookie = true
-                    let c = await utils.reCookie(user.ufa_account, user.type_password, user.web)
-                    user.cookie = c
-                    user.cookieTime = moment().valueOf()
-                    user.save()
-                    isRecookie = false
-                }
             }
             else if (res.data.status == 200) {
                 if (botObj.open_zero) {
@@ -571,37 +608,10 @@ async function bet(data) {
                 parentPort.postMessage({ action: 'bet_success', data: { ...data, betVal: betVal, current: current, botObj: botObj, turnover: turnover, bet: realBet } })
                 betFailed = true
 
-                const user = await db.user.findOne({
-                    where: {
-                        id: botObj.userId
-                    },
-                })
-                let cTime = parseFloat(user.cookieTime) || 0
-                let cookieAge = Math.round((moment() - cTime) / 1000)
-                // console.log(cookieAge)
-                if (cookieAge > 1600 || !user.cookie) {
-                    isRecookie = true
-                    let c = await utils.reCookie(user.ufa_account, user.type_password, user.web)
-                    user.cookie = c
-                    user.cookieTime = moment().valueOf()
-                    user.save()
-                    isRecookie = false
-                    
-                }
+                
             }else {
                 parentPort.postMessage({ action: 'bet_failed', botObj: botObj, error: res.data })
                 betFailed = false
-                let cTime = parseFloat(user.cookieTime) || 0
-                let cookieAge = Math.round((moment() - cTime) / 1000)
-                // console.log(cookieAge)
-                if (cookieAge > 1630 || !user.cookie) {
-                    isRecookie = true
-                    let c = await utils.reCookie(user.ufa_account, user.type_password, user.web)
-                    user.cookie = c
-                    user.cookieTime = moment().valueOf()
-                    user.save()
-                    isRecookie = false
-                }
             }
 
         } else {
@@ -683,14 +693,14 @@ function genLeftProfitXSystem(wallet) {
 }
 
 async function processResultBet(betStatus, botTransactionId, botTransaction, gameResult) {
-    let startLoop = moment()
-    while(isRecookie){
-        await new Promise(() => setTimeout(() => {}, 2000));
-        let loopAge = Math.round((moment() - startLoop) / 1000)
-        if(loopAge > 120){
-            break;
-        }
-    }
+    // let startLoop = moment()
+    // while(isRecookie){
+    //     await new Promise(() => setTimeout(() => {}, 2000));
+    //     let loopAge = Math.round((moment() - startLoop) / 1000)
+    //     if(loopAge > 120){
+    //         break;
+    //     }
+    // }
 
     let gameResultObj = JSON.parse(gameResult)
     // console.log(gameResultObj.data)
@@ -1162,36 +1172,37 @@ async function processResultBet(betStatus, botTransactionId, botTransaction, gam
     }
 }
 
-function registerForEventListening() {
+async function registerForEventListening() {
     is_mock = workerData.is_mock
     playData = workerData.playData
     botObj = workerData.obj
     stopLoss = botObj.init_wallet - botObj.loss_threshold
     stopLossPercent = botObj.loss_percent
     token = workerData.obj.token
+    await checkAndReconnect()
     if(botObj.bet_limit == "260903"){
         maxBet = 10000
     }
     // console.log(`${workerData.obj.id} hello`)
 
-    axios.get(`https://truthbet.com/api/m/settings/limit`, {
-        headers: {
-            Authorization: `Bearer ${workerData.obj.token}`
-        }
-    })
-        .then(res => {
-            let userConfig = res.data.userConfig
-            if (userConfig.package == 'rookie') {
-                minBet = 100
-                maxBet = 5000
-            } else if (userConfig.package == 'medium') {
-                minBet = 200
-                maxBet = 10000
-            }
-        })
-        .catch(error => {
-            // console.log(error)
-        })
+    // axios.get(`https://truthbet.com/api/m/settings/limit`, {
+    //     headers: {
+    //         Authorization: `Bearer ${workerData.obj.token}`
+    //     }
+    // })
+    //     .then(res => {
+    //         let userConfig = res.data.userConfig
+    //         if (userConfig.package == 'rookie') {
+    //             minBet = 100
+    //             maxBet = 5000
+    //         } else if (userConfig.package == 'medium') {
+    //             minBet = 200
+    //             maxBet = 10000
+    //         }
+    //     })
+    //     .catch(error => {
+    //         // console.log(error)
+    //     })
     // callback method is defined to receive data from main thread
     let cb = (err, result) => {
         if (err) return console.error(err);
@@ -1201,6 +1212,12 @@ function registerForEventListening() {
         }
         if (result.action == 'info') {
             parentPort.postMessage({ action: 'info', botObj: botObj, playData: playData, turnover: turnover, userId: botObj.userId, table: table, current: current })
+        }
+        if (result.action == 'check_connection') {
+            checkConnection()
+        }
+        if (result.action == 'check_reconnect') {
+            checkAndReconnect()
         }
         if (result.action == 'result_bet') {
             mapBotTypeAndBetSide = {

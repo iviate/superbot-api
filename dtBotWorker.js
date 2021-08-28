@@ -733,24 +733,24 @@ function registerForEventListening() {
     token = workerData.obj.token
     // console.log(`${workerData.obj.id} hello`)
 
-    axios.get(`https://truthbet.com/api/m/settings/limit`, {
-        headers: {
-            Authorization: `Bearer ${workerData.obj.token}`
-        }
-    })
-        .then(res => {
-            let userConfig = res.data.userConfig
-            if (userConfig.package == 'rookie') {
-                minBet = 100
-                maxBet = 5000
-            } else if (userConfig.package == 'medium') {
-                minBet = 200
-                maxBet = 10000
-            }
-        })
-        .catch(error => {
-            // console.log(error)
-        })
+    // axios.get(`https://truthbet.com/api/m/settings/limit`, {
+    //     headers: {
+    //         Authorization: `Bearer ${workerData.obj.token}`
+    //     }
+    // })
+    //     .then(res => {
+    //         let userConfig = res.data.userConfig
+    //         if (userConfig.package == 'rookie') {
+    //             minBet = 100
+    //             maxBet = 5000
+    //         } else if (userConfig.package == 'medium') {
+    //             minBet = 200
+    //             maxBet = 10000
+    //         }
+    //     })
+    //     .catch(error => {
+    //         // console.log(error)
+    //     })
     // callback method is defined to receive data from main thread
     let cb = (err, result) => {
         if (err) return console.error(err);

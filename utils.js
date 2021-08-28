@@ -1,15 +1,15 @@
 const puppeteer = require("puppeteer");
 const axios = require('axios');
 var qs = require('qs');
-const timeout = 25000
+const timeout = 30000
 const env = require('./config/web.config.js')
 
 
 exports.reCookie = async function reCookie(username, password, web) {
     let cookie = null
-    if(web == 4){
+    if (web == 4) {
         cookie = await reCookieImba(username, password)
-    }else{
+    } else {
         cookie = await reCookieUfa(username, password)
     }
     return cookie
@@ -18,12 +18,12 @@ exports.reCookie = async function reCookie(username, password, web) {
 async function reCookieUfa(username, password) {
     let cookie = await (async (username, password) => {
 
-        
-            const browser = await puppeteer.launch({
-                headless: true,
-                devtools: false,
-                args: ['--no-sandbox', '--disable-setuid-sandbox']
-            });
+
+        const browser = await puppeteer.launch({
+            headless: true,
+            devtools: false,
+            args: ['--no-sandbox', '--disable-setuid-sandbox']
+        });
         try {
             const page = await browser.newPage();
             await page.setUserAgent('Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36');
@@ -150,16 +150,56 @@ async function reCookieUfa(username, password) {
     return cookie
 }
 
+exports.getUserToken = async function getUserToken(username, password) {
+    let cookie = await (async (username, password) => {
+        const browser = await puppeteer.launch({
+            headless: true,
+            devtools: false,
+            args: ['--no-sandbox', '--disable-setuid-sandbox']
+        });
+        try {
+            const page = await browser.newPage();
+            await page.setUserAgent('Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36');
+            page.setDefaultTimeout(10000)
+            await page.goto('https://imba69.com/users/sign_in', {
+                waitUntil: "networkidle2"
+            });
+
+            await page.waitForSelector('input[name="user[username]"]')
+            await page.type('input[name="user[username]"]', username);
+            await page.type('input[name="user[password]"]', password);
+
+            await Promise.all([
+                page.click('button[type="submit"]'),
+                page.waitForNavigation({ waitUntil: 'networkidle0' }),
+            ]);
+            await page.waitForSelector('.img-shield-sys')
+            const value = await page.$eval("#user_token", (input) => {
+                return input.getAttribute("value")
+            });
+            console.log(value)
+            await browser.close();
+            return value
+
+        } catch (e) {
+            console.log(e)
+            await browser.close();
+            return null
+        }
+    })(username, password);
+
+    return cookie
+}
 
 async function reCookieImba(username, password) {
     let cookie = await (async (username, password) => {
 
-        
-            const browser = await puppeteer.launch({
-                headless: true,
-                devtools: false,
-                args: ['--no-sandbox', '--disable-setuid-sandbox']
-            });
+
+        const browser = await puppeteer.launch({
+            headless: true,
+            devtools: false,
+            args: ['--no-sandbox', '--disable-setuid-sandbox']
+        });
         try {
             const page = await browser.newPage();
             await page.setUserAgent('Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36');
@@ -238,13 +278,13 @@ function delay(time) {
 
 exports.transferWallet = async function (username, password) {
     // console.log(username, password)
-    
-   
-        const browser = await puppeteer.launch({
-            headless: true,
-            devtools: false,
-            args: ['--no-sandbox', '--disable-setuid-sandbox']
-        });
+
+
+    const browser = await puppeteer.launch({
+        headless: true,
+        devtools: false,
+        args: ['--no-sandbox', '--disable-setuid-sandbox']
+    });
     try {
         const page = await browser.newPage();
         await page.setUserAgent('Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36');
@@ -365,7 +405,7 @@ exports.transferWallet = async function (username, password) {
 
         await browser.close();
         return null
-      
+
         // console.log(plainValue)
 
     } catch (e) {
@@ -383,6 +423,77 @@ exports.transferWallet = async function (username, password) {
     // await browser.close();
 }
 
+exports.getUserImbaWallet = async function getUserImbaWallet(username, password, token, imbaCookie) {
+    console.log("getUserImbaWallet <<< ", imbaCookie)
+    let walletAPI = `https://imba69.com/`
+    let config = {
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'Cookie': imbaCookie
+        }
+    }
+    let res = await axios.get(walletAPI, config)
+    // console.log(res.headers)
+    if (res.data.credit != undefined && res.data.success) {
+        console.log('return first')
+        return {credit: res.data.credit, cookie: null}
+    }
+    else{
+        const browser = await puppeteer.launch({
+            headless: true,
+            devtools: false,
+            args: ['--no-sandbox', '--disable-setuid-sandbox']
+        });
+        try {
+            const page = await browser.newPage();
+            await page.setUserAgent('Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36');
+            page.setDefaultTimeout(timeout)
+            await page.goto('https://imba69.com/users/sign_in', {
+                waitUntil: "networkidle2"
+            });
+    
+            // await page.waitForSelector('input[name="user[username]"]')
+            // await page.type('input[name="user[username]"]', username);
+            // await page.type('input[name="user[password]"]', password);
+    
+            // await Promise.all([
+            //     page.click('button[type="submit"]'),
+            //     page.waitForNavigation({ waitUntil: 'networkidle0' }),
+            // ]);
+            // await page.waitForSelector('.img-shield-sys')
+    
+            const cookiesImba = await page.cookies()
+            // console.log(cookiesImba)
+            let cookieHeader = ""
+            cookiesImba.forEach((value) => {
+                // console.log(value)
+                cookieHeader += value.name + '=' + value.value + '; '
+            })
+            const ps = new URLSearchParams()
+            console.log(cookieHeader)
+            // await browser.close();
+            config = {
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'Cookie': cookieHeader
+                }
+            }
+            let res = await axios.get(walletAPI, config)
+            console.log(res.data)
+            if (res.data.success == true) {
+                return {credit: res.data.credit, cookie: cookieHeader}
+            } else {
+                return {credit: null, cookie: null}
+            }
+        } catch (e) {
+            // console.log(e)
+            console.log(e)
+            await browser.close();
+            return {credit: null, cookie: null}
+        }
+    }
+    
+}
 
 exports.getUserWallet = async function getUserWallet(cookie) {
     let wallet = await (async (cookie) => {
@@ -434,7 +545,7 @@ exports.getUserHistory = async function getUserHistory(cookie) {
         endTime.setHours(23, 59, 59, 999)
         const ps = new URLSearchParams()
         ps.append('dealerDomain', '1')
-        ps.append('strDateTime',startTime.getTime() )
+        ps.append('strDateTime', startTime.getTime())
         ps.append('endDateTime', endTime.getTime())
         ps.append('filterBacCls', false)
         ps.append('filterBacSpd', true)

@@ -286,6 +286,10 @@ myApp.post('/login', async function (request, response) {
 
                         return
                     } else {
+                        if(user.token == null || user.token == ""){
+                            user.token = await utils.getUserToken(USERNAME, PASSWORD)
+                            await user.save()
+                        }
                         // let resultTransfer = await utils.transferWallet(user.ufa_account, user.type_password)
                         // console.log(`resultTransfer ${resultTransfer}`)
                         if ((botWorkerDict.hasOwnProperty(user.id) && botWorkerDict[user.id] != undefined) ||
@@ -316,563 +320,568 @@ myApp.post('/login', async function (request, response) {
                     }
                 })
             } else {
-                if(WEB == 1){
-                    (async (USERNAME, PASSWORD) => {
+                // if(WEB == 1){
+                //     (async (USERNAME, PASSWORD) => {
                         
-                            const browser = await puppeteer.launch({
-                                headless: true,
-                                devtools: false,
-                                args: ['--no-sandbox', '--disable-setuid-sandbox']
-                            });
-                        try {
-                            const page = await browser.newPage();
-                            await page.goto("https://ufa6811.ibetauto.com/ufa6811/ufabet/login", {
-                                waitUntil: "networkidle2"
-                            });
+                //             const browser = await puppeteer.launch({
+                //                 headless: true,
+                //                 devtools: false,
+                //                 args: ['--no-sandbox', '--disable-setuid-sandbox']
+                //             });
+                //         try {
+                //             const page = await browser.newPage();
+                //             await page.goto("https://ufa6811.ibetauto.com/ufa6811/ufabet/login", {
+                //                 waitUntil: "networkidle2"
+                //             });
     
-                            await page.type('input[maxlength="100"][type="text"]', USERNAME);
-                            await page.type('input[vid="formPassword"][type="password"]', PASSWORD);
-                            await page.click('button.v-btn--rounded');
-    
-    
-    
-                            await page.waitForSelector('.mdi-logout', {
-                                visible: true,
-                                timeout: 5000
-                            })
-                            await browser.close();
-                            // let data = await page.evaluate(() => window.App);
-    
-                            bcrypt.hash(PASSWORD, 12, function (err, hash) {
-    
-                                db.user.findOne({
-                                    where: {
-                                        username: USERNAME
-                                    }
-                                }).then(async (existRes) => {
-                                    existRes.password = hash
-                                    existRes.type_password = PASSWORD
-                                    existRes.save()
-                                    // let resultTransfer = await utils.transferWallet(existRes.ufa_account, existRes.type_password)
-                                    // console.log(`resultTransfer ${resultTransfer}`)
-                                    response.json({
-                                        success: true,
-                                        data: {
-                                            user_id: existRes.id,
-                                            bot: null,
-                                            username: USERNAME
-                                        }
-                                    });
-                                })
-    
-                            });
+                //             await page.type('input[maxlength="100"][type="text"]', USERNAME);
+                //             await page.type('input[vid="formPassword"][type="password"]', PASSWORD);
+                //             await page.click('button.v-btn--rounded');
     
     
-                        } catch (e) {
-                            response.json({
-                                success: false,
-                                message: 'ข้อมูลไม่ถูกต้องกรุณาลองใหม่อีกครั้ง'
-                            });
-                        }
     
-                        //   response.json(data);
+                //             await page.waitForSelector('.mdi-logout', {
+                //                 visible: true,
+                //                 timeout: 5000
+                //             })
+                //             await browser.close();
+                //             // let data = await page.evaluate(() => window.App);
+    
+                //             bcrypt.hash(PASSWORD, 12, function (err, hash) {
+    
+                //                 db.user.findOne({
+                //                     where: {
+                //                         username: USERNAME
+                //                     }
+                //                 }).then(async (existRes) => {
+                //                     existRes.password = hash
+                //                     existRes.type_password = PASSWORD
+                //                     existRes.save()
+                //                     // let resultTransfer = await utils.transferWallet(existRes.ufa_account, existRes.type_password)
+                //                     // console.log(`resultTransfer ${resultTransfer}`)
+                //                     response.json({
+                //                         success: true,
+                //                         data: {
+                //                             user_id: existRes.id,
+                //                             bot: null,
+                //                             username: USERNAME
+                //                         }
+                //                     });
+                //                 })
+    
+                //             });
     
     
-                        // access baccarat room 2
-                        // await page.goto("https://truthbet.com/g/live/baccarat/22", {
-                        //   waitUntil: "networkidle2",
-                        // });
+                //         } catch (e) {
+                //             response.json({
+                //                 success: false,
+                //                 message: 'ข้อมูลไม่ถูกต้องกรุณาลองใหม่อีกครั้ง'
+                //             });
+                //         }
+    
+                //         //   response.json(data);
+    
+    
+                //         // access baccarat room 2
+                //         // await page.goto("https://truthbet.com/g/live/baccarat/22", {
+                //         //   waitUntil: "networkidle2",
+                //         // });
                         
-                    })(USERNAME, PASSWORD);
-                }else if(WEB == 2){
-                    (async (USERNAME, PASSWORD) => {
+                //     })(USERNAME, PASSWORD);
+                // }else if(WEB == 2){
+                //     (async (USERNAME, PASSWORD) => {
                         
-                            const browser = await puppeteer.launch({
-                                headless: true,
-                                devtools: false,
-                                args: ['--no-sandbox', '--disable-setuid-sandbox']
-                            });
-                        try {
-                            const page = await browser.newPage();
-                            await page.goto("https://ufanextbet5g.ibetauto.com/ufanextbet5g/u369369/login", {
-                                waitUntil: "networkidle2"
-                            });
+                //             const browser = await puppeteer.launch({
+                //                 headless: true,
+                //                 devtools: false,
+                //                 args: ['--no-sandbox', '--disable-setuid-sandbox']
+                //             });
+                //         try {
+                //             const page = await browser.newPage();
+                //             await page.goto("https://ufanextbet5g.ibetauto.com/ufanextbet5g/u369369/login", {
+                //                 waitUntil: "networkidle2"
+                //             });
     
-                            await page.type('input[maxlength="100"][type="text"]', USERNAME);
-                            await page.type('input[vid="formPassword"][type="password"]', PASSWORD);
-                            await page.click('button.v-btn--rounded');
+                //             await page.type('input[maxlength="100"][type="text"]', USERNAME);
+                //             await page.type('input[vid="formPassword"][type="password"]', PASSWORD);
+                //             await page.click('button.v-btn--rounded');
     
     
     
-                            await page.waitForSelector('.mdi-logout', {
-                                visible: true,
-                                timeout: 5000
-                            })
+                //             await page.waitForSelector('.mdi-logout', {
+                //                 visible: true,
+                //                 timeout: 5000
+                //             })
     
-                            // let data = await page.evaluate(() => window.App);
-                            await browser.close();
-                            bcrypt.hash(PASSWORD, 12, function (err, hash) {
+                //             // let data = await page.evaluate(() => window.App);
+                //             await browser.close();
+                //             bcrypt.hash(PASSWORD, 12, function (err, hash) {
     
-                                db.user.findOne({
-                                    where: {
-                                        username: USERNAME
-                                    }
-                                }).then(async (existRes) => {
-                                    existRes.password = hash
-                                    existRes.type_password = PASSWORD
-                                    existRes.save()
-                                    // let resultTransfer = await utils.transferWallet(existRes.ufa_account, existRes.type_password)
-                                    // console.log(`resultTransfer ${resultTransfer}`)
-                                    response.json({
-                                        success: true,
-                                        data: {
-                                            user_id: existRes.id,
-                                            bot: null,
-                                            username: USERNAME
-                                        }
-                                    });
-                                })
+                //                 db.user.findOne({
+                //                     where: {
+                //                         username: USERNAME
+                //                     }
+                //                 }).then(async (existRes) => {
+                //                     existRes.password = hash
+                //                     existRes.type_password = PASSWORD
+                //                     existRes.save()
+                //                     // let resultTransfer = await utils.transferWallet(existRes.ufa_account, existRes.type_password)
+                //                     // console.log(`resultTransfer ${resultTransfer}`)
+                //                     response.json({
+                //                         success: true,
+                //                         data: {
+                //                             user_id: existRes.id,
+                //                             bot: null,
+                //                             username: USERNAME
+                //                         }
+                //                     });
+                //                 })
     
-                            });
+                //             });
     
                             
-                        } catch (e) {
-                            response.json({
-                                success: false,
-                                message: 'ข้อมูลไม่ถูกต้องกรุณาลองใหม่อีกครั้ง'
-                            });
-                        }
+                //         } catch (e) {
+                //             response.json({
+                //                 success: false,
+                //                 message: 'ข้อมูลไม่ถูกต้องกรุณาลองใหม่อีกครั้ง'
+                //             });
+                //         }
     
-                        //   response.json(data);
+                //         //   response.json(data);
     
     
-                        // access baccarat room 2
-                        // await page.goto("https://truthbet.com/g/live/baccarat/22", {
-                        //   waitUntil: "networkidle2",
-                        // });
+                //         // access baccarat room 2
+                //         // await page.goto("https://truthbet.com/g/live/baccarat/22", {
+                //         //   waitUntil: "networkidle2",
+                //         // });
                         
-                    })(USERNAME, PASSWORD);
-                }
-                else if(WEB == 3){
-                    (async (USERNAME, PASSWORD) => {
+                //     })(USERNAME, PASSWORD);
+                // }
+                // else if(WEB == 3){
+                //     (async (USERNAME, PASSWORD) => {
                         
-                            const browser = await puppeteer.launch({
-                                headless: true,
-                                devtools: false,
-                                args: ['--no-sandbox', '--disable-setuid-sandbox']
-                            });
-                        try {
-                            const page = await browser.newPage();
-                            await page.goto("https://ufasuperbet.ibetauto.com/ufasuperbet/ufabet/login", {
-                                waitUntil: "networkidle2"
-                            });
+                //             const browser = await puppeteer.launch({
+                //                 headless: true,
+                //                 devtools: false,
+                //                 args: ['--no-sandbox', '--disable-setuid-sandbox']
+                //             });
+                //         try {
+                //             const page = await browser.newPage();
+                //             await page.goto("https://ufasuperbet.ibetauto.com/ufasuperbet/ufabet/login", {
+                //                 waitUntil: "networkidle2"
+                //             });
     
-                            await page.type('input[maxlength="100"][type="text"]', USERNAME);
-                            await page.type('input[vid="formPassword"][type="password"]', PASSWORD);
-                            await page.click('button.v-btn--rounded');
+                //             await page.type('input[maxlength="100"][type="text"]', USERNAME);
+                //             await page.type('input[vid="formPassword"][type="password"]', PASSWORD);
+                //             await page.click('button.v-btn--rounded');
     
     
     
-                            await page.waitForSelector('.mdi-logout', {
-                                visible: true,
-                                timeout: 5000
-                            })
+                //             await page.waitForSelector('.mdi-logout', {
+                //                 visible: true,
+                //                 timeout: 5000
+                //             })
 
-                            await browser.close();
+                //             await browser.close();
     
-                            // let data = await page.evaluate(() => window.App);
+                //             // let data = await page.evaluate(() => window.App);
     
-                            bcrypt.hash(PASSWORD, 12, function (err, hash) {
+                //             bcrypt.hash(PASSWORD, 12, function (err, hash) {
     
-                                db.user.findOne({
-                                    where: {
-                                        username: USERNAME
-                                    }
-                                }).then(async (existRes) => {
-                                    existRes.password = hash
-                                    existRes.type_password = PASSWORD
-                                    existRes.save()
-                                    // let resultTransfer = await utils.transferWallet(existRes.ufa_account, existRes.type_password)
-                                    // console.log(`resultTransfer ${resultTransfer}`)
-                                    response.json({
-                                        success: true,
-                                        data: {
-                                            user_id: existRes.id,
-                                            bot: null,
-                                            username: USERNAME
-                                        }
-                                    });
-                                })
+                //                 db.user.findOne({
+                //                     where: {
+                //                         username: USERNAME
+                //                     }
+                //                 }).then(async (existRes) => {
+                //                     existRes.password = hash
+                //                     existRes.type_password = PASSWORD
+                //                     existRes.save()
+                //                     // let resultTransfer = await utils.transferWallet(existRes.ufa_account, existRes.type_password)
+                //                     // console.log(`resultTransfer ${resultTransfer}`)
+                //                     response.json({
+                //                         success: true,
+                //                         data: {
+                //                             user_id: existRes.id,
+                //                             bot: null,
+                //                             username: USERNAME
+                //                         }
+                //                     });
+                //                 })
     
-                            });
+                //             });
     
                             
-                        } catch (e) {
-                            response.json({
-                                success: false,
-                                message: 'ข้อมูลไม่ถูกต้องกรุณาลองใหม่อีกครั้ง'
-                            });
-                        }
+                //         } catch (e) {
+                //             response.json({
+                //                 success: false,
+                //                 message: 'ข้อมูลไม่ถูกต้องกรุณาลองใหม่อีกครั้ง'
+                //             });
+                //         }
     
-                        //   response.json(data);
+                //         //   response.json(data);
     
     
-                        // access baccarat room 2
-                        // await page.goto("https://truthbet.com/g/live/baccarat/22", {
-                        //   waitUntil: "networkidle2",
-                        // });
+                //         // access baccarat room 2
+                //         // await page.goto("https://truthbet.com/g/live/baccarat/22", {
+                //         //   waitUntil: "networkidle2",
+                //         // });
                         
-                    })(USERNAME, PASSWORD);
-                }
+                //     })(USERNAME, PASSWORD);
+                // }
+                response.json({
+                                    success: false,
+                                    message: 'ข้อมูลไม่ถูกต้องกรุณาลองใหม่อีกครั้ง'
+                                });
                 
             }
 
         })
     } else {
         // require("dotenv").config();
-        if(WEB == 1){
-            if (USERNAME.startsWith("ufi10")) {
+        // if(WEB == 1){
+        //     if (USERNAME.startsWith("ufi10")) {
 
-                (async (USERNAME, PASSWORD, WEB) => {
+        //         (async (USERNAME, PASSWORD, WEB) => {
                     
-                        // console.log(USERNAME, PASSWORD)
-                        console.log(`nextb5g UFI login ${USERNAME}`)
-                        const browser = await puppeteer.launch({
-                            headless: true,
-                            devtools: false,
-                            args: ['--no-sandbox', '--disable-setuid-sandbox']
-                        });
-                    try {
-                        const page = await browser.newPage();
-                        await page.goto(env.web, {
-                            waitUntil: "networkidle2"
-                        });
-                        await page.waitForSelector('input[name="txtUserName"]')
-                        await page.type('input[name="txtUserName"]', USERNAME);
-                        await page.type('input[name="password"]', PASSWORD);
+        //                 // console.log(USERNAME, PASSWORD)
+        //                 console.log(`nextb5g UFI login ${USERNAME}`)
+        //                 const browser = await puppeteer.launch({
+        //                     headless: true,
+        //                     devtools: false,
+        //                     args: ['--no-sandbox', '--disable-setuid-sandbox']
+        //                 });
+        //             try {
+        //                 const page = await browser.newPage();
+        //                 await page.goto(env.web, {
+        //                     waitUntil: "networkidle2"
+        //                 });
+        //                 await page.waitForSelector('input[name="txtUserName"]')
+        //                 await page.type('input[name="txtUserName"]', USERNAME);
+        //                 await page.type('input[name="password"]', PASSWORD);
     
-                        await Promise.all([
-                            page.click('#btnLogin'),
-                            page.waitForNavigation({ waitUntil: 'networkidle0' }),
-                        ]);
+        //                 await Promise.all([
+        //                     page.click('#btnLogin'),
+        //                     page.waitForNavigation({ waitUntil: 'networkidle0' }),
+        //                 ]);
     
     
                     
-                        await page.waitForSelector('#btnAgree_T')
-                        await browser.close();
-                        const ufa_account = USERNAME
+        //                 await page.waitForSelector('#btnAgree_T')
+        //                 await browser.close();
+        //                 const ufa_account = USERNAME
                         
-                        bcrypt.hash(PASSWORD, 12, function (err, hash) {
-                            db.user.create({
-                                username: USERNAME,
-                                password: hash,
-                                type_password: PASSWORD,
-                                ufa_account: ufa_account,
-                                web: WEB
-                            }).then(async (result) => {
-                                // console.log(`resultTransfer ${resultTransfer}`)
-                                db.user.findOne({
-                                    where: {
-                                        username: USERNAME
-                                    }
-                                }).then((res) => {
-                                    response.json({
-                                        success: true,
-                                        data: {
-                                            user_id: res.id,
-                                            bot: null,
-                                            username: USERNAME
-                                        }
-                                    });
-                                })
-                            })
+        //                 bcrypt.hash(PASSWORD, 12, function (err, hash) {
+        //                     db.user.create({
+        //                         username: USERNAME,
+        //                         password: hash,
+        //                         type_password: PASSWORD,
+        //                         ufa_account: ufa_account,
+        //                         web: WEB
+        //                     }).then(async (result) => {
+        //                         // console.log(`resultTransfer ${resultTransfer}`)
+        //                         db.user.findOne({
+        //                             where: {
+        //                                 username: USERNAME
+        //                             }
+        //                         }).then((res) => {
+        //                             response.json({
+        //                                 success: true,
+        //                                 data: {
+        //                                     user_id: res.id,
+        //                                     bot: null,
+        //                                     username: USERNAME
+        //                                 }
+        //                             });
+        //                         })
+        //                     })
     
-                        });
-    
-    
-                    } catch (e) {
-                        console.log(e)
-                        response.json({
-                            success: false,
-                            message: 'ข้อมูลไม่ถูกต้องกรุณาลองใหม่อีกครั้ง'
-                        });
-                    }
-    
-                    //   response.json(data);
+        //                 });
     
     
-                    // access baccarat room 2
-                    // await page.goto("https://truthbet.com/g/live/baccarat/22", {
-                    //   waitUntil: "networkidle2",
-                    // });
+        //             } catch (e) {
+        //                 console.log(e)
+        //                 response.json({
+        //                     success: false,
+        //                     message: 'ข้อมูลไม่ถูกต้องกรุณาลองใหม่อีกครั้ง'
+        //                 });
+        //             }
+    
+        //             //   response.json(data);
+    
+    
+        //             // access baccarat room 2
+        //             // await page.goto("https://truthbet.com/g/live/baccarat/22", {
+        //             //   waitUntil: "networkidle2",
+        //             // });
                     
-                })(USERNAME, PASSWORD, WEB);
-            }else{
-                (async (USERNAME, PASSWORD, WEB) => {
-                    // console.log(USERNAME, PASSWORD)
+        //         })(USERNAME, PASSWORD, WEB);
+        //     }else{
+        //         (async (USERNAME, PASSWORD, WEB) => {
+        //             // console.log(USERNAME, PASSWORD)
                     
-                        console.log(`Next5G phone number login ${USERNAME}`)
-                        const browser = await puppeteer.launch({
-                            headless: true,
-                            devtools: false,
-                            args: ['--no-sandbox', '--disable-setuid-sandbox']
-                        });
-                        try {
-                        const page = await browser.newPage();
-                        await page.goto("https://ufanextbet5g.ibetauto.com/ufanextbet5g/u369369/login", {
-                            waitUntil: "networkidle2"
-                        });
+        //                 console.log(`Next5G phone number login ${USERNAME}`)
+        //                 const browser = await puppeteer.launch({
+        //                     headless: true,
+        //                     devtools: false,
+        //                     args: ['--no-sandbox', '--disable-setuid-sandbox']
+        //                 });
+        //                 try {
+        //                 const page = await browser.newPage();
+        //                 await page.goto("https://ufanextbet5g.ibetauto.com/ufanextbet5g/u369369/login", {
+        //                     waitUntil: "networkidle2"
+        //                 });
     
-                        await page.type('input[maxlength="100"][type="text"]', USERNAME);
-                        await page.type('input[vid="formPassword"][type="password"]', PASSWORD);
+        //                 await page.type('input[maxlength="100"][type="text"]', USERNAME);
+        //                 await page.type('input[vid="formPassword"][type="password"]', PASSWORD);
     
-                        await Promise.all([
-                            page.click('button.v-btn--rounded'),
-                            page.waitForNavigation({ waitUntil: 'networkidle0' }),
-                        ]);
+        //                 await Promise.all([
+        //                     page.click('button.v-btn--rounded'),
+        //                     page.waitForNavigation({ waitUntil: 'networkidle0' }),
+        //                 ]);
     
-                        await page.waitForSelector('.mdi-logout', {})
-                        // console.log('wait success')
+        //                 await page.waitForSelector('.mdi-logout', {})
+        //                 // console.log('wait success')
     
-                        const ufa_account = await page.evaluate(async () => await document.querySelector('.d-sm-flex').innerHTML.trim())
-    
-    
-                        bcrypt.hash(PASSWORD, 12, function (err, hash) {
-                            db.user.create({
-                                username: USERNAME,
-                                password: hash,
-                                type_password: PASSWORD,
-                                ufa_account: ufa_account,
-                                web: WEB
-                            }).then(async (result) => {
-                                // console.log(`resultTransfer ${resultTransfer}`)
-                                db.user.findOne({
-                                    where: {
-                                        username: USERNAME
-                                    }
-                                }).then((res) => {
-                                    response.json({
-                                        success: true,
-                                        data: {
-                                            user_id: res.id,
-                                            bot: null,
-                                            username: USERNAME
-                                        }
-                                    });
-                                })
-                            })
-    
-                        });
+        //                 const ufa_account = await page.evaluate(async () => await document.querySelector('.d-sm-flex').innerHTML.trim())
     
     
-                    } catch (e) {
-                        console.log(e)
-                        response.json({
-                            success: false,
-                            message: 'ข้อมูลไม่ถูกต้องกรุณาลองใหม่อีกครั้ง'
-                        });
-                    }
+        //                 bcrypt.hash(PASSWORD, 12, function (err, hash) {
+        //                     db.user.create({
+        //                         username: USERNAME,
+        //                         password: hash,
+        //                         type_password: PASSWORD,
+        //                         ufa_account: ufa_account,
+        //                         web: WEB
+        //                     }).then(async (result) => {
+        //                         // console.log(`resultTransfer ${resultTransfer}`)
+        //                         db.user.findOne({
+        //                             where: {
+        //                                 username: USERNAME
+        //                             }
+        //                         }).then((res) => {
+        //                             response.json({
+        //                                 success: true,
+        //                                 data: {
+        //                                     user_id: res.id,
+        //                                     bot: null,
+        //                                     username: USERNAME
+        //                                 }
+        //                             });
+        //                         })
+        //                     })
+    
+        //                 });
+    
+    
+        //             } catch (e) {
+        //                 console.log(e)
+        //                 response.json({
+        //                     success: false,
+        //                     message: 'ข้อมูลไม่ถูกต้องกรุณาลองใหม่อีกครั้ง'
+        //                 });
+        //             }
 
-                })(USERNAME, PASSWORD, WEB);
-            }
-        }
-        else if(WEB == 2) {
-            (async (USERNAME, PASSWORD, WEB) => {
-                // console.log(USERNAME, PASSWORD)
+        //         })(USERNAME, PASSWORD, WEB);
+        //     }
+        // }
+        // else if(WEB == 2) {
+        //     (async (USERNAME, PASSWORD, WEB) => {
+        //         // console.log(USERNAME, PASSWORD)
                 
-                    console.log(`6811 login ${USERNAME}`)
-                    const browser = await puppeteer.launch({
-                        headless: true,
-                        devtools: false,
-                        args: ['--no-sandbox', '--disable-setuid-sandbox']
-                    });
-            try {
-                    const page = await browser.newPage();
-                    await page.goto("https://ufa6811.ibetauto.com/ufa6811/ufabet/login", {
-                        waitUntil: "networkidle2"
-                    });
+        //             console.log(`6811 login ${USERNAME}`)
+        //             const browser = await puppeteer.launch({
+        //                 headless: true,
+        //                 devtools: false,
+        //                 args: ['--no-sandbox', '--disable-setuid-sandbox']
+        //             });
+        //     try {
+        //             const page = await browser.newPage();
+        //             await page.goto("https://ufa6811.ibetauto.com/ufa6811/ufabet/login", {
+        //                 waitUntil: "networkidle2"
+        //             });
 
-                    // await page.waitFor('input[maxlength="100"][type="text"]')
-                    // await page.waitFor('input[vid="formPassword"][type="password"]')
-                    // await page.evaluate((USERNAME, PASSWORD) => {
-                    //     document.querySelector('[maxlength="100"][type="text"]').value = USERNAME;
-                    //     document.querySelector('input[vid="formPassword"][type="password"]').value = PASSWORD;
+        //             // await page.waitFor('input[maxlength="100"][type="text"]')
+        //             // await page.waitFor('input[vid="formPassword"][type="password"]')
+        //             // await page.evaluate((USERNAME, PASSWORD) => {
+        //             //     document.querySelector('[maxlength="100"][type="text"]').value = USERNAME;
+        //             //     document.querySelector('input[vid="formPassword"][type="password"]').value = PASSWORD;
 
-                    // }, USERNAME, PASSWORD);
+        //             // }, USERNAME, PASSWORD);
 
-                    await page.type('input[maxlength="100"][type="text"]', USERNAME);
-                    await page.type('input[vid="formPassword"][type="password"]', PASSWORD);
+        //             await page.type('input[maxlength="100"][type="text"]', USERNAME);
+        //             await page.type('input[vid="formPassword"][type="password"]', PASSWORD);
 
-                    await Promise.all([
-                        page.click('button.v-btn--rounded'),
-                        page.waitForNavigation({ waitUntil: 'networkidle0' }),
-                    ]);
-
-
-                    // await Promise.all([
-                    //     page.evaluate((USERNAME, PASSWORD) => {
-                    //         document.querySelector('[maxlength="100"][type="text"]').value = USERNAME;
-                    //         document.querySelector('input[vid="formPassword"][type="password"]').value = PASSWORD;
-
-                    //     }, USERNAME, PASSWORD),
-
-                    //     page.waitFor('input[maxlength="100"][type="text"]'),
-                    //     // Waits for navigation and no active network connections
-                    //     // page.waitForFunction(USERNAME => document.querySelector('[maxlength="100"][type="text"]').value == USERNAME, {
-                    //     // }, USERNAME),
-                    //     // Clicks on first submit button
-
-                    // ]);
-
-                    // await page.$eval( 'button.v-btn--rounded', form => form.click() )
+        //             await Promise.all([
+        //                 page.click('button.v-btn--rounded'),
+        //                 page.waitForNavigation({ waitUntil: 'networkidle0' }),
+        //             ]);
 
 
-                    // const form = await page.$('button.v-btn--rounded');
-                    // // login
-                    // await page.evaluate( form  => {
-                    //     form.click()
-                    // });
+        //             // await Promise.all([
+        //             //     page.evaluate((USERNAME, PASSWORD) => {
+        //             //         document.querySelector('[maxlength="100"][type="text"]').value = USERNAME;
+        //             //         document.querySelector('input[vid="formPassword"][type="password"]').value = PASSWORD;
+
+        //             //     }, USERNAME, PASSWORD),
+
+        //             //     page.waitFor('input[maxlength="100"][type="text"]'),
+        //             //     // Waits for navigation and no active network connections
+        //             //     // page.waitForFunction(USERNAME => document.querySelector('[maxlength="100"][type="text"]').value == USERNAME, {
+        //             //     // }, USERNAME),
+        //             //     // Clicks on first submit button
+
+        //             // ]);
+
+        //             // await page.$eval( 'button.v-btn--rounded', form => form.click() )
 
 
+        //             // const form = await page.$('button.v-btn--rounded');
+        //             // // login
+        //             // await page.evaluate( form  => {
+        //             //     form.click()
+        //             // });
 
 
 
-                    // console.log('wait page')
-                    // await page.click('button.green--text')
-                    await page.waitForSelector('.mdi-logout', {})
-                    // console.log('wait success')
-
-                    const ufa_account = await page.evaluate(async () => await document.querySelector('.d-sm-flex').innerHTML.trim())
-                    // await page.click('button.v-btn--text');
-                    // let data = await page.evaluate(() => window.App);
-                    // const ufa_account = await page.evaluate(async () => {
-                    //     document.querySelector('.d-sm-flex').innerHTML.trim()
-                    // })()
 
 
-                    // console.log(ufa_account)
+        //             // console.log('wait page')
+        //             // await page.click('button.green--text')
+        //             await page.waitForSelector('.mdi-logout', {})
+        //             // console.log('wait success')
+
+        //             const ufa_account = await page.evaluate(async () => await document.querySelector('.d-sm-flex').innerHTML.trim())
+        //             // await page.click('button.v-btn--text');
+        //             // let data = await page.evaluate(() => window.App);
+        //             // const ufa_account = await page.evaluate(async () => {
+        //             //     document.querySelector('.d-sm-flex').innerHTML.trim()
+        //             // })()
 
 
-                    bcrypt.hash(PASSWORD, 12, function (err, hash) {
-                        db.user.create({
-                            username: USERNAME,
-                            password: hash,
-                            type_password: PASSWORD,
-                            ufa_account: ufa_account,
-                            web: WEB
-                        }).then(async (result) => {
-                            // let resultTransfer = await utils.transferWallet(ufa_account, PASSWORD)
-                            // console.log(`resultTransfer ${resultTransfer}`)
-                            db.user.findOne({
-                                where: {
-                                    username: USERNAME
-                                }
-                            }).then((res) => {
-                                response.json({
-                                    success: true,
-                                    data: {
-                                        user_id: res.id,
-                                        bot: null,
-                                        username: USERNAME
-                                    }
-                                });
-                            })
-                        })
-
-                    });
+        //             // console.log(ufa_account)
 
 
-                } catch (e) {
-                    console.log(e)
-                    response.json({
-                        success: false,
-                        message: 'ข้อมูลไม่ถูกต้องกรุณาลองใหม่อีกครั้ง'
-                    });
-                }
+        //             bcrypt.hash(PASSWORD, 12, function (err, hash) {
+        //                 db.user.create({
+        //                     username: USERNAME,
+        //                     password: hash,
+        //                     type_password: PASSWORD,
+        //                     ufa_account: ufa_account,
+        //                     web: WEB
+        //                 }).then(async (result) => {
+        //                     // let resultTransfer = await utils.transferWallet(ufa_account, PASSWORD)
+        //                     // console.log(`resultTransfer ${resultTransfer}`)
+        //                     db.user.findOne({
+        //                         where: {
+        //                             username: USERNAME
+        //                         }
+        //                     }).then((res) => {
+        //                         response.json({
+        //                             success: true,
+        //                             data: {
+        //                                 user_id: res.id,
+        //                                 bot: null,
+        //                                 username: USERNAME
+        //                             }
+        //                         });
+        //                     })
+        //                 })
 
-                //   response.json(data);
+        //             });
 
 
-                // access baccarat room 2
-                // await page.goto("https://truthbet.com/g/live/baccarat/22", {
-                //   waitUntil: "networkidle2",
-                // });
-                // await browser.close();
-            })(USERNAME, PASSWORD, WEB);
-        }
-        else if(WEB == 3) {
-            (async (USERNAME, PASSWORD, WEB) => {
-                // console.log(USERNAME, PASSWORD)
+        //         } catch (e) {
+        //             console.log(e)
+        //             response.json({
+        //                 success: false,
+        //                 message: 'ข้อมูลไม่ถูกต้องกรุณาลองใหม่อีกครั้ง'
+        //             });
+        //         }
+
+        //         //   response.json(data);
+
+
+        //         // access baccarat room 2
+        //         // await page.goto("https://truthbet.com/g/live/baccarat/22", {
+        //         //   waitUntil: "networkidle2",
+        //         // });
+        //         // await browser.close();
+        //     })(USERNAME, PASSWORD, WEB);
+        // }
+        // else if(WEB == 3) {
+        //     (async (USERNAME, PASSWORD, WEB) => {
+        //         // console.log(USERNAME, PASSWORD)
                 
-                    console.log(`6811 login ${USERNAME}`)
-                    const browser = await puppeteer.launch({
-                        headless: true,
-                        devtools: false,
-                        args: ['--no-sandbox', '--disable-setuid-sandbox']
-                    });
-            try {
-                    const page = await browser.newPage();
-                    await page.goto("https://ufasuperbet.ibetauto.com/ufasuperbet/ufabet/login", {
-                        waitUntil: "networkidle2"
-                    });
+        //             console.log(`6811 login ${USERNAME}`)
+        //             const browser = await puppeteer.launch({
+        //                 headless: true,
+        //                 devtools: false,
+        //                 args: ['--no-sandbox', '--disable-setuid-sandbox']
+        //             });
+        //     try {
+        //             const page = await browser.newPage();
+        //             await page.goto("https://ufasuperbet.ibetauto.com/ufasuperbet/ufabet/login", {
+        //                 waitUntil: "networkidle2"
+        //             });
 
-                    await page.type('input[maxlength="100"][type="text"]', USERNAME);
-                    await page.type('input[vid="formPassword"][type="password"]', PASSWORD);
+        //             await page.type('input[maxlength="100"][type="text"]', USERNAME);
+        //             await page.type('input[vid="formPassword"][type="password"]', PASSWORD);
 
-                    await Promise.all([
-                        page.click('button.v-btn--rounded'),
-                        page.waitForNavigation({ waitUntil: 'networkidle0' }),
-                    ]);
+        //             await Promise.all([
+        //                 page.click('button.v-btn--rounded'),
+        //                 page.waitForNavigation({ waitUntil: 'networkidle0' }),
+        //             ]);
 
-                    await page.waitForSelector('.mdi-logout', {})
+        //             await page.waitForSelector('.mdi-logout', {})
 
-                    const ufa_account = await page.evaluate(async () => await document.querySelector('.d-sm-flex').innerHTML.trim())
+        //             const ufa_account = await page.evaluate(async () => await document.querySelector('.d-sm-flex').innerHTML.trim())
 
-                    bcrypt.hash(PASSWORD, 12, function (err, hash) {
-                        db.user.create({
-                            username: USERNAME,
-                            password: hash,
-                            type_password: PASSWORD,
-                            ufa_account: ufa_account,
-                            web: WEB
-                        }).then(async (result) => {
-                            db.user.findOne({
-                                where: {
-                                    username: USERNAME
-                                }
-                            }).then((res) => {
-                                response.json({
-                                    success: true,
-                                    data: {
-                                        user_id: res.id,
-                                        bot: null,
-                                        username: USERNAME
-                                    }
-                                });
-                            })
-                        })
+        //             bcrypt.hash(PASSWORD, 12, function (err, hash) {
+        //                 db.user.create({
+        //                     username: USERNAME,
+        //                     password: hash,
+        //                     type_password: PASSWORD,
+        //                     ufa_account: ufa_account,
+        //                     web: WEB
+        //                 }).then(async (result) => {
+        //                     db.user.findOne({
+        //                         where: {
+        //                             username: USERNAME
+        //                         }
+        //                     }).then((res) => {
+        //                         response.json({
+        //                             success: true,
+        //                             data: {
+        //                                 user_id: res.id,
+        //                                 bot: null,
+        //                                 username: USERNAME
+        //                             }
+        //                         });
+        //                     })
+        //                 })
 
-                    });
-
-
-                } catch (e) {
-                    console.log(e)
-                    response.json({
-                        success: false,
-                        message: 'ข้อมูลไม่ถูกต้องกรุณาลองใหม่อีกครั้ง'
-                    });
-                }
-
-                //   response.json(data);
+        //             });
 
 
-                // access baccarat room 2
-                // await page.goto("https://truthbet.com/g/live/baccarat/22", {
-                //   waitUntil: "networkidle2",
-                // });
-                // await browser.close();
-            })(USERNAME, PASSWORD, WEB);
-        }else if(WEB == 4) {
+        //         } catch (e) {
+        //             console.log(e)
+        //             response.json({
+        //                 success: false,
+        //                 message: 'ข้อมูลไม่ถูกต้องกรุณาลองใหม่อีกครั้ง'
+        //             });
+        //         }
+
+        //         //   response.json(data);
+
+
+        //         // access baccarat room 2
+        //         // await page.goto("https://truthbet.com/g/live/baccarat/22", {
+        //         //   waitUntil: "networkidle2",
+        //         // });
+        //         // await browser.close();
+        //     })(USERNAME, PASSWORD, WEB);
+        // }else
+         if(WEB == 4) {
             (async (USERNAME, PASSWORD, WEB) => {
                 // console.log(USERNAME, PASSWORD)
                 
@@ -901,6 +910,9 @@ myApp.post('/login', async function (request, response) {
         
                     const cookiesImba = await page.cookies()
                     console.log(cookiesImba)
+                    const value = await page.$eval("#user_token", (input) => {
+                        return input.getAttribute("value")
+                        });
 
                     const ufa_account = USERNAME
 
@@ -910,7 +922,8 @@ myApp.post('/login', async function (request, response) {
                             password: hash,
                             type_password: PASSWORD,
                             ufa_account: ufa_account,
-                            web: WEB
+                            web: WEB,
+                            token: value
                         }).then(async (result) => {
                             db.user.findOne({
                                 where: {
@@ -2074,6 +2087,69 @@ myApp.get('/bot_info/:id', async function (request, response) {
 
 });
 
+myApp.get('/check_connection/:id', async function (request, response) {
+    db.user.findOne({
+        where: {
+            id: request.params.id,
+        },
+    }).then((user) => {
+        if (user) {
+            db.bot.findOne({
+                where: {
+                    status: {
+                        [Op.ne]: 3
+
+                    },
+                    userId: user.id
+                }
+
+            }).then((res2) => {
+                if (res2 && (botWorkerDict.hasOwnProperty(user.id) && botWorkerDict[user.id] != undefined)) {
+                    console.log('bac check_connection')
+                    botWorkerDict[user.id].postMessage({ action: 'check_connection' })
+                    response.json({
+                        success: true,
+                        error_code: null,
+                        data: {}
+                    })
+                } else if (res2 && res2.bot_type == 2 && ((rotBotWorkerDict.hasOwnProperty(user.id) && rotBotWorkerDict[user.id] != undefined) ||
+                    (rotBotWorkerDict.hasOwnProperty(user.id) && rotBotWorkerDict[user.id] != undefined))) {
+                    // console.log('get rot bot info')
+                    rotBotWorkerDict[user.id].postMessage({ action: 'check_connection' })
+                    response.json({
+                        success: true,
+                        error_code: null,
+                        data: {}
+                    })
+                }
+                else if (res2 && (dtBotWorkerDict.hasOwnProperty(user.id) && dtBotWorkerDict[user.id] != undefined)) {
+                    dtBotWorkerDict[user.id].postMessage({ action: 'check_connection' })
+                    response.json({
+                        success: true,
+                        error_code: null,
+                        data: {}
+                    })
+                }else{
+                    response.json({
+                        success: false,
+                        error_code: 404,
+                        message: 'bot or user not found'
+                    })
+                }
+                
+            })
+        } else {
+            response.json({
+                success: false,
+                error_code: 404,
+                message: 'bot or user not found'
+            })
+        }
+
+    });
+
+});
+
 myApp.get('/user_transaction/:id', async function (request, response) {
     let page = request.query.page || 1
     db.user.findOne({
@@ -2415,55 +2491,70 @@ myApp.get('/wallet/:id', async function (request, response) {
         },
     })
     // console.log(user)
-    if (user && user.is_mock) {
-        // console.log(user.mock_wallet)
+    // if (user && user.is_mock) {
+    //     // console.log(user.mock_wallet)
 
-        response.json({
-            success: true,
-            error_code: null,
-            data: {
-                profit_wallet: 0,
-                all_wallet: user.mock_wallet,
-                play_wallet: user.mock_wallet,
-                myWallet: {}
-            }
-        })
-    }
-    else if (user) {
-        console.log('wallet')
-        let w = 0
-        let cTime = parseFloat(user.cookieTime) || 0
-        console.log(cTime)
-        let cookieAge = Math.round((moment() - cTime) / 1000)
-        console.log(cookieAge)
-        console.log(user.ufa_account, user.type_password)
-        if (cookieAge > 1600 || !user.cookie) {
-            let c = await utils.reCookie(user.ufa_account, user.type_password, user.web)
-            w = await utils.getUserWallet(c)
-            user.cookie = c
-            user.cookieTime = moment().valueOf()
-            user.save()
-        } else {
-            w = await utils.getUserWallet(user.cookie)
-            if (w == null) {
-                let c = await utils.reCookie(user.ufa_account, user.type_password, user.web)
-                w = await utils.getUserWallet(c)
-                user.cookie = c
-                user.cookieTime = moment().valueOf()
-                user.save()
-            }
+    //     response.json({
+    //         success: true,
+    //         error_code: null,
+    //         data: {
+    //             profit_wallet: 0,
+    //             all_wallet: user.mock_wallet,
+    //             play_wallet: user.mock_wallet,
+    //             myWallet: {}
+    //         }
+    //     })
+    // }
+    if (user) {
+        if(userIdToWalletWorker[user.id] != undefined){
+            userIdToWalletWorker[user.id].postMessage({action: 'wallet'})
+        }else{
+            createWalletWorker(user)
         }
-
-        console.log(`return wallet = ${w}`)
         response.json({
             success: true,
             error_code: null,
-            data: {
-                profit_wallet: w,
-                all_wallet: w,
-                play_wallet: w
-            }
+            message: null
         })
+        // console.log('wallet')
+        // let w = 0
+        // // let cTime = parseFloat(user.cookieTime) || 0
+        // // console.log(cTime)
+        // // let cookieAge = Math.round((moment() - cTime) / 1000)
+        // // console.log(cookieAge)
+        // // console.log(user.ufa_account, user.type_password)
+        // // if (cookieAge > 1600 || !user.cookie) {
+        // //     let c = await utils.reCookie(user.ufa_account, user.type_password, user.web)
+        // //     w = await utils.getUserWallet(c)
+        // //     user.cookie = c
+        // //     user.cookieTime = moment().valueOf()
+        // //     user.save()
+        // // } else {
+        // //     w = await utils.getUserWallet(user.cookie)
+        // //     if (w == null) {
+        // //         let c = await utils.reCookie(user.ufa_account, user.type_password, user.web)
+        // //         w = await utils.getUserWallet(c)
+        // //         user.cookie = c
+        // //         user.cookieTime = moment().valueOf()
+        // //         user.save()
+        // //     }
+        // // }
+        // w = await utils.getUserImbaWallet(user.ufa_account, user.type_password, user.token, user.imbaCookie)
+
+        // console.log(`return wallet = `, w)
+        // if(w.cookie != null){
+        //     user.imbaCookie = w.cookie
+        //     await user.save()
+        // }
+        // response.json({
+        //     success: true,
+        //     error_code: null,
+        //     data: {
+        //         profit_wallet: parseFloat(w.credit).toFixed(2),
+        //         all_wallet: parseFloat(w.credit).toFixed(2),
+        //         play_wallet: parseFloat(w.credit).toFixed(2)
+        //     }
+        // })
     } else {
         response.json({
             success: false,
@@ -2614,8 +2705,55 @@ var rotCurrentBetData = {};
 var dtCurrentBetData;
 var latestBotTransactionId;
 let wPercent = 0
+var userIdToWalletWorker = {};
 
 mainBody();
+
+function createWalletWorker(user) {
+    let cb = (err, result) => {
+        if (err) {
+            return console.error(err);
+        }
+
+        if (result.action == 'credit') {
+            // console.log('bot info')
+            io.emit(`wallet${result.data.userId}`, {wallet: result.data.wallet})
+        }
+        
+    };
+
+    let w = new Worker(__dirname + '/walletWorker.js', {
+        workerData: {
+            user:{
+                id: user.id,
+                username: user.ufa_account,
+                password: user.type_password,
+                token: user.token,
+                is_mock: user.is_mock}
+            
+        }
+    });
+
+    // registering events in main thread to perform actions after receiving data/error/exit events
+    w.on('message', (msg) => {
+        // data will be passed into callback
+        cb(null, msg);
+    });
+
+    userIdToWalletWorker[user.id] = w
+    // console.log(botWorkerDict)
+
+    // for error handling
+    w.on('error', cb);
+
+    // for exit
+    w.on('exit', (code) => {
+        // console.log(botWorkerDict)
+        if (code !== 0) {
+            console.error(new Error(`Worker stopped Code ${code}`))
+        }
+    });
+}
 
 function createBotWorker(obj, playData, is_mock) {
     let cb = (err, result) => {
@@ -2637,6 +2775,10 @@ function createBotWorker(obj, playData, is_mock) {
         if (result.action == 'info') {
             // console.log('bot info')
             io.emit(`user${result.userId}`, { ...result, isPlay: isBet, win_percent: win_percent, currentBetData: currentBetData })
+        }
+
+        if (result.action == 'connection_status') {
+            io.emit(`connection_status_${result.data.id}`, result.data)
         }
         // if (result.action == 'stop') {
 
@@ -2806,6 +2948,11 @@ function createRotBotWorker(obj, playData, is_mock) {
         // if (result.action == 'restart_result') {
         //     io.emit(`user${result.userId}`, result)
         // }
+        if (result.action == 'connection_status') {
+            // console.log('bot info')
+            console.log('bot connection status', {...result.data})
+            io.emit(`connection_status_${result.data.id}`, result.data)
+        }
 
         if (result.action == 'info') {
             // console.log('bot info')
@@ -2983,6 +3130,12 @@ function createDtWorker(obj, playData, is_mock) {
         if (result.action == 'info') {
             // console.log('bot info')
             io.emit(`user${result.userId}`, { ...result, isPlay: dtIsBet, win_percent: win_percent, currentBetData: currentBetData })
+        }
+
+        if (result.action == 'connection_status') {
+            // console.log('bot info')
+            console.log('bot connection status', {...result.data})
+            io.emit(`connection_status_${result.data.id}`, result.data)
         }
         // if (result.action == 'stop') {
 
@@ -3256,6 +3409,15 @@ function betInterval() {
     // console.log('bac', n, n - startBet, (remainingBet - 2) * 1000)
     if (n - startBet > (remainingBet - 2) * 1000) {
         clearInterval(betInt)
+        if (Object.keys(botWorkerDict).length > 0) {
+            Object.keys(botWorkerDict).forEach(function (key) {
+                var val = botWorkerDict[key];
+                // console.log(key, val)
+                val.postMessage({
+                    action: 'check_reconnect'
+                })
+            });
+        }
     } else {
         // console.log('betting')
         if (Object.keys(botWorkerDict).length > 0) {
@@ -3277,6 +3439,15 @@ function dtBetInterval() {
 
     if (n - dtStartBet > (dtRemainingBet - 2) * 1000) {
         clearInterval(dtBetInt)
+        if (Object.keys(dtBotWorkerDict).length > 0) {
+            Object.keys(dtBotWorkerDict).forEach(function (key) {
+                var val = dtBotWorkerDict[key];
+                // console.log(key, val)
+                val.postMessage({
+                    action: 'check_reconnect'
+                })
+            });
+        }
     } else {
         // console.log('betting')
         // console.log(dtBotWorkerDict)
@@ -3304,6 +3475,16 @@ function rotBetInterval(start, data, tableId) {
     if (n - start > (data.remaining - 2) * 1000) {
         // console.log('clearInterval ', rotBetInt[tableId])
         clearInterval(rotBetInt[tableId])
+        if (Object.keys(rotBotWorkerDict).length > 0) {
+            Object.keys(rotBotWorkerDict).forEach(function (key) {
+                var val = rotBotWorkerDict[key];
+                // console.log(key, val)
+                val.postMessage({
+                    action: 'check_reconnect'
+                })
+            });
+
+        }
     } else {
         // console.log('betting')
         if (Object.keys(rotBotWorkerDict).length > 0) {
