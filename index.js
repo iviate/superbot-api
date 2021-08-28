@@ -2492,7 +2492,7 @@ myApp.get('/wallet/:id', async function (request, response) {
     })
 
     if((user.token == null || user.token == "") && !user.is_mock){
-        user.token = await utils.getUserToken(USERNAME, PASSWORD)
+        user.token = await utils.getUserToken(user.ufa_account, user.type_password)
         await user.save()
     }
     // console.log(user)
