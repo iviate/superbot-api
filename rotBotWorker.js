@@ -50,6 +50,11 @@ async function checkAndReconnect() {
         return
     }
 
+    if(is_mock){
+        is_connect = true
+        return
+    }
+
     const user = await db.user.findOne({
         where: {
             id: botObj.userId

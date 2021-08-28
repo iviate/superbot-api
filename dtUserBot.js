@@ -43,12 +43,17 @@ async function checkAndReconnect() {
     if (is_reconnect) {
         return
     }
-
+    if(is_mock){
+        is_connect = true
+        return
+    }
     const user = await db.user.findOne({
         where: {
             id: botObj.userId
         },
     })
+
+    
     let cTime = parseFloat(user.cookieTime) || 0
     let cookieAge = Math.round((moment() - cTime) / 1000)
     console.log(cookieAge)
