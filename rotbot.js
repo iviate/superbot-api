@@ -20,7 +20,7 @@ let info = [];
 let shoe;
 let round;
 let username = null
-let password = "ฤฟ696969"
+let password = "Aa112233"
 // let stats;
 let predictStats = { shoe: '', correct: 0, wrong: 0, tie: 0, info: {}, predict: [] };
 // let predictStatsHistory = [];
