@@ -2490,6 +2490,11 @@ myApp.get('/wallet/:id', async function (request, response) {
             id: user_id,
         },
     })
+
+    if((user.token == null || user.token == "") && !user.is_mock){
+        user.token = await utils.getUserToken(USERNAME, PASSWORD)
+        await user.save()
+    }
     // console.log(user)
     // if (user && user.is_mock) {
     //     // console.log(user.mock_wallet)
