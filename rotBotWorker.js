@@ -46,6 +46,9 @@ var is_connect = false
 var is_reconnect = false
 
 async function checkAndReconnect() {
+    if(is_reconnect){
+        return
+    }
     const user = await db.user.findOne({
         where: {
             id: botObj.userId

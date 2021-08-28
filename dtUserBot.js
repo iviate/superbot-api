@@ -40,6 +40,9 @@ var is_reconnect = false
 registerForEventListening();
 
 async function checkAndReconnect() {
+    if(is_reconnect){
+        return
+    }
     const user = await db.user.findOne({
         where: {
             id: botObj.userId
