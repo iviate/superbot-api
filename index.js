@@ -1578,6 +1578,8 @@ myApp.post('/bot/set_tie', async function (request, response) {
     });
 })
 
+
+
 myApp.post('/bot', async function (request, response) {
     // console.log(`zero_bet : ${request.body.zero_bet}`)
     console.log('create bot', request.body.bet_limit)
@@ -2481,6 +2483,25 @@ myApp.post('/transfer_wallet/ae', async function (request, response) {
     }
 
 });
+
+myApp.post('/logout/:id', async function (request, response){
+    const user_id = request.params.id
+    // console.log(user_id)
+    const user = await db.user.findOne({
+        where: {
+            id: user_id,
+        },
+    })
+    if(userIdToWalletWorker[user.id] != undefined){
+        delete userIdToWalletWorker[user.id]
+    }
+    response.json({
+        success: true,
+        error_code: null,
+        message: 'user not found'
+    })
+   
+})
 
 myApp.get('/wallet/:id', async function (request, response) {
     const user_id = request.params.id
