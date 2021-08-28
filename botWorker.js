@@ -57,6 +57,7 @@ async function checkAndReconnect() {
         is_connect = false
         while (!is_connect) {
             console.log('reconnect')
+            console.log(user.ufa_account, user.type_password, user.web)
             let c = await utils.reCookie(user.ufa_account, user.type_password, user.web)
             if (c != null) {
                 user.cookie = c
