@@ -3,11 +3,13 @@ const axios = require('axios');
 var qs = require('qs');
 const timeout = 30000
 const env = require('./config/web.config.js')
-
+var FormData = require('form-data');
+var request = require('request');
 
 exports.reCookie = async function reCookie(username, password, web) {
     let cookie = null
     if (web == 4) {
+        console.log('web = 4')
         cookie = await reCookieImba(username, password)
     } else {
     }
@@ -190,6 +192,93 @@ exports.getUserToken = async function getUserToken(username, password) {
     return cookie
 }
 
+async function reCookieImbaNew(username, password) {
+    console.log('recookie imba')
+    let cookie = await (async (username, password) => {
+        var options = {
+            'method': 'POST',
+            'url': 'https://imba69.com/users/sign_in',
+            formData: {
+                'user[username]': username,
+                'user[password]': password
+            }
+        };
+        request(options, function (error, response) {
+            if (error) throw new Error(error);
+            // console.log(response.headers["set-cookie"]);
+            var data = new FormData();
+            data.append('user[username]', username);
+            data.append('user[password]', password);
+
+            var config = {
+                method: 'post',
+                url: 'https://imba69.com/users/sign_in',
+                headers: {
+                    'Cookie': response.headers["set-cookie"].join(),
+                    ...data.getHeaders()
+                },
+                data: data
+            };
+
+            axios(config)
+                .then(function (response) {
+                    console.log(response.headers['set-cookie']);
+                    var config = {
+                        method: 'get',
+                        url: 'https://imba69.com/member/gamelink?vendor=sexy&game_id=undefined&game_code=undefined&mobile=false',
+                        headers: {
+                            'Cookie': response.headers['set-cookie'].join()
+                        }
+                    };
+
+                    axios(config)
+                        .then(async function (response) {
+
+                            const browser = await puppeteer.launch({
+                                headless: true,
+                                devtools: false,
+                                args: ['--no-sandbox', '--disable-setuid-sandbox']
+                            });
+
+                            const page2 = await browser.newPage();
+                            // await page2.setUserAgent('Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36');
+                            page2.setDefaultTimeout(timeout)
+                            await page2.goto(response.data.data, {
+                                waitUntil: "networkidle2"
+                            });
+
+                            await page2.waitForSelector('#playerInfo')
+                            const cookies = await page2.cookies()
+                            // console.log(cookies)
+
+                            let cookieHeader2 = ''
+                            cookies.forEach((value) => {
+                                cookieHeader2 += value.name + '=' + value.value + '; '
+                            })
+
+                            console.log(cookieHeader2)
+                            await browser.close()
+                            return cookieHeader2
+                           
+
+                        })
+                        .catch(function (error) {
+                            console.log(error);
+                            return null
+                        });
+                })
+                .catch(function (error) {
+                    console.log(error);
+                    return null
+                });
+        });
+
+
+    })(username, password);
+
+    return cookie
+}
+
 async function reCookieImba(username, password) {
     let cookie = await (async (username, password) => {
 
@@ -199,71 +288,72 @@ async function reCookieImba(username, password) {
             devtools: false,
             args: ['--no-sandbox', '--disable-setuid-sandbox']
         });
-        try {
-            const page = await browser.newPage();
-            await page.setUserAgent('Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36');
-            page.setDefaultTimeout(timeout)
-            await page.goto('https://imba69.com/users/sign_in', {
-                waitUntil: "networkidle2"
-            });
+        // try {
+        const page = await browser.newPage();
+        await page.setUserAgent('Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36');
+        page.setDefaultTimeout(timeout)
+        await page.goto('https://imba69.com/users/sign_in', {
+            waitUntil: "networkidle2"
+        });
 
-            await page.waitForSelector('input[name="user[username]"]')
-            await page.type('input[name="user[username]"]', username);
-            await page.type('input[name="user[password]"]', password);
+        await page.waitForSelector('input[name="user[username]"]')
+        await page.type('input[name="user[username]"]', username);
+        await page.type('input[name="user[password]"]', password);
 
-            await Promise.all([
-                page.click('button[type="submit"]'),
-                page.waitForNavigation({ waitUntil: 'networkidle0' }),
-            ]);
-            await page.waitForSelector('.img-shield-sys')
+        await Promise.all([
+            page.click('button[type="submit"]'),
+            page.waitForNavigation({ waitUntil: 'networkidle0' }),
+        ]);
+        await page.waitForSelector('.img-shield-sys')
 
-            const cookiesImba = await page.cookies()
-            // console.log(cookiesImba)
-            let cookieHeader = ""
-            cookiesImba.forEach((value) => {
-                // console.log(value)
-                cookieHeader += value.name + '=' + value.value + '; '
-            })
-            const ps = new URLSearchParams()
-            // console.log(cookieHeader)
-            const URL = "https://imba69.com/member/gamelink?vendor=sexy&game_id=undefined&game_code=undefined&mobile=false"
-            const config = {
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    'Cookie': cookieHeader
-                }
+        const cookiesImba = await page.cookies()
+        // console.log(cookiesImba)
+        let cookieHeader = ""
+        cookiesImba.forEach((value) => {
+            // console.log(value)
+            cookieHeader += value.name + '=' + value.value + '; '
+        })
+        const ps = new URLSearchParams()
+        // console.log(cookieHeader)
+        const URL = "https://imba69.com/member/gamelink?vendor=sexy&game_id=undefined&game_code=undefined&mobile=false"
+        const config = {
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'Cookie': cookieHeader
             }
-
-
-
-            let res = await axios.get(URL, config)
-            // console.log(res.data)
-            const page2 = await browser.newPage();
-            await page2.setUserAgent('Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36');
-            page2.setDefaultTimeout(timeout)
-            await page2.goto(res.data.data, {
-                waitUntil: "networkidle2"
-            });
-
-            await page2.waitForSelector('#playerInfo')
-            const cookies = await page2.cookies()
-            // console.log(cookies)
-
-            let cookieHeader2 = ''
-            cookies.forEach((value) => {
-                cookieHeader2 += value.name + '=' + value.value + '; '
-            })
-
-
-            console.log(cookieHeader2)
-            await browser.close();
-            return cookieHeader2
-
-        } catch (e) {
-            console.log(e)
-            await browser.close();
-            return null
         }
+
+
+
+        let res = await axios.get(URL, config)
+        // console.log(res.data)
+        const page2 = await browser.newPage();
+        await page2.setUserAgent('Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36');
+        page2.setDefaultTimeout(timeout)
+        await page2.goto(res.data.data, {
+            waitUntil: "networkidle2"
+        });
+
+        await page2.waitForSelector('#playerInfo')
+        const cookies = await page2.cookies()
+        // console.log(cookies)
+
+        let cookieHeader2 = ''
+        cookies.forEach((value) => {
+            cookieHeader2 += value.name + '=' + value.value + '; '
+        })
+
+
+        console.log(cookieHeader2)
+        await browser.close();
+        return cookieHeader2
+
+        // } 
+        // catch (e) {
+        //     console.log(e)
+        //     await browser.close();
+        //     return null
+        // }
     })(username, password);
 
     return cookie
@@ -435,9 +525,9 @@ exports.getUserImbaWallet = async function getUserImbaWallet(username, password,
     // console.log(res.headers)
     if (res.data.credit != undefined && res.data.success) {
         console.log('return first')
-        return {credit: res.data.credit, cookie: null}
+        return { credit: res.data.credit, cookie: null }
     }
-    else{
+    else {
         const browser = await puppeteer.launch({
             headless: true,
             devtools: false,
@@ -450,17 +540,17 @@ exports.getUserImbaWallet = async function getUserImbaWallet(username, password,
             await page.goto('https://imba69.com/users/sign_in', {
                 waitUntil: "networkidle2"
             });
-    
+
             // await page.waitForSelector('input[name="user[username]"]')
             // await page.type('input[name="user[username]"]', username);
             // await page.type('input[name="user[password]"]', password);
-    
+
             // await Promise.all([
             //     page.click('button[type="submit"]'),
             //     page.waitForNavigation({ waitUntil: 'networkidle0' }),
             // ]);
             // await page.waitForSelector('.img-shield-sys')
-    
+
             const cookiesImba = await page.cookies()
             // console.log(cookiesImba)
             let cookieHeader = ""
@@ -480,18 +570,18 @@ exports.getUserImbaWallet = async function getUserImbaWallet(username, password,
             let res = await axios.get(walletAPI, config)
             console.log(res.data)
             if (res.data.success == true) {
-                return {credit: res.data.credit, cookie: cookieHeader}
+                return { credit: res.data.credit, cookie: cookieHeader }
             } else {
-                return {credit: null, cookie: null}
+                return { credit: null, cookie: null }
             }
         } catch (e) {
             // console.log(e)
             console.log(e)
             await browser.close();
-            return {credit: null, cookie: null}
+            return { credit: null, cookie: null }
         }
     }
-    
+
 }
 
 exports.getUserWallet = async function getUserWallet(cookie) {

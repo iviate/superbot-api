@@ -137,8 +137,13 @@ function registerForEventListening() {
 }
 
 async function inititalInfo() {
+    let reing = false
     while (cookie == null) {
+        if(reing){
+            continue
+        }
         try {
+            reing = true
             cookie = await utils.reCookie(username, password, 4)
             console.log(cookie)
             cookieTime = moment()
@@ -148,6 +153,7 @@ async function inititalInfo() {
                         Cookie: cookie
                     }
                 })
+            reing = false
             isReCookie = false
         } catch (e) {
             cookie = null
@@ -204,12 +210,17 @@ async function predictPlay() {
     }
     let cookieAge = Math.round((moment() - cookieTime) / 1000)
     // console.log(cookieAge)
+    let reing = false
     if (previousEventType === 'GP_NEW_GAME_START' && !isPlay && cookieAge > 1520) {
         cookie = null
         while (cookie == null) {
+            if (reing) {
+                continue
+            }
             try {
                 cookie = null
                 isReCookie = true
+                reing = true
                 cookie = await utils.reCookie(username, password, 4)
                 cookieTime = moment()
                 await axios.get(`https://bpweb.bikimex.net/player/singleRouTable.jsp?dm=1&t=${tableId}&title=1&sgt=6&hall=1`,
@@ -218,10 +229,12 @@ async function predictPlay() {
                             Cookie: cookie
                         }
                     })
+                reing = false
                 isReCookie = false
                 
             } catch (e) {
                 cookie = null
+                reing = false
                 continue
             }
         }

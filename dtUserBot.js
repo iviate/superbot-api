@@ -60,16 +60,23 @@ async function checkAndReconnect() {
     if (cookieAge > 1600 || !user.cookie) {
         is_reconnect = true
         is_connect = false
+        let reing = false
         while (!is_connect) {
+            if (reing) {
+                continue
+            }
             console.log('reconnect with time condition')
             console.log(user.ufa_account, user.type_password, user.web)
+            reing = true
             let c = await utils.reCookie(user.ufa_account, user.type_password, user.web)
+            reing = false
             if (c != null) {
                 user.cookie = c
                 user.cookieTime = moment().valueOf()
                 user.save()
                 is_connect = true
             }
+            
 
         }
         is_reconnect = false
@@ -80,10 +87,16 @@ async function checkAndReconnect() {
         if (balance == null) {
             is_reconnect = true
             is_connect = false
+            let reing = false
             while (!is_connect) {
+                if (reing) {
+                    continue
+                }
                 console.log('reconnect with logout condition')
                 console.log(user.ufa_account, user.type_password, user.web)
+                reing = true
                 let c = await utils.reCookie(user.ufa_account, user.type_password, user.web)
+                reing = false
                 if (c != null) {
                     user.cookie = c
                     user.cookieTime = moment().valueOf()

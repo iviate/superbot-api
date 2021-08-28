@@ -112,12 +112,17 @@ function registerForEventListening() {
 }
 
 async function inititalInfo() {
+    let reing = false
     while (cookie == null) {
-        try{
+        if (reing) {
+            continue
+        }
+        try {
+            reing = true
             cookie = await utils.reCookie(username, password, 4)
             console.log(cookie)
             cookieTime = moment()
-    
+
             console.log(`https://bpweb.bikimex.net/player/singleTable4.jsp?dm=1&t=${tableId}&title=1&sgt=0&hall=1`)
             await axios.get(`https://bpweb.bikimex.net/player/singleTable4.jsp?dm=1&t=${tableId}&title=1&sgt=0&hall=1`,
                 {
@@ -126,12 +131,14 @@ async function inititalInfo() {
                     }
                 })
             isReCookie = false
-        }catch(e){
+            reing = false
+        } catch (e) {
             cookie = null
             isReCookie = true
+            reing = false
         }
-        
-        
+
+
     }
     interval = setInterval(predictPlay, 2000);
 
@@ -178,12 +185,18 @@ async function predictPlay() {
         console.log(`table - ${tableId} reCookie`)
         return
     }
+    let reing = false
     let cookieAge = Math.round((moment() - cookieTime) / 1000)
     // console.log(cookieAge)
     if (previousEventType === 'GP_NEW_GAME_START' && !isPlay && cookieAge > 1620) {
         cookie = null
+
         while (cookie == null) {
+            if (reing) {
+                continue
+            }
             try {
+                reing = true
                 isReCookie = true
                 cookie = await utils.reCookie(username, password, 4)
                 cookieTime = moment()
@@ -193,17 +206,20 @@ async function predictPlay() {
                             Cookie: cookie
                         }
                     })
+                reing = false
                 isReCookie = false
             } catch (e) {
                 cookie = null
                 isReCookie = true
+                reing = false
+                
             }
         }
 
         return
     }
     let res = null
-    try{
+    try {
         let balanceAPI = "https://bpweb.bikimex.net/player/query/queryDealerEventV2"
         const ps = new URLSearchParams()
         ps.append('domainType', 1)
@@ -220,16 +236,21 @@ async function predictPlay() {
 
 
         res = await axios.post(balanceAPI, ps, config)
-    }catch (e) {
+    } catch (e) {
         return
     }
-    
+
     if (typeof res.data === 'object' && res !== null) {
         livePlaying(res.data)
     } else {
         cookie = null
+        reing = false
         while (cookie == null) {
+            if (reing) {
+                continue
+            }
             try {
+                reing = true
                 isReCookie = true
                 cookie = await utils.reCookie(username, password, 4)
                 cookieTime = moment()
@@ -239,10 +260,12 @@ async function predictPlay() {
                             Cookie: cookie
                         }
                     })
+                reing = false
                 isReCookie = false
             } catch (e) {
                 cookie = null
                 isReCookie = true
+                reing = false
             }
         }
 
@@ -372,7 +395,7 @@ async function livePlaying(data) {
                         win_percent = win_percent
                     }
 
-                    if(win_percent < 55){
+                    if (win_percent < 55) {
                         win_percent += 5
                     }
 
