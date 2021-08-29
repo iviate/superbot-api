@@ -290,7 +290,7 @@ function getBetVal() {
 
 async function bet(data) {
     table = data.table
-    console.log(status, betFailed, botObj.bet_side, botObj.is_infinite)
+    // console.log(status, betFailed, botObj.bet_side, botObj.is_infinite)
     if (betFailed) {
         return
     }
@@ -319,7 +319,7 @@ async function bet(data) {
     }
     else {
         // console.log(data)
-        console.log("bot start play")
+        // console.log("bot start play")
         let betVal = getBetVal()
         // console.log(`betVal : ${betVal}`)
         if (betVal < botObj.init_bet) {
