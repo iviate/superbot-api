@@ -1042,11 +1042,6 @@ async function registerForEventListening() {
             status = 1
             // betFailed = false
         }
-        if (result.action == 'check_connection') {
-            botObj.status = 1
-            status = 1
-            // betFailed = false
-        }
         if (result.action == 'stop') {
             // console.log('action stop')
             isStop = true
