@@ -45,7 +45,7 @@ registerForEventListening();
 var is_connect = false
 var is_reconnect = false
 
-async function checkAndReconnect() {
+async function checkAndReconnect(force=false) {
     if (is_reconnect) {
         return
     }
@@ -60,13 +60,12 @@ async function checkAndReconnect() {
             id: botObj.userId
         },
     })
-    let cTime = parseFloat(user.cookieTime) || 0
-    let cookieAge = Math.round((moment() - cTime) / 1000)
-    let reing = false
-    console.log(cookieAge)
-    if (cookieAge > 1600 || !user.cookie) {
+
+    if(force){
+        let reing = false
         is_reconnect = true
         is_connect = false
+        parentPort.postMessage({ action: 'connection_status', data: { status: is_connect, id: botObj.id } })
         while (!is_connect) {
             if(reing){
                 continue
@@ -85,19 +84,20 @@ async function checkAndReconnect() {
 
         }
         is_reconnect = false
-
-
-    } else {
-        let balance = await utils.getUserWallet(user.cookie)
-        if (balance == null) {
+    }else{
+        let cTime = parseFloat(user.cookieTime) || 0
+        let cookieAge = Math.round((moment() - cTime) / 1000)
+        let reing = false
+        console.log(cookieAge)
+        if (cookieAge > 1600 || !user.cookie) {
             is_reconnect = true
             is_connect = false
-            reing = false
+            parentPort.postMessage({ action: 'connection_status', data: { status: is_connect, id: botObj.id } })
             while (!is_connect) {
                 if(reing){
                     continue
                 }
-                console.log('reconnect with logout condition')
+                console.log('reconnect with time condition')
                 console.log(user.ufa_account, user.type_password, user.web)
                 reing = true
                 let c = await utils.reCookie(user.ufa_account, user.type_password, user.web)
@@ -108,13 +108,43 @@ async function checkAndReconnect() {
                     user.save()
                     is_connect = true
                 }
-
+    
             }
             is_reconnect = false
+    
+    
         } else {
-            is_connect = true
+            let balance = await utils.getUserWallet(user.cookie)
+            if (balance == null) {
+                is_reconnect = true
+                is_connect = false
+                reing = false
+                parentPort.postMessage({ action: 'connection_status', data: { status: is_connect, id: botObj.id } })
+                while (!is_connect) {
+                    if(reing){
+                        continue
+                    }
+                    console.log('reconnect with logout condition')
+                    console.log(user.ufa_account, user.type_password, user.web)
+                    reing = true
+                    let c = await utils.reCookie(user.ufa_account, user.type_password, user.web)
+                    reing = false
+                    if (c != null) {
+                        user.cookie = c
+                        user.cookieTime = moment().valueOf()
+                        user.save()
+                        is_connect = true
+                    }
+    
+                }
+                is_reconnect = false
+            } else {
+                is_connect = true
+            }
         }
     }
+
+    
     parentPort.postMessage({ action: 'connection_status', data: { status: is_connect, id: botObj.id } })
 }
 
@@ -417,7 +447,7 @@ async function bet(data) {
     } else if (status == 3) {
         // console.log(`bot ${workerData.obj.userId} stop`)
     } else {
-
+        console.log('rot start play')
         let betVal = getBetVal()
         // console.log(`betVal : ${betVal}`)
         if (betVal < botObj.init_bet) {
@@ -626,7 +656,7 @@ async function bet(data) {
             try{
                 res = await axios(config)
             }catch (e){
-
+                res = null
             }
             // console.log(res.data)
             if(res == null || res.data.status != 200) {
@@ -645,6 +675,7 @@ async function bet(data) {
                 }
                 current = { bot: data.bot, bet: realBet, shoe: data.shoe, round: data.round, table_id: data.table, betVal: betVal, playTurn: playTurn, botObj: botObj, is_opposite: is_opposite }
                 parentPort.postMessage({ action: 'bet_success', data: { ...data, betVal: betVal, current: current, botObj: botObj, turnover: turnover, bet: realBet } })
+                console.log(`${botObj.userId} rot bot roud ${data.round} bet success`)
                 betFailed = true
 
                 
@@ -1218,7 +1249,7 @@ async function registerForEventListening() {
     stopLoss = botObj.init_wallet - botObj.loss_threshold
     stopLossPercent = botObj.loss_percent
     token = workerData.obj.token
-    await checkAndReconnect()
+    await checkAndReconnect(false)
     if(botObj.bet_limit == "260903"){
         maxBet = 10000
     }
@@ -1256,7 +1287,10 @@ async function registerForEventListening() {
             checkConnection()
         }
         if (result.action == 'check_reconnect') {
-            checkAndReconnect()
+            checkAndReconnect(false)
+        }
+        if (result.action == 'force_reconnect') {
+            checkAndReconnect(true)
         }
         if (result.action == 'result_bet') {
             mapBotTypeAndBetSide = {

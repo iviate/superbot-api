@@ -6,7 +6,8 @@ const axios = require('axios');
 const puppeteer = require("puppeteer");
 const utils = require("./utils.js")
 const moment = require('moment-timezone');
-const rotConfig = require('./config/rot.config.js')
+const rotConfig = require('./config/rot.config.js');
+const e = require('express');
 
 
 let interval;
@@ -121,7 +122,7 @@ function registerForEventListening() {
             playRound = round + 1
             // betting(result.current)
         }
-        
+
 
 
         // //  setting up interval to call method to multiple with factor
@@ -139,7 +140,7 @@ function registerForEventListening() {
 async function inititalInfo() {
     let reing = false
     while (cookie == null) {
-        if(reing){
+        if (reing) {
             continue
         }
         try {
@@ -231,7 +232,7 @@ async function predictPlay() {
                     })
                 reing = false
                 isReCookie = false
-                
+
             } catch (e) {
                 cookie = null
                 reing = false
@@ -526,9 +527,11 @@ async function livePlaying(data) {
         //     return
         // }
         let remainBet = Math.max(WAITNG_TIME - Math.round((moment() - previousGameStartAt) / 1000), 0)
+
         setTimeout(function () {
             parentPort.postMessage({ action: 'start', remaining: remainBet, data: dataJson })
-        }, 9000)
+        }, 8000)
+
 
         let twozone = randomTwoZone()
         bot = {
@@ -556,21 +559,25 @@ async function livePlaying(data) {
             }
         } else {
             if (remainBet > 17) {
-
-                setTimeout(function () {
-                    parentPort.postMessage({
-                        action: 'bet', data: {
-                            bot: bot,
-                            table: tableId,
-                            shoe: shoe,
-                            round: dataJson.gameRound,
-                            game_id: dataJson.gameRound,
-                            remaining: remainBet,
-                            win_percent: winPercent,
-                            playList: ['RB', 'EO', 'SB', 'ZONE']
-                        }
-                    })
-                }, 10000)
+                if (dataJson.gameRound % 15 == 0 || dataJson.gameRound == 1) {
+                    console.log(">>>>>>>>>>> skip round <<<<<<<<<<<<<")
+                    parentPort.postMessage({ action: 'force_reconnect' })
+                } else {
+                    setTimeout(function () {
+                        parentPort.postMessage({
+                            action: 'bet', data: {
+                                bot: bot,
+                                table: tableId,
+                                shoe: shoe,
+                                round: dataJson.gameRound,
+                                game_id: dataJson.gameRound,
+                                remaining: remainBet,
+                                win_percent: winPercent,
+                                playList: ['RB', 'EO', 'SB', 'ZONE']
+                            }
+                        })
+                    }, 9000)
+                }
 
             } else {
                 // parentPort.postMessage({ action: 'played', status: 'FAILEO', playList: ['RB', 'EO', 'SB', 'ZONE'], table: workerData })
@@ -641,17 +648,21 @@ async function livePlaying(data) {
                 statCount.oneZoneWrong++;
             }
             console.log(status)
+          
+            if (dataJson.gameRound % 15 == 0 || dataJson.gameRound == 1) {
 
-
-            parentPort.postMessage({
-                action: 'played',
-                status: status,
-                stats: predictStats.predict[playCount - 1],
-                shoe: shoe,
-                table: tableId,
-                bot_type: 2,
-                playList: ['RB', 'EO', 'SB', 'ZONE']
-            })
+            }else{
+                parentPort.postMessage({
+                    action: 'played',
+                    status: status,
+                    stats: predictStats.predict[playCount - 1],
+                    shoe: shoe,
+                    table: tableId,
+                    bot_type: 2,
+                    playList: ['RB', 'EO', 'SB', 'ZONE']
+                })
+            }
+            
 
 
             bot = null

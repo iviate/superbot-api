@@ -4544,6 +4544,18 @@ function initiateRotWorker(table) {
 
             io.emit('bot', { action: 'play', data: result.data })
         }
+        if(result.action == 'force_reconnect'){
+            if (Object.keys(rotBotWorkerDict).length > 0) {
+                Object.keys(rotBotWorkerDict).forEach(function (key) {
+                    var val = rotBotWorkerDict[key];
+                    // console.log(key, val)
+                    val.postMessage({
+                        action: 'force_reconnect'
+                    })
+                });
+    
+            }
+        }
     };
 
     // start worker
