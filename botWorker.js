@@ -9,6 +9,8 @@ const utils = require("./utils.js")
 const moment = require('moment-timezone');
 var qs = require('qs');
 
+var betting = false
+
 let is_mock = false
 let interval;
 let systemData;
@@ -303,6 +305,10 @@ async function bet(data) {
         return
     }
 
+    if(betting){
+        return
+    }
+
     if (current.shoe == data.shoe && current.round == data.round) {
         betFailed = false
         return
@@ -318,6 +324,7 @@ async function bet(data) {
 
     }
     else {
+        betting = true
         // console.log(data)
         // console.log("bot start play")
         let betVal = getBetVal()
@@ -432,15 +439,18 @@ async function bet(data) {
                 console.log(res.data)
                 parentPort.postMessage({ action: 'bet_failed', botObj: botObj, error: res.data })
                 betFailed = false
+                betting = false
             }
             else if (res.data.status == 200) {
                 turnover += betVal
                 current = { bot: data.bot, bet: realBet, shoe: data.shoe, round: data.round, table_id: data.table, betVal: betVal, playTurn: playTurn, botObj: botObj, is_opposite: is_opposite }
                 parentPort.postMessage({ action: 'bet_success', data: { ...data, betVal: betVal, current: current, botObj: botObj, turnover: turnover, bet: realBet } })
                 betFailed = true
+                betting = false
             } else {
                 parentPort.postMessage({ action: 'bet_failed', botObj: botObj, error: res.data })
                 betFailed = false
+                betting = false
             }
 
 
@@ -514,7 +524,9 @@ async function bet(data) {
             parentPort.postMessage({ action: 'bet_success', data: { ...data, betVal: betVal, current: current, botObj: botObj, turnover: turnover, bet: realBet } })
             betFailed = true
             bet_time = Date.now()
+            betting = false
         }
+        betting = false
     }
 
 }

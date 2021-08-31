@@ -4535,7 +4535,7 @@ function initiateRotWorker(table) {
             rotStartBet = new Date().getTime()
             rotBetInt[result.data.table] = setInterval(function () {
                 rotBetInterval(rotStartBet, result.data, result.data.table);
-            }, 2000);
+            }, 3000);
 
             rotCurrentBetData[result.data.table] = result.data
             // rotIsBet = true;

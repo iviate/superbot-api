@@ -7,6 +7,7 @@ const e = require('express');
 const db = require('./app/models');
 const utils = require("./utils.js")
 const moment = require('moment-timezone');
+
 var qs = require('qs');
 var botCodeMap = {
     11: 'RB',
@@ -44,6 +45,7 @@ let botProfit = 0
 registerForEventListening();
 var is_connect = false
 var is_reconnect = false
+var betting = false
 
 async function checkAndReconnect(force=false) {
     if (is_reconnect) {
@@ -421,6 +423,10 @@ async function bet(data) {
         return
     }
 
+    if(betting){
+        return
+    }
+
     if (current.shoe == data.shoe && current.round == data.round) {
         betFailed = false
         return
@@ -447,6 +453,7 @@ async function bet(data) {
     } else if (status == 3) {
         // console.log(`bot ${workerData.obj.userId} stop`)
     } else {
+        betting = true
         console.log('rot start play')
         let betVal = getBetVal()
         // console.log(`betVal : ${betVal}`)
@@ -677,11 +684,13 @@ async function bet(data) {
                 parentPort.postMessage({ action: 'bet_success', data: { ...data, betVal: betVal, current: current, botObj: botObj, turnover: turnover, bet: realBet } })
                 console.log(`${botObj.userId} rot bot roud ${data.round} bet success`)
                 betFailed = true
+                betting = false
 
                 
             }else {
                 parentPort.postMessage({ action: 'bet_failed', botObj: botObj, error: res.data })
                 betFailed = false
+                betting = false
             }
 
         } else {
@@ -690,7 +699,10 @@ async function bet(data) {
             parentPort.postMessage({ action: 'bet_success', data: { ...data, betVal: betVal, current: current, botObj: botObj, turnover: turnover, bet: realBet } })
             betFailed = true
             bet_time = Date.now()
+            betting = false
         }
+
+        betting = false
     }
 
 }
