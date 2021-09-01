@@ -17,28 +17,28 @@ module.exports = (sequelize, Sequelize, DataTypes) => {
         type: DataTypes.INTEGER // 1 stable, 2 มาติงเกล, 3 ลาบูแชร์ 4 x system
       },
       profit_threshold: {
-        type: DataTypes.FLOAT.UNSIGNED,
+        type: DataTypes.FLOAT,
       },
       loss_threshold:{
-        type: DataTypes.FLOAT.UNSIGNED,
+        type: DataTypes.FLOAT,
       },
       profit_percent: {
-        type: DataTypes.FLOAT.UNSIGNED,
+        type: DataTypes.FLOAT,
       },
       loss_percent:{
-        type: DataTypes.FLOAT.UNSIGNED,
+        type: DataTypes.FLOAT,
       },
       init_wallet: {
-        type: DataTypes.FLOAT.UNSIGNED,
+        type: DataTypes.FLOAT,
       },
       init_bet: {
-        type: DataTypes.FLOAT.UNSIGNED,
+        type: DataTypes.FLOAT,
       },
       bet_side: {
         type: DataTypes.INTEGER, // 1 P/B , 2 ONLY P, 3 ONLY B, 11 R/B, 12 E/D, 13 S/B, 14 TWOZONE, 15 ONEZONE
       },
       max_turn: {
-        type: DataTypes.INTEGER.UNSIGNED,
+        type: DataTypes.INTEGER,
       },
       stats: {
         type: DataTypes.TEXT,
