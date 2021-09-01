@@ -334,7 +334,7 @@ async function livePlaying(data) {
     // }
     let previousGameStartAt = moment();
     let botChoice = ["BANKER", "PLAYER"]
-    // console.log(data.message)
+    console.log(data.message)
     let dataJson = JSON.parse(data.message)
     // console.log(dataJson)
     if (dataJson.eventType === "GP_NEW_GAME_START" && previousEventType !== "GP_NEW_GAME_START") {
