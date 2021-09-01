@@ -47,6 +47,18 @@ var is_connect = false
 var is_reconnect = false
 var betting = false
 
+var userSeToken = null
+var userSeTokenTime = 0
+
+async function getHistory(){
+    // console.log('get history <<< ', userSeToken)
+    if(userSeToken){
+        let w = await utils.getUserHistory(userSeToken)
+        parentPort.postMessage({ action: 'history', data: { history: w, id: botObj.userId } })
+    }
+    
+}
+
 async function checkAndReconnect(force=false) {
     if (is_reconnect) {
         return
@@ -78,20 +90,22 @@ async function checkAndReconnect(force=false) {
             let c = await utils.reCookie(user.ufa_account, user.type_password, user.web)
             reing = false
             if (c != null) {
-                user.cookie = c
-                user.cookieTime = moment().valueOf()
+                userSeToken = c
+                userSeTokenTime = moment().valueOf()
                 user.save()
                 is_connect = true
+                is_reconnect = false
+                await getHistory()
             }
 
         }
-        is_reconnect = false
+        
     }else{
-        let cTime = parseFloat(user.cookieTime) || 0
+        let cTime = parseFloat(userSeTokenTime) || 0
         let cookieAge = Math.round((moment() - cTime) / 1000)
         let reing = false
         console.log(cookieAge)
-        if (cookieAge > 1600 || !user.cookie) {
+        if (cookieAge > 1600 || !userSeToken) {
             is_reconnect = true
             is_connect = false
             parentPort.postMessage({ action: 'connection_status', data: { status: is_connect, id: botObj.id } })
@@ -105,18 +119,19 @@ async function checkAndReconnect(force=false) {
                 let c = await utils.reCookie(user.ufa_account, user.type_password, user.web)
                 reing = false
                 if (c != null) {
-                    user.cookie = c
-                    user.cookieTime = moment().valueOf()
+                    userSeToken = c
+                    userSeTokenTime = moment().valueOf()
                     user.save()
                     is_connect = true
+                    is_reconnect = false
+    
                 }
     
             }
-            is_reconnect = false
-    
+            
     
         } else {
-            let balance = await utils.getUserWallet(user.cookie)
+            let balance = await utils.getUserWallet(userSeToken)
             if (balance == null) {
                 is_reconnect = true
                 is_connect = false
@@ -132,14 +147,16 @@ async function checkAndReconnect(force=false) {
                     let c = await utils.reCookie(user.ufa_account, user.type_password, user.web)
                     reing = false
                     if (c != null) {
-                        user.cookie = c
-                        user.cookieTime = moment().valueOf()
+                        userSeToken = c
+                        userSeTokenTime = moment().valueOf()
                         user.save()
                         is_connect = true
+                        is_reconnect = false
+                        await getHistory()
                     }
     
                 }
-                is_reconnect = false
+                
             } else {
                 is_connect = true
             }
@@ -653,7 +670,7 @@ async function bet(data) {
                 method: 'post',
                 url: 'https://bpweb.bikimex.net/player/update/addRouTransaction',
                 headers: {
-                    'Cookie': user.cookie,
+                    'Cookie': userSeToken,
                     'Content-Type': 'application/x-www-form-urlencoded'
                 },
                 data: pData
@@ -941,7 +958,11 @@ async function processResultBet(betStatus, botTransactionId, botTransaction, gam
         let currentWallet = 0
         // currentWallet = await utils.getUserWallet(user.cookie)
         if (score == 0) {
-            botProfit -= current.betVal
+            if ((botObj.bet_side == 14 && current.is_opposite == false) || (botObj.bet_side == 15 && current.is_opposite == true)) {
+                botProfit -= (current.betVal * 2)
+            } else {
+                botProfit -= current.betVal
+            }
         }
         if ((betStatus == 'WIN' && current.is_opposite == false) || (betStatus == 'LOSE' && current.is_opposite == true)) {
             if ((botObj.bet_side == 14 && current.is_opposite == true) || (botObj.bet_side == 15 && current.is_opposite == false)) {
@@ -1262,6 +1283,7 @@ async function registerForEventListening() {
     stopLossPercent = botObj.loss_percent
     token = workerData.obj.token
     await checkAndReconnect(false)
+    await getHistory()
     if(botObj.bet_limit == "260903"){
         maxBet = 10000
     }
@@ -1297,6 +1319,10 @@ async function registerForEventListening() {
         }
         if (result.action == 'check_connection') {
             checkConnection()
+        }
+        if (result.action == 'get_history') {
+            // console.log('get history')
+            getHistory()
         }
         if (result.action == 'check_reconnect') {
             checkAndReconnect(false)

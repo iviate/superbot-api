@@ -475,7 +475,7 @@ async function processResultBet(betStatus, botTransactionId, botTransaction) {
                         playData = JSON.parse(botObj.data)
                         playTurn = 1
                         // console.log(botObj.profit_wallet, b.profit_wallet)
-                        b.save()
+                        await b.save()
                         db.wallet_transfer.create({ botId: botObj.id, amount: amount }).then((created) => { })
                         parentPort.postMessage({
                             action: 'process_result',
@@ -586,7 +586,7 @@ async function processResultBet(betStatus, botTransactionId, botTransaction) {
                 u.mock_wallet = u.mock_wallet - (current.betVal / 2)
             }
             let currentWallet = u.mock_wallet
-            u.save()
+            await u.save()
             // console.log(u)
 
             let cutProfit = botObj.init_wallet + Math.floor(((botObj.profit_threshold - botObj.init_wallet) * 94) / 100)
@@ -614,7 +614,7 @@ async function processResultBet(betStatus, botTransactionId, botTransaction) {
                     where: {
                         id: botObj.id
                     }
-                }).then((b) => {
+                }).then(async (b) => {
                     let amount = currentWallet - botObj.profit_wallet - botObj.init_wallet
                     b.profit_wallet += amount
                     b.deposite_count += 1
@@ -623,7 +623,7 @@ async function processResultBet(betStatus, botTransactionId, botTransaction) {
                     playData = JSON.parse(botObj.data)
                     playTurn = 1
                     // console.log(botObj.profit_wallet, b.profit_wallet)
-                    b.save()
+                    await b.save()
                     db.wallet_transfer.create({ botId: botObj.id, amount: amount }).then((created) => { })
                     parentPort.postMessage({
                         action: 'process_result',
@@ -798,10 +798,10 @@ function registerForEventListening() {
                 where: {
                     id: botObj.id,
                 }
-            }).then((b) => {
+            }).then(async (b) => {
                 b.turnover = turnover
                 // console.log(`turn over stop ${turnover}`)
-                b.save()
+                await b.save()
                 process.exit(0)
             })
 

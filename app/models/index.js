@@ -13,7 +13,7 @@ const sequelize = new Sequelize(dbConfig.DB, dbConfig.USER, dbConfig.PASSWORD, {
       ca: dbConfig.ca
     }
   },
-  operatorsAliases: false,
+  operatorsAliases: 0,
   logging: false
 });
 

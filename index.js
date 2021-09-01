@@ -942,10 +942,11 @@ myApp.post('/login', async function (request, response) {
                         })
 
                     });
-
+                    await browser.close();
 
                 } catch (e) {
                     console.log(e)
+                    await browser.close();
                     response.json({
                         success: false,
                         message: 'ข้อมูลไม่ถูกต้องกรุณาลองใหม่อีกครั้ง'
@@ -959,7 +960,7 @@ myApp.post('/login', async function (request, response) {
                 // await page.goto("https://truthbet.com/g/live/baccarat/22", {
                 //   waitUntil: "networkidle2",
                 // });
-                await browser.close();
+                
             })(USERNAME, PASSWORD, WEB);
         }
 
@@ -2512,7 +2513,7 @@ myApp.get('/wallet/:id', async function (request, response) {
         },
     })
 
-    if((user.token == null || user.token == "") && !user.is_mock && user){
+    if(user && (user.token == null || user.token == "") && !user.is_mock){
         user.token = await utils.getUserToken(user.ufa_account, user.type_password)
         await user.save()
     }
@@ -2594,68 +2595,70 @@ myApp.get('/wallet/:id', async function (request, response) {
 
 myApp.get('/history/:id', async function (request, response) {
     const user_id = request.params.id
-    // console.log(user_id)
-    const user = await db.user.findOne({
+    db.user.findOne({
         where: {
             id: user_id,
         },
-    })
-    // console.log(user)
-    if (user && user.is_mock) {
-        // console.log(user.mock_wallet)
+    }).then((user) => {
+        if (user && !user.is_mock) {
+            db.bot.findOne({
+                where: {
+                    status: {
+                        [Op.ne]: 3
 
-        response.json({
-            success: true,
-            error_code: null,
-            data: {
-                profit_wallet: 0,
-                all_wallet: user.mock_wallet,
-                play_wallet: user.mock_wallet,
-                myWallet: {}
-            }
-        })
-    }
-    else if (user) {
-        // console.log('history')
-        let w = 0
-        let cTime = parseFloat(user.cookieTime) || 0
-        // console.log(cTime)
-        let cookieAge = Math.round((moment() - cTime) / 1000)
-        // console.log(cookieAge)
-        // console.log(user.ufa_account, user.type_password)
-        if (cookieAge > 1600 || !user.cookie) {
-            let c = await utils.reCookie(user.ufa_account, user.type_password, user.web)
-            w = await utils.getUserHistory(c)
-            user.cookie = c
-            user.cookieTime = moment().valueOf()
-            user.save()
+                    },
+                    userId: user.id
+                }
+
+            }).then((res2) => {
+                if (res2 && (botWorkerDict.hasOwnProperty(user.id) && botWorkerDict[user.id] != undefined)) {
+                    botWorkerDict[user.id].postMessage({ action: 'get_history' })
+                    response.json({
+                        success: true,
+                        error_code: null,
+                        data: {
+                            history: []
+                        }
+                    })
+                } else if (res2 && res2.bot_type == 2 && ((rotBotWorkerDict.hasOwnProperty(user.id) && rotBotWorkerDict[user.id] != undefined) ||
+                    (rotBotWorkerDict.hasOwnProperty(user.id) && rotBotWorkerDict[user.id] != undefined))) {
+                    // console.log('get rot bot info')
+                    rotBotWorkerDict[user.id].postMessage({ action: 'get_history' })
+                    response.json({
+                        success: true,
+                        error_code: null,
+                        data: {
+                            history: []
+                        }
+                    })
+                }
+                else if (res2 && (dtBotWorkerDict.hasOwnProperty(user.id) && dtBotWorkerDict[user.id] != undefined)) {
+                    dtBotWorkerDict[user.id].postMessage({ action: 'get_history' })
+                    response.json({
+                        success: true,
+                        error_code: null,
+                        data: {
+                            history: []
+                        }
+                    })
+                }else{
+                    response.json({
+                        success: false,
+                        error_code: 404,
+                        message: 'bot or user not found'
+                    })
+                }
+                
+            })
         } else {
-            w = await utils.getUserHistory(user.cookie)
-            // console.log(w)
-            if (w == null) {
-                let c = await utils.reCookie(user.ufa_account, user.type_password, user.web)
-                w = await utils.getUserHistory(c)
-                user.cookie = c
-                user.cookieTime = moment().valueOf()
-                user.save()
-            }
+            response.json({
+                success: false,
+                error_code: 404,
+                message: 'bot or user not found'
+            })
         }
 
-        // console.log('history', w)
-        response.json({
-            success: true,
-            error_code: null,
-            data: {
-               hitory: w
-            }
-        })
-    } else {
-        response.json({
-            success: false,
-            error_code: 404,
-            message: 'user not found'
-        })
-    }
+    });
 
 });
 
@@ -2805,6 +2808,10 @@ function createBotWorker(obj, playData, is_mock) {
 
         if (result.action == 'connection_status') {
             io.emit(`connection_status_${result.data.id}`, result.data)
+        }
+
+        if (result.action == 'history') {
+            io.emit(`history_${result.data.id}`, result.data)
         }
         // if (result.action == 'stop') {
 
@@ -2978,6 +2985,11 @@ function createRotBotWorker(obj, playData, is_mock) {
             // console.log('bot info')
             console.log('bot connection status', {...result.data})
             io.emit(`connection_status_${result.data.id}`, result.data)
+        }
+
+        if (result.action == 'history') {
+            // console.log('get history', result.data)
+            io.emit(`history_${result.data.id}`, result.data)
         }
 
         if (result.action == 'info') {
@@ -3162,6 +3174,10 @@ function createDtWorker(obj, playData, is_mock) {
             // console.log('bot info')
             console.log('bot connection status', {...result.data})
             io.emit(`connection_status_${result.data.id}`, result.data)
+        }
+
+        if (result.action == 'history') {
+            io.emit(`history_${result.data.id}`, result.data)
         }
         // if (result.action == 'stop') {
 

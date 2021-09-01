@@ -38,8 +38,17 @@ var bet_time = null
 let botProfit = 0
 var is_reconnect = false
 var betting = false
-registerForEventListening();
 
+var userSeToken = null
+var userSeTokenTime = 0
+registerForEventListening();
+async function getHistory(){
+    if(userSeToken){
+        let w = await utils.getUserHistory(userSeToken)
+        parentPort.postMessage({ action: 'history', data: { history: w, id: botObj.userId } })
+    }
+    
+}
 async function checkAndReconnect() {
     if (is_reconnect) {
         return
@@ -55,10 +64,10 @@ async function checkAndReconnect() {
     })
 
     
-    let cTime = parseFloat(user.cookieTime) || 0
+    let cTime = parseFloat(userSeTokenTime) || 0
     let cookieAge = Math.round((moment() - cTime) / 1000)
     console.log(cookieAge)
-    if (cookieAge > 1600 || !user.cookie) {
+    if (cookieAge > 1600 || !userSeToken) {
         is_reconnect = true
         is_connect = false
         let reing = false
@@ -72,19 +81,21 @@ async function checkAndReconnect() {
             let c = await utils.reCookie(user.ufa_account, user.type_password, user.web)
             reing = false
             if (c != null) {
-                user.cookie = c
-                user.cookieTime = moment().valueOf()
-                user.save()
+                userSeToken = c
+                userSeTokenTime = moment().valueOf()
+                await user.save()
                 is_connect = true
+                is_reconnect = false
+                await getHistory()
             }
             
 
         }
-        is_reconnect = false
+        
 
 
     } else {
-        let balance = await utils.getUserWallet(user.cookie)
+        let balance = await utils.getUserWallet(userSeToken)
         if (balance == null) {
             is_reconnect = true
             is_connect = false
@@ -99,14 +110,16 @@ async function checkAndReconnect() {
                 let c = await utils.reCookie(user.ufa_account, user.type_password, user.web)
                 reing = false
                 if (c != null) {
-                    user.cookie = c
-                    user.cookieTime = moment().valueOf()
-                    user.save()
+                    userSeToken = c
+                    userSeTokenTime = moment().valueOf()
+                    await user.save()
                     is_connect = true
+                    is_reconnect = false
+                    await getHistory()
                 }
 
             }
-            is_reconnect = false
+            
         } else {
             is_connect = true
         }
@@ -412,7 +425,7 @@ async function bet(data) {
                 method: 'post',
                 url: 'https://bpweb.bikimex.net/player/update/addLongHuTransaction',
                 headers: {
-                    'Cookie': user.cookie,
+                    'Cookie': userSeToken,
                     'Content-Type': 'application/x-www-form-urlencoded'
                 },
                 data: pData
@@ -681,7 +694,7 @@ async function processResultBet(betStatus, botTransactionId, botTransaction) {
                 where: {
                     id: botObj.id
                 }
-            }).then((b) => {
+            }).then(async (b) => {
                 let amount = currentWallet - botObj.profit_wallet - botObj.init_wallet
                 b.profit_wallet += amount
                 b.deposite_count += 1
@@ -690,7 +703,7 @@ async function processResultBet(betStatus, botTransactionId, botTransaction) {
                 playData = JSON.parse(botObj.data)
                 playTurn = 1
                 // console.log(botObj.profit_wallet, b.profit_wallet)
-                b.save()
+                await b.save()
                 db.wallet_transfer.create({ botId: botObj.id, amount: amount }).then((created) => { })
                 parentPort.postMessage({
                     action: 'process_result',
@@ -784,15 +797,6 @@ async function processResultBet(betStatus, botTransactionId, botTransaction) {
 
 
         }
-
-        let cTime = parseFloat(user.cookieTime) || 0
-        let cookieAge = Math.round((moment() - cTime) / 1000)
-        if (cookieAge > 1560 || !user.cookie) {
-            let c = await utils.reCookie(user.ufa_account, user.type_password, user.web)
-            user.cookie = c
-            user.cookieTime = moment().valueOf()
-            user.save()
-        }
     } else {
         console.log('process result mock')
         db.user.findOne({
@@ -811,7 +815,7 @@ async function processResultBet(betStatus, botTransactionId, botTransaction) {
                 u.mock_wallet -= current.betVal
             }
             let currentWallet = u.mock_wallet
-            u.save()
+            await u.save()
             // console.log(u)
 
             let cutProfit = botObj.init_wallet + Math.floor(((botObj.profit_threshold - botObj.init_wallet) * 94) / 100)
@@ -839,7 +843,7 @@ async function processResultBet(betStatus, botTransactionId, botTransaction) {
                     where: {
                         id: botObj.id
                     }
-                }).then((b) => {
+                }).then(async (b) => {
                     let amount = currentWallet - botObj.profit_wallet - botObj.init_wallet
                     b.profit_wallet += amount
                     b.deposite_count += 1
@@ -848,7 +852,7 @@ async function processResultBet(betStatus, botTransactionId, botTransaction) {
                     playData = JSON.parse(botObj.data)
                     playTurn = 1
                     // console.log(botObj.profit_wallet, b.profit_wallet)
-                    b.save()
+                    await b.save()
                     db.wallet_transfer.create({ botId: botObj.id, amount: amount }).then((created) => { })
                     parentPort.postMessage({
                         action: 'process_result',
@@ -959,6 +963,7 @@ async function registerForEventListening() {
     stopLossPercent = botObj.loss_percent
     token = workerData.obj.token
     await checkAndReconnect()
+    await getHistory()
     if(botObj.bet_limit == "260903"){
         maxBet = 10000
     }
@@ -990,6 +995,9 @@ async function registerForEventListening() {
         }
         if (result.action == 'check_connection') {
             checkConnection()
+        }
+        if (result.action == 'get_history') {
+            getHistory()
         }
         if (result.action == 'check_reconnect') {
             checkAndReconnect()
@@ -1037,10 +1045,10 @@ async function registerForEventListening() {
                 where: {
                     id: botObj.id,
                 }
-            }).then((b) => {
+            }).then(async (b) => {
                 b.turnover = turnover
                 // console.log(`turn over stop ${turnover}`)
-                b.save()
+                await b.save()
                 process.exit(0)
             })
 
