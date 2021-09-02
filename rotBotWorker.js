@@ -1165,7 +1165,7 @@ async function processResultBet(betStatus, botTransactionId, botTransaction, gam
                     where: {
                         id: botObj.id
                     }
-                }).then((b) => {
+                }).then(async (b) => {
                     let amount = currentWallet - botObj.profit_wallet - botObj.init_wallet
                     b.profit_wallet += amount
                     b.deposite_count += 1
