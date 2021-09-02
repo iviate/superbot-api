@@ -92,7 +92,7 @@ async function checkAndReconnect(force=false) {
             if (c != null) {
                 userSeToken = c
                 userSeTokenTime = moment().valueOf()
-                user.save()
+                await user.save()
                 is_connect = true
                 is_reconnect = false
                 await getHistory()
@@ -121,7 +121,7 @@ async function checkAndReconnect(force=false) {
                 if (c != null) {
                     userSeToken = c
                     userSeTokenTime = moment().valueOf()
-                    user.save()
+                    await user.save()
                     is_connect = true
                     is_reconnect = false
     
@@ -149,7 +149,7 @@ async function checkAndReconnect(force=false) {
                     if (c != null) {
                         userSeToken = c
                         userSeTokenTime = moment().valueOf()
-                        user.save()
+                        await user.save()
                         is_connect = true
                         is_reconnect = false
                         await getHistory()
@@ -1009,7 +1009,7 @@ async function processResultBet(betStatus, botTransactionId, botTransaction, gam
                 where: {
                     id: botObj.id
                 }
-            }).then((b) => {
+            }).then(async (b) => {
                 // console.log('profit wallet')
                 let amount = currentWallet - botObj.profit_wallet - botObj.init_wallet
                 b.profit_wallet += amount
@@ -1019,7 +1019,7 @@ async function processResultBet(betStatus, botTransactionId, botTransaction, gam
                 playData = JSON.parse(botObj.data)
                 playTurn = 1
                 // console.log(botObj.profit_wallet, b.profit_wallet)
-                b.save()
+                await b.save()
                 db.wallet_transfer.create({ botId: botObj.id, amount: amount }).then((created) => { })
                 parentPort.postMessage({
                     action: 'process_result',
@@ -1137,7 +1137,7 @@ async function processResultBet(betStatus, botTransactionId, botTransaction, gam
             } else if (betStatus == 'TIE') {
             }
             let currentWallet = u.mock_wallet
-            u.save()
+            await u.save()
             // console.log(u)
 
             let cutProfit = botObj.init_wallet + Math.floor(((botObj.profit_threshold - botObj.init_wallet) * 94) / 100)
@@ -1174,7 +1174,7 @@ async function processResultBet(betStatus, botTransactionId, botTransaction, gam
                     playData = JSON.parse(botObj.data)
                     playTurn = 1
                     // console.log(botObj.profit_wallet, b.profit_wallet)
-                    b.save()
+                    await b.save()
                     db.wallet_transfer.create({ botId: botObj.id, amount: amount }).then((created) => { })
                     parentPort.postMessage({
                         action: 'process_result',
@@ -1390,10 +1390,10 @@ async function registerForEventListening() {
                 where: {
                     id: botObj.id,
                 }
-            }).then((b) => {
+            }).then(async (b) => {
                 b.turnover = turnover
                 // console.log(`turn over stop ${turnover}`)
-                b.save()
+                await b.save()
                 process.exit(0)
             })
 

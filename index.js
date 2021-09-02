@@ -658,10 +658,10 @@ myApp.post('/bot/set_opposite', async function (request, response) {
                     userId: user.id,
                     status: 2
                 },
-            }).then((botObj) => {
+            }).then(async (botObj) => {
                 if (botObj) {
                     botObj.is_opposite = is_opposite
-                    botObj.save()
+                    await botObj.save()
                     if (botWorkerDict[user.id] != undefined) {
                         botWorkerDict[user.id].postMessage({
                             action: 'set_opposite',
@@ -720,11 +720,11 @@ myApp.post('/bot/set_stoploss', async function (request, response) {
                     userId: user.id,
                     status: 2
                 },
-            }).then((botObj) => {
+            }).then(async (botObj) => {
                 if (botObj) {
                     botObj.loss_threshold = loss_threshold
                     botObj.loss_percent = loss_percent
-                    botObj.save()
+                    await botObj.save()
                     if (botWorkerDict[user.id] != undefined) {
                         botWorkerDict[user.id].postMessage({
                             action: 'set_stoploss',
@@ -786,10 +786,10 @@ myApp.post('/bot/set_bet_side', async function (request, response) {
                     userId: user.id,
                     status: 2
                 },
-            }).then((botObj) => {
+            }).then(async (botObj) => {
                 if (botObj) {
                     botObj.bet_side = bet_side
-                    botObj.save()
+                    await botObj.save()
                     if (botObj.bot_type == 1) {
                         if (botWorkerDict[user.id] != undefined) {
                             botWorkerDict[user.id].postMessage({
@@ -850,10 +850,10 @@ myApp.post('/bot/set_init_bet', async function (request, response) {
                     userId: user.id,
                     status: 2
                 },
-            }).then((botObj) => {
+            }).then(async (botObj) => {
                 if (botObj) {
                     botObj.init_bet = init_bet
-                    botObj.save()
+                    await botObj.save()
 
                     if (botObj.bot_type == 1) {
                         if (botWorkerDict[user.id] != undefined) {
@@ -915,10 +915,10 @@ myApp.post('/bot/set_stop_loss', async function (request, response) {
                     userId: user.id,
                     status: 2
                 },
-            }).then((botObj) => {
+            }).then(async (botObj) => {
                 if (botObj) {
                     botObj.loss_threshold = loss_threshold
-                    botObj.save()
+                    await botObj.save()
                     if (botObj.bot_type == 1) {
                         if (botWorkerDict[user.id] != undefined) {
                             botWorkerDict[user.id].postMessage({
@@ -981,7 +981,7 @@ myApp.post('/bot/set_zero', async function (request, response) {
                     userId: user.id,
                     status: 2
                 },
-            }).then((botObj) => {
+            }).then(async (botObj) => {
                 if (botObj) {
                     if (botObj.bot_type == 1 || botObj.bot_type == 3) {
                         response.json({
@@ -992,7 +992,7 @@ myApp.post('/bot/set_zero', async function (request, response) {
                     } else if (botObj.bot_type == 2) {
                         botObj.zero_bet = zero_bet
                         botObj.open_zero = open_zero
-                        botObj.save()
+                        await botObj.save()
                         if (rotBotWorkerDict[user.id] != undefined) {
                             rotBotWorkerDict[user.id].postMessage({
                                 action: 'set_zero',
@@ -1044,7 +1044,7 @@ myApp.post('/bot/set_tie', async function (request, response) {
                     userId: user.id,
                     status: 2
                 },
-            }).then((botObj) => {
+            }).then(async (botObj) => {
                 if (botObj) {
                     if (botObj.bot_type == 2 || botObj.bot_type == 3) {
                         response.json({
@@ -1055,7 +1055,7 @@ myApp.post('/bot/set_tie', async function (request, response) {
                     } else if (botObj.bot_type == 1) {
                         botObj.b_tie_val = b_tie_val
                         botObj.b_tie = b_tie
-                        botObj.save()
+                        await botObj.save()
                         if (botWorkerDict[user.id] != undefined) {
                             botWorkerDict[user.id].postMessage({
                                 action: 'set_tie',
@@ -1218,10 +1218,10 @@ myApp.post('/start', async function (request, response) {
                     userId: user.id,
                     status: 2
                 },
-            }).then((botObj) => {
+            }).then(async (botObj) => {
                 if (botObj) {
                     botObj.status = 1
-                    botObj.save()
+                    await botObj.save()
                     if (botWorkerDict[user.id] != undefined) {
                         botWorkerDict[user.id].postMessage({
                             action: 'start'
@@ -1274,7 +1274,7 @@ myApp.post('/pause', async function (request, response) {
                     userId: u.id,
                     status: 1
                 },
-            }).then((botObj) => {
+            }).then(async (botObj) => {
                 // console.log(u.id)
                 if (botObj) {
                     botObj.status = 2
@@ -1302,7 +1302,7 @@ myApp.post('/pause', async function (request, response) {
                         delete dtBotWorkerDict[u.id]
                     }
 
-                    botObj.save()
+                    await botObj.save()
                     response.json({
                         success: true,
                         error_code: null
@@ -1746,12 +1746,12 @@ myApp.post('/stop', function (request, response) {
                         [Op.or]: [1, 2]
                     }
                 },
-            }).then((botObj) => {
+            }).then(async (botObj) => {
                 if (botObj) {
                     botObj.status = 3
                     botObj.stop_by = 1
                     botObj.stop_wallet = request.body.wallet
-                    botObj.save()
+                    await botObj.save()
                     if (botWorkerDict[user.id] != undefined) {
                         botWorkerDict[user.id].postMessage({
                             action: 'stop'
@@ -2413,13 +2413,13 @@ function createBotWorker(obj, playData, is_mock) {
                     where: {
                         id: result.botObj.id
                     }
-                }).then((res) => {
+                }).then(async (res) => {
                     res.status = 3
                     res.stop_wallet = result.wallet
                     res.turnover = result.turnover
                     res.stop_by = (result.botObj.is_infinite == false && Math.floor(((result.botObj.profit_threshold * 94) / 100)) >= userWallet) ? 2 : result.isStop ? 1 : 4
                     // userWallet - result.botObj.profit_wallet <= result.botObj.loss_threshold ? 3 : 
-                    res.save()
+                    await res.save()
                     if (botWorkerDict.hasOwnProperty(res.userId) && botWorkerDict[res.userId] != undefined) {
                         botWorkerDict[res.userId].terminate()
                         delete botWorkerDict[res.userId]
@@ -2599,13 +2599,13 @@ function createRotBotWorker(obj, playData, is_mock) {
                     where: {
                         id: result.botObj.id
                     }
-                }).then((res) => {
+                }).then(async (res) => {
                     res.status = 3
                     res.stop_wallet = result.wallet
                     res.turnover = result.turnover
                     res.stop_by = (result.botObj.is_infinite == false && Math.floor(((result.botObj.profit_threshold * 94) / 100)) >= userWallet) ? 2 : result.isStop ? 1 : 4
                     // userWallet - result.botObj.profit_wallet <= result.botObj.loss_threshold ? 3 : 
-                    res.save()
+                    await res.save()
                     if (rotBotWorkerDict.hasOwnProperty(res.userId) && rotBotWorkerDict[res.userId] != undefined) {
                         rotBotWorkerDict[res.userId].terminate()
                         delete rotBotWorkerDict[res.userId]
@@ -2777,13 +2777,13 @@ function createDtWorker(obj, playData, is_mock) {
                     where: {
                         id: result.botObj.id
                     }
-                }).then((res) => {
+                }).then(async (res) => {
                     res.status = 3
                     res.stop_wallet = result.wallet
                     res.turnover = result.turnover
                     res.stop_by = (result.botObj.is_infinite == false && Math.floor(((result.botObj.profit_threshold * 94) / 100)) >= userWallet) ? 2 : result.isStop ? 1 : 4
                     // userWallet - result.botObj.profit_wallet <= result.botObj.loss_threshold ? 3 : 
-                    res.save()
+                    await res.save()
                     if (dtBotWorkerDict.hasOwnProperty(res.userId) && dtBotWorkerDict[res.userId] != undefined) {
                         dtBotWorkerDict[res.userId].terminate()
                         delete dtBotWorkerDict[res.userId]
