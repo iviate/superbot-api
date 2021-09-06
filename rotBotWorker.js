@@ -682,12 +682,13 @@ async function bet(data) {
             }catch (e){
                 res = null
             }
-            // console.log(res.data)
+            // console.log(res.data, res.data.message.success)
             if(res == null || res.data.status != 200) {
                 parentPort.postMessage({ action: 'bet_failed', botObj: botObj, error: res.data })
+                // console.log(`${botObj.userId} rot bot roud ${data.round} bet faile if`)
                 betFailed = false
             }
-            else if (res.data.status == 200) {
+            else if (res.data.status == 200 && res.data.message.success) {
                 if (botObj.open_zero) {
                     turnover += zeroVal
                 }
@@ -706,6 +707,7 @@ async function bet(data) {
                 
             }else {
                 parentPort.postMessage({ action: 'bet_failed', botObj: botObj, error: res.data })
+                // console.log(`${botObj.userId} rot bot roud ${data.round} bet faile else`)
                 betFailed = false
                 betting = false
             }

@@ -453,7 +453,7 @@ async function bet(data) {
                 betFailed = false
                 betting = false
             }
-            else if (res.data.status == 200) {
+            else if (res.data.status == 200 && res.data.message.success) {
                 turnover += betVal
                 current = { bot: data.bot, bet: realBet, shoe: data.shoe, round: data.round, table_id: data.table, betVal: betVal, playTurn: playTurn, botObj: botObj, is_opposite: is_opposite }
                 parentPort.postMessage({ action: 'bet_success', data: { ...data, betVal: betVal, current: current, botObj: botObj, turnover: turnover, bet: realBet } })
