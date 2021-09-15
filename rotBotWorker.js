@@ -714,7 +714,7 @@ async function bet(data) {
                 // console.log(`${botObj.userId} rot bot roud ${data.round} bet faile if`)
                 betFailed = false
             }
-            else if (res.data.status == 200 && message.txnDetails[0].success == true) {
+            else if (res.data.status == 200 && message.txnDetails != undefined && message.txnDetails[0].success == true) {
                 if (botObj.open_zero) {
                     turnover += zeroVal
                 }
