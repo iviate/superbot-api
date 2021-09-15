@@ -603,7 +603,7 @@ exports.getUserWallet = async function getUserWallet(cookie) {
 
         let res = await axios.post(balanceAPI, ps, config)
 
-        // console.log(res.data)
+        console.log('get user wallet >>>>>> ', res.data)
 
         if (res.data.balance != undefined) {
             return res.data.balance

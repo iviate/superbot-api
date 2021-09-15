@@ -45,12 +45,12 @@ var bet_time = null
 var maximumBet = 100000
 registerForEventListening();
 
-async function getHistory(){
-    if(userSeToken){
+async function getHistory() {
+    if (userSeToken) {
         let w = await utils.getUserHistory(userSeToken)
         parentPort.postMessage({ action: 'history', data: { history: w, id: botObj.userId } })
     }
-    
+
 }
 
 
@@ -59,7 +59,7 @@ async function checkAndReconnect() {
         return
     }
 
-    if(is_mock){
+    if (is_mock) {
         is_connect = true
         return
     }
@@ -78,7 +78,7 @@ async function checkAndReconnect() {
         is_reconnect = true
         is_connect = false
         while (!is_connect) {
-            if(reing){
+            if (reing) {
                 continue
             }
             console.log('reconnect with time condition')
@@ -95,37 +95,40 @@ async function checkAndReconnect() {
             }
 
         }
-        
 
 
-    } else {
-        let balance = await utils.getUserWallet(userSeTokenTime)
-        if (balance == null) {
-            is_reconnect = true
-            is_connect = false
-            reing = false
-            while (!is_connect) {
-                if(reing){
-                    continue
-                }
-                console.log('reconnect with logout condition')
-                console.log(user.ufa_account, user.type_password, user.web)
-                reing = true
-                let c = await utils.reCookie(user.ufa_account, user.type_password, user.web)
-                reing = false
-                if (c != null) {
-                    userSeToken = c
-                    userSeTokenTime = moment().valueOf()
-                    is_connect = true
-                    is_reconnect = false
-                    await getHistory()
-                }
 
-            }
-        } else {
-            is_connect = true
-        }
+    } 
+    else {
+        is_connect = true
     }
+    // else {
+    //     let balance = await utils.getUserWallet(userSeTokenTime)
+    //     if (balance == null) {
+    //         is_reconnect = true
+    //         is_connect = false
+    //         reing = false
+    //         while (!is_connect) {
+    //             if (reing) {
+    //                 continue
+    //             }
+    //             console.log('reconnect with logout condition')
+    //             console.log(user.ufa_account, user.type_password, user.web)
+    //             reing = true
+    //             let c = await utils.reCookie(user.ufa_account, user.type_password, user.web)
+    //             reing = false
+    //             if (c != null) {
+    //                 userSeToken = c
+    //                 userSeTokenTime = moment().valueOf()
+    //                 is_connect = true
+    //                 is_reconnect = false
+    //                 await getHistory()
+    //             }
+
+    //         }
+    //     } 
+        
+    // }
     parentPort.postMessage({ action: 'connection_status', data: { status: is_connect, id: botObj.id } })
 }
 
@@ -303,17 +306,17 @@ function getBetVal() {
     return ~~betval
 }
 
-async function getBetLimitCode(betSide, value){
-    if(value < 2000){
+async function getBetLimitCode(betSide, value) {
+    if (value < 2000) {
         return "260901"
-    }else if(value < 10000){
+    } else if (value < 10000) {
         return "260903"
-    }else if(value < 50000){
+    } else if (value < 50000) {
         return "260905"
-    }else if(value <= 100000){
+    } else if (value <= 100000) {
         return "260906"
     }
-    
+
 }
 
 async function bet(data) {
@@ -331,7 +334,7 @@ async function bet(data) {
         return
     }
 
-    if(betting){
+    if (betting) {
         return
     }
 
@@ -462,22 +465,22 @@ async function bet(data) {
                 console.log("")
             }
 
-            
+
             let message = {}
-            if(res.data.message != undefined && res.data.message){
+            if (res.data.message != undefined && res.data.message) {
                 // console.log(res.data.message)
-                try{
+                try {
                     message = JSON.parse(res.data.message)
-                }catch(e){
+                } catch (e) {
                     message = {}
                     console.log(res.data)
                 }
-                
+
                 // console.log('convert message <<<<', message)
             }
 
             if (res == null || res.data.status != 200) {
-                console.log(res.data)
+                // console.log(res.data)
                 parentPort.postMessage({ action: 'bet_failed', botObj: botObj, error: res.data })
                 betFailed = false
                 betting = false

@@ -51,21 +51,21 @@ var userSeToken = null
 var userSeTokenTime = 0
 var maximumBet = 100000
 
-async function getHistory(){
+async function getHistory() {
     // console.log('get history <<< ', userSeToken)
-    if(userSeToken){
+    if (userSeToken) {
         let w = await utils.getUserHistory(userSeToken)
         parentPort.postMessage({ action: 'history', data: { history: w, id: botObj.userId } })
     }
-    
+
 }
 
-async function checkAndReconnect(force=false) {
+async function checkAndReconnect(force = false) {
     if (is_reconnect) {
         return
     }
 
-    if(is_mock){
+    if (is_mock) {
         is_connect = true
         return
     }
@@ -76,13 +76,13 @@ async function checkAndReconnect(force=false) {
         },
     })
 
-    if(force){
+    if (force) {
         let reing = false
         is_reconnect = true
         is_connect = false
         parentPort.postMessage({ action: 'connection_status', data: { status: is_connect, id: botObj.id } })
         while (!is_connect) {
-            if(reing){
+            if (reing) {
                 continue
             }
             console.log('reconnect with time condition')
@@ -100,8 +100,8 @@ async function checkAndReconnect(force=false) {
             }
 
         }
-        
-    }else{
+
+    } else {
         let cTime = parseFloat(userSeTokenTime) || 0
         let cookieAge = Math.round((moment() - cTime) / 1000)
         let reing = false
@@ -111,7 +111,7 @@ async function checkAndReconnect(force=false) {
             is_connect = false
             parentPort.postMessage({ action: 'connection_status', data: { status: is_connect, id: botObj.id } })
             while (!is_connect) {
-                if(reing){
+                if (reing) {
                     continue
                 }
                 console.log('reconnect with time condition')
@@ -125,51 +125,53 @@ async function checkAndReconnect(force=false) {
                     await user.save()
                     is_connect = true
                     is_reconnect = false
-    
+
                 }
-    
+
             }
-            
-    
-        } else {
-            let balance = await utils.getUserWallet(userSeToken)
-            if (balance == null) {
-                is_reconnect = true
-                is_connect = false
-                reing = false
-                parentPort.postMessage({ action: 'connection_status', data: { status: is_connect, id: botObj.id } })
-                while (!is_connect) {
-                    if(reing){
-                        continue
-                    }
-                    console.log('reconnect with logout condition')
-                    console.log(user.ufa_account, user.type_password, user.web)
-                    reing = true
-                    let c = await utils.reCookie(user.ufa_account, user.type_password, user.web)
-                    reing = false
-                    if (c != null) {
-                        userSeToken = c
-                        userSeTokenTime = moment().valueOf()
-                        await user.save()
-                        is_connect = true
-                        is_reconnect = false
-                        await getHistory()
-                    }
-    
-                }
-                
-            } else {
-                is_connect = true
-            }
+
+
         }
+        else {
+            is_connect = true
+        }
+        //     else {
+        //         let balance = await utils.getUserWallet(userSeToken)
+        //         if (balance == null) {
+        //             is_reconnect = true
+        //             is_connect = false
+        //             reing = false
+        //             parentPort.postMessage({ action: 'connection_status', data: { status: is_connect, id: botObj.id } })
+        //             while (!is_connect) {
+        //                 if(reing){
+        //                     continue
+        //                 }
+        //                 console.log('reconnect with logout condition')
+        //                 console.log(user.ufa_account, user.type_password, user.web)
+        //                 reing = true
+        //                 let c = await utils.reCookie(user.ufa_account, user.type_password, user.web)
+        //                 reing = false
+        //                 if (c != null) {
+        //                     userSeToken = c
+        //                     userSeTokenTime = moment().valueOf()
+        //                     await user.save()
+        //                     is_connect = true
+        //                     is_reconnect = false
+        //                     await getHistory()
+        //                 }
+
+        //             }
+
+        //         } 
+        // }
     }
 
-    
+
     parentPort.postMessage({ action: 'connection_status', data: { status: is_connect, id: botObj.id } })
 }
 
 function checkConnection() {
-    parentPort.postMessage({ action: 'connection_status', data: { status: is_connect, id: botObj.id }})
+    parentPort.postMessage({ action: 'connection_status', data: { status: is_connect, id: botObj.id } })
 
 }
 
@@ -423,34 +425,34 @@ function getBetVal() {
 
 // }
 
-async function getBetLimitCode(betSide, value){
+async function getBetLimitCode(betSide, value) {
     // console.log('getBetLimitCode <<< ', betSide, value)
-    if(betSide != 14 && betSide != 15){
-        if(value < 2000){
+    if (betSide != 14 && betSide != 15) {
+        if (value < 2000) {
             return "260901"
-        }else if(value < 10000){
+        } else if (value < 10000) {
             return "260903"
-        }else if(value < 50000){
+        } else if (value < 50000) {
             return "260905"
-        }else if(value <= 100000){
+        } else if (value <= 100000) {
             return "260906"
         }
-    }else{
-        return "260906" 
+    } else {
+        return "260906"
     }
 }
 
 async function bet(data) {
     table = data.table
     // console.log(status, betFailed, botObj.bet_side, botObj.is_infinite, data.playList)
-    if(isRecookie){
+    if (isRecookie) {
         return
     }
-    if(is_reconnect){
+    if (is_reconnect) {
         return
     }
 
-    if(!is_connect){
+    if (!is_connect) {
         return
     }
 
@@ -458,7 +460,7 @@ async function bet(data) {
         return
     }
 
-    if(betting){
+    if (betting) {
         return
     }
 
@@ -604,13 +606,13 @@ async function bet(data) {
                 return
             }
         } else if (botObj.bet_side == 14) {
-           
+
 
             if (!is_opposite) {
                 realBet = data.bot.TWOZONE
                 realBet.forEach(element => {
-                idx.push(mapZone[element])
-            });
+                    idx.push(mapZone[element])
+                });
             } else {
                 let dozen = ['FIRST', 'SECOND', 'THIRD']
                 let index1 = dozen.indexOf(data.bot.TWOZONE[0])
@@ -682,7 +684,7 @@ async function bet(data) {
                 'gameShoe': data.shoe.toString(),
                 'gameRound': data.round.toString(),
                 'data': JSON.stringify(bPayload),
-                'betLimitID': betLimiCode ,// 11901 20 - 5000, 110902 100 - 10000
+                'betLimitID': betLimiCode,// 11901 20 - 5000, 110902 100 - 10000
                 'f': '-1',
                 'c': 'A'
             });
@@ -697,24 +699,24 @@ async function bet(data) {
             };
 
             let res = null
-            try{
+            try {
                 res = await axios(config)
-            }catch (e){
+            } catch (e) {
                 res = null
             }
-            
+
             let message = {}
-            if(res.data.message != undefined && res.data.message){
-                try{
+            if (res.data.message != undefined && res.data.message) {
+                try {
                     message = JSON.parse(res.data.message)
-                }catch(e){
+                } catch (e) {
                     message = {}
                     console.log(res.data)
                 }
                 // console.log('convert message <<<<', message)
             }
             // console.log(res.data, message.txnDetails[0].success)
-            if(res == null || res.data.status != 200) {
+            if (res == null || res.data.status != 200) {
                 parentPort.postMessage({ action: 'bet_failed', botObj: botObj, error: res.data })
                 // console.log(`${botObj.userId} rot bot roud ${data.round} bet faile if`)
                 betFailed = false
@@ -735,8 +737,8 @@ async function bet(data) {
                 betFailed = true
                 betting = false
 
-                
-            }else {
+
+            } else {
                 parentPort.postMessage({ action: 'bet_failed', botObj: botObj, error: res.data })
                 // console.log(`${botObj.userId} rot bot roud ${data.round} bet faile else`)
                 betFailed = false
@@ -965,7 +967,7 @@ async function processResultBet(betStatus, botTransactionId, botTransaction, gam
         } else if ((betStatus == 'LOSE' && current.is_opposite == false) || (betStatus == 'WIN' && current.is_opposite == true)) {
             playTurn += 1
         }
-    }else if (botObj.money_system == 6) {
+    } else if (botObj.money_system == 6) {
         if (score == 0) {
             playTurn = 1
             // if (playTurn > playData.length) {
@@ -1010,7 +1012,7 @@ async function processResultBet(betStatus, botTransactionId, botTransaction, gam
             } else {
                 botProfit -= current.betVal
             }
-            
+
         } else if (betStatus == 'TIE') {
         }
         currentWallet = botObj.init_wallet + botProfit
@@ -1166,7 +1168,7 @@ async function processResultBet(betStatus, botTransactionId, botTransaction, gam
                 } else {
                     u.mock_wallet -= current.betVal
                 }
-                
+
             } else if (betStatus == 'TIE') {
             }
             let currentWallet = u.mock_wallet
@@ -1378,11 +1380,11 @@ async function registerForEventListening() {
                 result.round == current.round &&
                 result.shoe == current.shoe &&
                 mapBotTypeAndBetSide[botObj.bet_side] == result.botTransaction.bot_type) {
-                
-                setTimeout( function () {
+
+                setTimeout(function () {
                     processResultBet(result.status, result.botTransactionId, result.botTransaction, result.result)
                 }, 7000)
-                
+
             }
         }
         if (result.action == 'set_opposite') {
