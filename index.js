@@ -3206,7 +3206,7 @@ function playDragonTiger() {
         return
     }
 
-    if (dtIsPlay == false && dtCurrentList.length != Object.keys(dtWorkerDict).length) return;
+    if (dtIsPlay == false && dtCurrentList.length < Object.keys(dtWorkerDict).length - 1) return;
 
     dtCurrentList.sort(compare)
     let found = true
