@@ -240,6 +240,79 @@ myApp.post('/add_mock_wallet', async function (request, response) {
     }
 })
 
+myApp.get('/stop_bot_table/:id', async function (request, response) {
+    const tableId = request.params.id
+    if(workerDict[tableId] != undefined){
+        workerDict[tableId].worker.postMessage({action: 'stop'})
+        delete workerDict[tableId]
+        response.json({
+            success: true,
+            data: {
+            }
+        });
+    }else if(rotWorkerDict[tableId] != undefined){
+        console.log(rotWorkerDict[tableId])
+        rotWorkerDict[tableId].worker.postMessage({action: 'stop'})
+        
+        delete rotWorkerDict[tableId]
+        response.json({
+            success: true,
+            data: {
+            }
+        });
+    }else if(dtWorkerDict[tableId] != undefined){
+        dtWorkerDict[tableId].worker.postMessage({action: 'stop'})
+        delete dtWorkerDict[tableId]
+        response.json({
+            success: true,
+            data: {
+            }
+        });
+    }else{
+        response.json({
+            success: false,
+            data: {
+            }
+        });
+    }
+})
+
+myApp.get('/start_bot_table/:id', async function (request, response) {
+    const id = request.params.id
+    const tableId = parseInt(id);
+    const bacTableList = [1, 2, 3, 4, 5, 6]
+    const dtTableList = [31, 32]
+    const rotTableList = [71]
+    if(bacTableList.includes(tableId) && workerDict[tableId] == undefined){
+        initiateWorker(tableId)
+        response.json({
+            success: true,
+            data: {
+            }
+        });
+    }else if(rotTableList.includes(tableId) && rotWorkerDict[tableId] == undefined){
+        initiateRotWorker(tableId)
+        response.json({
+            success: true,
+            data: {
+            }
+        });
+    }else if(dtTableList.includes(tableId) && dtWorkerDict[tableId] == undefined){
+        initiateDtWorker(tableId)
+        response.json({
+            success: true,
+            data: {
+            }
+        });
+    }else{
+        response.json({
+            success: false,
+            data: {
+            }
+        });
+    }
+})
+
 myApp.post('/login', async function (request, response) {
     console.log('login')
     const USERNAME = request.body.username;
@@ -482,7 +555,7 @@ myApp.post('/login', async function (request, response) {
 
 });
 
-function processBotMoneySystem(money_system, init_wallet, profit_threshold, init_bet) {
+function processBotMoneySystem(money_system, init_wallet, profit_threshold, init_bet, max_bet) {
     let half_bet = init_bet / 2
     if (money_system == 1) {
         return [init_bet]
@@ -600,12 +673,8 @@ function processBotMoneySystem(money_system, init_wallet, profit_threshold, init
 
         // console.log('3 in 9')
         // console.log(ret)
-        let max = 10000
-        if (init_bet == 10) {
-            max = 2000
-        }
         let ret = []
-        while (init_bet <= max) {
+        while (init_bet <= max_bet) {
             ret.push(init_bet)
             ret.push(init_bet)
             ret.push(init_bet)
@@ -618,21 +687,20 @@ function processBotMoneySystem(money_system, init_wallet, profit_threshold, init
 
         // console.log('3 in 9')
         // console.log(ret)
-        let max = 10000
         let initSet = [1, 2, 3,
             5, 8, 13,
             21, 34, 55,
-            89, 144, 233, 377]
-        if (init_bet == 10) {
-            max = 2000
-        }
+            89, 144, 233, 
+            377, 610, 987, 
+            1,597, 2,584, 4,181, 
+            6,765, 10,946]
+
         let ret = []
         for (let i = 0; i < initSet.length; i++) {
             let bVal = initSet[i] * init_bet
-            if (bVal <= max) {
+            if (bVal <= max_bet) {
                 ret.push(bVal)
             } else {
-                ret.push(5000)
                 break;
             }
 
@@ -1094,7 +1162,7 @@ myApp.post('/bot/set_tie', async function (request, response) {
 
 myApp.post('/bot', async function (request, response) {
     // console.log(`zero_bet : ${request.body.zero_bet}`)
-    console.log('create bot', request.body.bet_limit)
+    // console.log('create bot', request.body.bet_limit)
     const USERNAME = request.body.username
     console.log(`create bot ${USERNAME}`)
     db.user.findOne({
@@ -1104,8 +1172,8 @@ myApp.post('/bot', async function (request, response) {
     }).then((user) => {
         if (user) {
             // console.log(request.body.is_infinite)
-            console.log(`create bot zero bet ${request.body.zero_bet}`)
-            botData = {
+            // console.log(`create bot zero bet ${request.body.zero_bet}`)
+            var botData = {
                 userId: user.id,
                 token: "",
                 token_at: db.sequelize.fn('NOW'),
@@ -1128,13 +1196,14 @@ myApp.post('/bot', async function (request, response) {
                 open_zero: false,
                 b_tie_val: request.body.b_tie_val | 0,
                 b_tie: false,
-                bet_limit: request.body.bet_limit
+                bet_limit: request.body.bet_limit,
+                maximum_bet: request.body.maximum_bet
             }
             // console.log(botData)
             let playData = []
             // 5 => martingel 6 => reverse martingel
             if (request.body.money_system != 5 && request.body.money_system != 6) {
-                playData = processBotMoneySystem(botData.money_system, botData.init_wallet, botData.profit_threshold, botData.init_bet)
+                playData = processBotMoneySystem(botData.money_system, botData.init_wallet, botData.profit_threshold, botData.init_bet, botData.maximum_bet)
                 botData.data = JSON.stringify(playData)
             } else {
                 playData = request.body.playData
@@ -2482,6 +2551,8 @@ function createBotWorker(obj, playData, is_mock) {
         // console.log(botWorkerDict)
         if (code !== 0) {
             console.error(new Error(`Worker stopped Code ${code}`))
+        }else{
+            w.terminate()
         }
     });
 }
@@ -2665,6 +2736,8 @@ function createRotBotWorker(obj, playData, is_mock) {
         // console.log(botWorkerDict)
         if (code !== 0) {
             console.error(new Error(`Worker stopped Code ${code}`))
+        }else{
+            w.terminate()
         }
     });
 }
@@ -2843,6 +2916,8 @@ function createDtWorker(obj, playData, is_mock) {
         // console.log(botWorkerDict)
         if (code !== 0) {
             console.error(new Error(`Worker stopped Code ${code}`))
+        }else{
+            w.terminate()
         }
     });
 }
@@ -4128,6 +4203,8 @@ function startWorker(table, path, cb) {
     w.on('exit', (code) => {
         if (code !== 0) {
             console.error(new Error(`Worker stopped Code ${code}`))
+        }else{
+            w.terminate()
         }
     });
     return w;

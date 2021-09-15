@@ -82,6 +82,11 @@ function registerForEventListening() {
             playRound = round + 1
             // betting(result.current)
         }
+        if (result.action == 'stop') {
+            // console.log('action stop')
+            process.exit(0)
+
+        }
 
 
         // //  setting up interval to call method to multiple with factor

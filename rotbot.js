@@ -122,6 +122,11 @@ function registerForEventListening() {
             playRound = round + 1
             // betting(result.current)
         }
+        if (result.action == 'stop') {
+            // console.log('action stop')
+            process.exit(0)
+
+        }
 
 
 

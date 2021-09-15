@@ -49,6 +49,7 @@ var betting = false
 
 var userSeToken = null
 var userSeTokenTime = 0
+var maximumBet = 100000
 
 async function getHistory(){
     // console.log('get history <<< ', userSeToken)
@@ -104,7 +105,7 @@ async function checkAndReconnect(force=false) {
         let cTime = parseFloat(userSeTokenTime) || 0
         let cookieAge = Math.round((moment() - cTime) / 1000)
         let reing = false
-        console.log(cookieAge)
+        // console.log(cookieAge)
         if (cookieAge > 1600 || !userSeToken) {
             is_reconnect = true
             is_connect = false
@@ -422,6 +423,23 @@ function getBetVal() {
 
 // }
 
+async function getBetLimitCode(betSide, value){
+    // console.log('getBetLimitCode <<< ', betSide, value)
+    if(betSide != 14 && betSide != 15){
+        if(value < 2000){
+            return "260901"
+        }else if(value < 10000){
+            return "260903"
+        }else if(value < 50000){
+            return "260905"
+        }else if(value <= 100000){
+            return "260906"
+        }
+    }else{
+        return "260906" 
+    }
+}
+
 async function bet(data) {
     table = data.table
     // console.log(status, betFailed, botObj.bet_side, botObj.is_infinite, data.playList)
@@ -476,8 +494,8 @@ async function bet(data) {
         // console.log(`betVal : ${betVal}`)
         if (betVal < botObj.init_bet) {
             betVal = botObj.init_bet
-        } else if (betVal > maxBet) {
-            betVal = maxBet
+        } else if (betVal > botObj.maximum_bet) {
+            betVal = botObj.maximum_bet
         }
 
         // if (betVal > maxBet) {
@@ -656,13 +674,15 @@ async function bet(data) {
             })
             // let bData = [{ "categoryIdx": categoryId, "categoryName": realBet, "stake": betVal }]
             // console.log(data)
+            let betLimiCode = await getBetLimitCode(botObj.bet_side, betVal)
+            console.log('betLimitCode >> ', betLimiCode)
             var pData = qs.stringify({
                 'dealerDomain': '1',
                 'tableID': data.table.toString(),
                 'gameShoe': data.shoe.toString(),
                 'gameRound': data.round.toString(),
                 'data': JSON.stringify(bPayload),
-                'betLimitID': botObj.bet_limit ,// 11901 20 - 5000, 110902 100 - 10000
+                'betLimitID': betLimiCode ,// 11901 20 - 5000, 110902 100 - 10000
                 'f': '-1',
                 'c': 'A'
             });
@@ -682,13 +702,19 @@ async function bet(data) {
             }catch (e){
                 res = null
             }
-            // console.log(res.data, res.data.message.success)
+            
+            let message = {}
+            if(res.data.message != undefined && res.data.message){
+                message = JSON.parse(res.data.message)
+                // console.log('convert message <<<<', message)
+            }
+            // console.log(res.data, message.txnDetails[0].success)
             if(res == null || res.data.status != 200) {
                 parentPort.postMessage({ action: 'bet_failed', botObj: botObj, error: res.data })
                 // console.log(`${botObj.userId} rot bot roud ${data.round} bet faile if`)
                 betFailed = false
             }
-            else if (res.data.status == 200 && res.data.message.success) {
+            else if (res.data.status == 200 && message.txnDetails[0].success == true) {
                 if (botObj.open_zero) {
                     turnover += zeroVal
                 }
@@ -1286,9 +1312,9 @@ async function registerForEventListening() {
     token = workerData.obj.token
     await checkAndReconnect(false)
     await getHistory()
-    if(botObj.bet_limit == "260903"){
-        maxBet = 10000
-    }
+    // if(botObj.bet_limit == "260903"){
+    //     maxBet = 10000
+    // }
     // console.log(`${workerData.obj.id} hello`)
 
     // axios.get(`https://truthbet.com/api/m/settings/limit`, {

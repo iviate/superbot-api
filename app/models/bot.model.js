@@ -98,6 +98,10 @@ module.exports = (sequelize, Sequelize, DataTypes) => {
       b_tie_val: {
         type: DataTypes.FLOAT,
         defaultValue: 0
+      },
+      maximum_bet: {
+        type: DataTypes.FLOAT,
+        defaultValue: 100000
       }
     });
 
