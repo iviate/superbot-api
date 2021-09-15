@@ -705,7 +705,12 @@ async function bet(data) {
             
             let message = {}
             if(res.data.message != undefined && res.data.message){
-                message = JSON.parse(res.data.message)
+                try{
+                    message = JSON.parse(res.data.message)
+                }catch(e){
+                    message = {}
+                    console.log(res.data)
+                }
                 // console.log('convert message <<<<', message)
             }
             // console.log(res.data, message.txnDetails[0].success)
