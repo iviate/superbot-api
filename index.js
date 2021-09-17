@@ -1688,7 +1688,7 @@ myApp.get('/check_connection/:id', async function (request, response) {
 
             }).then((res2) => {
                 if (res2 && (botWorkerDict.hasOwnProperty(user.id) && botWorkerDict[user.id] != undefined)) {
-                    console.log('bac check_connection')
+                    // console.log('bac check_connection')
                     botWorkerDict[user.id].postMessage({ action: 'check_connection' })
                     response.json({
                         success: true,
