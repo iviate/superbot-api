@@ -2103,111 +2103,70 @@ myApp.get('/wallet/:id', async function (request, response) {
         // parentPort.postMessage({ action: 'credit', data: { userId: userData.id, wallet: parseFloat(user.mock_wallet).toFixed(2) } })
     }
     else if (user) {
-        var options = {
-            'method': 'POST',
-            'timeout': 500,
-            'url': 'https://imba69.com/users/sign_in',
-            formData: {
-                'user[username]': user.username,
-                'user[password]': user.type_password
-            }
-        };
+
+        const browser = await puppeteer.launch({
+            headless: true,
+            devtools: false,
+            args: ['--no-sandbox', '--disable-setuid-sandbox']
+        });
         try {
-            requests(options, async function (error, res) {
-                try {
-                    if (error) {
-                        console.log(error.code === 'ETIMEDOUT');
-                        throw new Error(error);
-                        // console.log(error);
-                        // io.emit(`wallet${user_id}`, { wallet: null })
-                        // // parentPort.postMessage({ action: 'credit', data: { userId: userData.id, wallet: null } })
-                        // response.json({
-                        //     success: false,
-                        //     error_code: null,
-                        //     message: null
-                        // })
-                    }
-                    // console.log(response.headers["set-cookie"]);
-                    if (res.headers['set-cookie'] == undefined) {
-                        // io.emit(`wallet${user_id}`, { wallet: null })
-                        // // parentPort.postMessage({ action: 'credit', data: { userId: userData.id, wallet: null } })
-                        // response.json({
-                        //     success: false,
-                        //     error_code: null,
-                        //     message: null
-                        // })
-                        throw new Error('res.headers["set-cookie"] undefined');
-                    }
-                    var data = new FormData();
-                    data.append('user[username]', user.username);
-                    data.append('user[password]', user.type_password);
-
-                    // var config = {
-                    //     method: 'post',
-                    //     url: 'https://imba69.com/users/sign_in',
-                    //     headers: {
-                    //         'Cookie': res.headers["set-cookie"].join(),
-                    //         ...data.getHeaders()
-                    //     },
-                    //     data: data
-                    // };
-
-                    // axios(config)
-                    //     .then(async function (res) {
-                    // console.log(response.headers['set-cookie']);
-                    let walletAPI = `https://imba69.com/member/get_credit_limit?token=${user.token}`
-                    let config = {
-                        headers: {
-                            'Content-Type': 'application/x-www-form-urlencoded',
-                            'Cookie': res.headers['set-cookie'].join()
-                        }
-                    }
-                    let res1 = await axios.get(walletAPI, config)
-                    // console.log(res.data)
-                    if (res1.data.success == true) {
-                        io.emit(`wallet${user_id}`, { wallet: parseFloat(res1.data.credit).toFixed(2) })
-                        // parentPort.postMessage({ action: 'credit', data: { userId: userData.id, wallet: parseFloat(res.data.credit).toFixed(2) } })
-                        response.json({
-                            success: true,
-                            error_code: null,
-                            message: null
-                        })
-
-                    } else {
-                        io.emit(`wallet${user_id}`, { wallet: null })
-                        // parentPort.postMessage({ action: 'credit', data: { userId: userData.id, wallet: null } })
-                        response.json({
-                            success: false,
-                            error_code: null,
-                            message: null
-                        })
-                    }
-
-                    // })
-                    // .catch(function (error) {
-                    //     console.log(error);
-                    //     io.emit(`wallet${user_id}`, { wallet: null })
-                    //     // parentPort.postMessage({ action: 'credit', data: { userId: userData.id, wallet: null } })
-                    //     response.json({
-                    //         success: false,
-                    //         error_code: null,
-                    //         message: null
-                    //     })
-
-                    // });
-
-                } catch (e) {
-                    console.log(e)
-                    io.emit(`wallet${user_id}`, { wallet: null })
-                    response.json({
-                        success: false,
-                        error_code: null,
-                        message: null
-                    })
-                }
+            const page = await browser.newPage();
+            // page.setDefaultTimeout(timeout)
+            page.setDefaultTimeout(10000)
+            await page.goto('https://imba69.com/login?token=' + user.token, {
+                waitUntil: "networkidle2"
             });
+
+            // await page.waitForSelector('input[name="user[username]"]')
+            // await page.type('input[name="user[username]"]', user.username);
+            // await page.type('input[name="user[password]"]', user.type_password);
+
+            // await Promise.all([
+            //     page.click('button[type="submit"]'),
+            //     page.waitForNavigation({ waitUntil: 'networkidle0' }),
+            // ]);
+            // await page.waitForSelector('.img-shield-sys')
+
+            const cookiesImba = await page.cookies()
+            // console.log(cookiesImba)
+            let cookieHeader = ""
+            cookiesImba.forEach((value) => {
+                // console.log(value)
+                cookieHeader += value.name + '=' + value.value + '; '
+            })
+
+            let walletAPI = `https://imba69.com/member/get_credit_limit?token=${user.token}`
+            let config = {
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'Cookie': cookieHeader
+                }
+            }
+            let res1 = await axios.get(walletAPI, config)
+            // console.log(res.data)
+            if (res1.data.success == true) {
+                io.emit(`wallet${user_id}`, { wallet: parseFloat(res1.data.credit).toFixed(2) })
+                // parentPort.postMessage({ action: 'credit', data: { userId: userData.id, wallet: parseFloat(res.data.credit).toFixed(2) } })
+                response.json({
+                    success: true,
+                    error_code: null,
+                    message: null
+                })
+
+            } else {
+                io.emit(`wallet${user_id}`, { wallet: null })
+                // parentPort.postMessage({ action: 'credit', data: { userId: userData.id, wallet: null } })
+                response.json({
+                    success: false,
+                    error_code: null,
+                    message: null
+                })
+            }
+            await browser.close();
+
         } catch (e) {
             console.log(e)
+            await browser.close();
             io.emit(`wallet${user_id}`, { wallet: null })
             response.json({
                 success: false,
@@ -2215,8 +2174,121 @@ myApp.get('/wallet/:id', async function (request, response) {
                 message: null
             })
         }
+        // var options = {
+        //     'method': 'POST',
+        //     'timeout': 500,
+        //     'url': 'https://imba69.com/users/sign_in',
+        //     formData: {
+        //         'user[username]': user.username,
+        //         'user[password]': user.type_password
+        //     }
+        // };
+        // try {
+        //     requests(options, async function (error, res) {
+        //         try {
+        //             if (error) {
+        //                 console.log(error.code === 'ETIMEDOUT');
+        //                 throw new Error(error);
+        //                 // console.log(error);
+        //                 // io.emit(`wallet${user_id}`, { wallet: null })
+        //                 // // parentPort.postMessage({ action: 'credit', data: { userId: userData.id, wallet: null } })
+        //                 // response.json({
+        //                 //     success: false,
+        //                 //     error_code: null,
+        //                 //     message: null
+        //                 // })
+        //             }
+        //             // console.log(response.headers["set-cookie"]);
+        //             if (res.headers['set-cookie'] == undefined) {
+        //                 // io.emit(`wallet${user_id}`, { wallet: null })
+        //                 // // parentPort.postMessage({ action: 'credit', data: { userId: userData.id, wallet: null } })
+        //                 // response.json({
+        //                 //     success: false,
+        //                 //     error_code: null,
+        //                 //     message: null
+        //                 // })
+        //                 throw new Error('res.headers["set-cookie"] undefined');
+        //             }
+        //             var data = new FormData();
+        //             data.append('user[username]', user.username);
+        //             data.append('user[password]', user.type_password);
+
+        //             // var config = {
+        //             //     method: 'post',
+        //             //     url: 'https://imba69.com/users/sign_in',
+        //             //     headers: {
+        //             //         'Cookie': res.headers["set-cookie"].join(),
+        //             //         ...data.getHeaders()
+        //             //     },
+        //             //     data: data
+        //             // };
+
+        //             // axios(config)
+        //             //     .then(async function (res) {
+        //             // console.log(response.headers['set-cookie']);
+        //             let walletAPI = `https://imba69.com/member/get_credit_limit?token=${user.token}`
+        //             let config = {
+        //                 headers: {
+        //                     'Content-Type': 'application/x-www-form-urlencoded',
+        //                     'Cookie': res.headers['set-cookie'].join()
+        //                 }
+        //             }
+        //             let res1 = await axios.get(walletAPI, config)
+        //             // console.log(res.data)
+        //             if (res1.data.success == true) {
+        //                 io.emit(`wallet${user_id}`, { wallet: parseFloat(res1.data.credit).toFixed(2) })
+        //                 // parentPort.postMessage({ action: 'credit', data: { userId: userData.id, wallet: parseFloat(res.data.credit).toFixed(2) } })
+        //                 response.json({
+        //                     success: true,
+        //                     error_code: null,
+        //                     message: null
+        //                 })
+
+        //             } else {
+        //                 io.emit(`wallet${user_id}`, { wallet: null })
+        //                 // parentPort.postMessage({ action: 'credit', data: { userId: userData.id, wallet: null } })
+        //                 response.json({
+        //                     success: false,
+        //                     error_code: null,
+        //                     message: null
+        //                 })
+        //             }
+
+        //             // })
+        //             // .catch(function (error) {
+        //             //     console.log(error);
+        //             //     io.emit(`wallet${user_id}`, { wallet: null })
+        //             //     // parentPort.postMessage({ action: 'credit', data: { userId: userData.id, wallet: null } })
+        //             //     response.json({
+        //             //         success: false,
+        //             //         error_code: null,
+        //             //         message: null
+        //             //     })
+
+        //             // });
+
+        //         } catch (e) {
+        //             console.log(e)
+        //             io.emit(`wallet${user_id}`, { wallet: null })
+        //             response.json({
+        //                 success: false,
+        //                 error_code: null,
+        //                 message: null
+        //             })
+        //         }
+        //     });
+        // } catch (e) {
+        //     console.log(e)
+        //     io.emit(`wallet${user_id}`, { wallet: null })
+        //     response.json({
+        //         success: false,
+        //         error_code: null,
+        //         message: null
+        //     })
+        // }
 
     } else {
+        io.emit(`wallet${user_id}`, { wallet: null })
         response.json({
             success: false,
             error_code: 404,
