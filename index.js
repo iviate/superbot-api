@@ -242,33 +242,33 @@ myApp.post('/add_mock_wallet', async function (request, response) {
 
 myApp.get('/stop_bot_table/:id', async function (request, response) {
     const tableId = request.params.id
-    if(workerDict[tableId] != undefined){
-        workerDict[tableId].worker.postMessage({action: 'stop'})
+    if (workerDict[tableId] != undefined) {
+        workerDict[tableId].worker.postMessage({ action: 'stop' })
         delete workerDict[tableId]
         response.json({
             success: true,
             data: {
             }
         });
-    }else if(rotWorkerDict[tableId] != undefined){
+    } else if (rotWorkerDict[tableId] != undefined) {
         console.log(rotWorkerDict[tableId])
-        rotWorkerDict[tableId].worker.postMessage({action: 'stop'})
-        
+        rotWorkerDict[tableId].worker.postMessage({ action: 'stop' })
+
         delete rotWorkerDict[tableId]
         response.json({
             success: true,
             data: {
             }
         });
-    }else if(dtWorkerDict[tableId] != undefined){
-        dtWorkerDict[tableId].worker.postMessage({action: 'stop'})
+    } else if (dtWorkerDict[tableId] != undefined) {
+        dtWorkerDict[tableId].worker.postMessage({ action: 'stop' })
         delete dtWorkerDict[tableId]
         response.json({
             success: true,
             data: {
             }
         });
-    }else{
+    } else {
         response.json({
             success: false,
             data: {
@@ -283,28 +283,28 @@ myApp.get('/start_bot_table/:id', async function (request, response) {
     const bacTableList = [1, 2, 3, 4, 5, 6]
     const dtTableList = [31, 32]
     const rotTableList = [71]
-    if(bacTableList.includes(tableId) && workerDict[tableId] == undefined){
+    if (bacTableList.includes(tableId) && workerDict[tableId] == undefined) {
         initiateWorker(tableId)
         response.json({
             success: true,
             data: {
             }
         });
-    }else if(rotTableList.includes(tableId) && rotWorkerDict[tableId] == undefined){
+    } else if (rotTableList.includes(tableId) && rotWorkerDict[tableId] == undefined) {
         initiateRotWorker(tableId)
         response.json({
             success: true,
             data: {
             }
         });
-    }else if(dtTableList.includes(tableId) && dtWorkerDict[tableId] == undefined){
+    } else if (dtTableList.includes(tableId) && dtWorkerDict[tableId] == undefined) {
         initiateDtWorker(tableId)
         response.json({
             success: true,
             data: {
             }
         });
-    }else{
+    } else {
         response.json({
             success: false,
             data: {
@@ -690,10 +690,10 @@ function processBotMoneySystem(money_system, init_wallet, profit_threshold, init
         let initSet = [1, 2, 3,
             5, 8, 13,
             21, 34, 55,
-            89, 144, 233, 
-            377, 610, 987, 
-            1,597, 2,584, 4,181, 
-            6,765, 10,946]
+            89, 144, 233,
+            377, 610, 987,
+            1, 597, 2, 584, 4, 181,
+            6, 765, 10, 946]
 
         let ret = []
         for (let i = 0; i < initSet.length; i++) {
@@ -2105,31 +2105,55 @@ myApp.get('/wallet/:id', async function (request, response) {
     else if (user) {
         var options = {
             'method': 'POST',
+            'timeout': 500,
             'url': 'https://imba69.com/users/sign_in',
             formData: {
                 'user[username]': user.username,
                 'user[password]': user.type_password
             }
         };
-        requests(options, function (error, res) {
-            if (error) return null;
-            // console.log(response.headers["set-cookie"]);
-            var data = new FormData();
-            data.append('user[username]', user.username);
-            data.append('user[password]', user.type_password);
+        try {
+            requests(options, async function (error, res) {
+                try {
+                    if (error) {
+                        console.log(error.code === 'ETIMEDOUT');
+                        throw new Error(error);
+                        // console.log(error);
+                        // io.emit(`wallet${user_id}`, { wallet: null })
+                        // // parentPort.postMessage({ action: 'credit', data: { userId: userData.id, wallet: null } })
+                        // response.json({
+                        //     success: false,
+                        //     error_code: null,
+                        //     message: null
+                        // })
+                    }
+                    // console.log(response.headers["set-cookie"]);
+                    if (res.headers['set-cookie'] == undefined) {
+                        // io.emit(`wallet${user_id}`, { wallet: null })
+                        // // parentPort.postMessage({ action: 'credit', data: { userId: userData.id, wallet: null } })
+                        // response.json({
+                        //     success: false,
+                        //     error_code: null,
+                        //     message: null
+                        // })
+                        throw new Error('res.headers["set-cookie"] undefined');
+                    }
+                    var data = new FormData();
+                    data.append('user[username]', user.username);
+                    data.append('user[password]', user.type_password);
 
-            var config = {
-                method: 'post',
-                url: 'https://imba69.com/users/sign_in',
-                headers: {
-                    'Cookie': res.headers["set-cookie"].join(),
-                    ...data.getHeaders()
-                },
-                data: data
-            };
+                    // var config = {
+                    //     method: 'post',
+                    //     url: 'https://imba69.com/users/sign_in',
+                    //     headers: {
+                    //         'Cookie': res.headers["set-cookie"].join(),
+                    //         ...data.getHeaders()
+                    //     },
+                    //     data: data
+                    // };
 
-            axios(config)
-                .then(async function (res) {
+                    // axios(config)
+                    //     .then(async function (res) {
                     // console.log(response.headers['set-cookie']);
                     let walletAPI = `https://imba69.com/member/get_credit_limit?token=${user.token}`
                     let config = {
@@ -2159,19 +2183,39 @@ myApp.get('/wallet/:id', async function (request, response) {
                         })
                     }
 
-                })
-                .catch(function (error) {
-                    console.log(error);
+                    // })
+                    // .catch(function (error) {
+                    //     console.log(error);
+                    //     io.emit(`wallet${user_id}`, { wallet: null })
+                    //     // parentPort.postMessage({ action: 'credit', data: { userId: userData.id, wallet: null } })
+                    //     response.json({
+                    //         success: false,
+                    //         error_code: null,
+                    //         message: null
+                    //     })
+
+                    // });
+
+                } catch (e) {
+                    console.log(e)
                     io.emit(`wallet${user_id}`, { wallet: null })
-                    // parentPort.postMessage({ action: 'credit', data: { userId: userData.id, wallet: null } })
                     response.json({
                         success: false,
                         error_code: null,
                         message: null
                     })
+                }
+            });
+        } catch (e) {
+            console.log(e)
+            io.emit(`wallet${user_id}`, { wallet: null })
+            response.json({
+                success: false,
+                error_code: null,
+                message: null
+            })
+        }
 
-                });
-        });
     } else {
         response.json({
             success: false,
@@ -2551,7 +2595,7 @@ function createBotWorker(obj, playData, is_mock) {
         // console.log(botWorkerDict)
         if (code !== 0) {
             console.error(new Error(`Worker stopped Code ${code}`))
-        }else{
+        } else {
             w.terminate()
         }
     });
@@ -2575,7 +2619,7 @@ function createRotBotWorker(obj, playData, is_mock) {
         // }
         if (result.action == 'connection_status') {
             // console.log('bot info')
-            console.log('bot connection status', { ...result.data })
+            // console.log('bot connection status', { ...result.data })
             io.emit(`connection_status_${result.data.id}`, result.data)
         }
 
@@ -2736,7 +2780,7 @@ function createRotBotWorker(obj, playData, is_mock) {
         // console.log(botWorkerDict)
         if (code !== 0) {
             console.error(new Error(`Worker stopped Code ${code}`))
-        }else{
+        } else {
             w.terminate()
         }
     });
@@ -2766,7 +2810,7 @@ function createDtWorker(obj, playData, is_mock) {
 
         if (result.action == 'connection_status') {
             // console.log('bot info')
-            console.log('bot connection status', { ...result.data })
+            // console.log('bot connection status', { ...result.data })
             io.emit(`connection_status_${result.data.id}`, result.data)
         }
 
@@ -2916,7 +2960,7 @@ function createDtWorker(obj, playData, is_mock) {
         // console.log(botWorkerDict)
         if (code !== 0) {
             console.error(new Error(`Worker stopped Code ${code}`))
-        }else{
+        } else {
             w.terminate()
         }
     });
@@ -4203,7 +4247,7 @@ function startWorker(table, path, cb) {
     w.on('exit', (code) => {
         if (code !== 0) {
             console.error(new Error(`Worker stopped Code ${code}`))
-        }else{
+        } else {
             w.terminate()
         }
     });

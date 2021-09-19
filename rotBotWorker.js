@@ -1237,36 +1237,36 @@ async function processResultBet(betStatus, botTransactionId, botTransaction, gam
                 }
                 // console.log(currentWallet - botObj.profit_wallet <= botObj.loss_threshold, currentWallet > 50)
                 if (parseInt(currentWallet) - parseInt(botObj.profit_wallet) <= parseInt(botObj.loss_threshold) + 1) {
-                    let currentBot = await db.bot.findOne({
-                        where: {
-                            id: botObj.id
-                        }
-                    })
-                    let new_loss = currentBot.loss_threshold - stopLoss
-                    let new_loss_percent = currentBot.loss_percent + stopLossPercent
-                    // console.log(currentWallet, new_loss, currentWallet <= new_loss, currentWallet - botObj.profit_wallet > 50)
-                    while (parseInt(currentWallet) <= new_loss + 1 + 10 && currentWallet - botObj.profit_wallet > 50) {
-                        new_loss -= stopLoss
-                        new_loss_percent += currentBot.stopLossPercent
-                    }
+                    // let currentBot = await db.bot.findOne({
+                    //     where: {
+                    //         id: botObj.id
+                    //     }
+                    // })
+                    // let new_loss = currentBot.loss_threshold - stopLoss
+                    // let new_loss_percent = currentBot.loss_percent + stopLossPercent
+                    // // console.log(currentWallet, new_loss, currentWallet <= new_loss, currentWallet - botObj.profit_wallet > 50)
+                    // while (parseInt(currentWallet) <= new_loss + 1 + 10 && currentWallet - botObj.profit_wallet > 50) {
+                    //     new_loss -= stopLoss
+                    //     new_loss_percent += currentBot.stopLossPercent
+                    // }
 
-                    if (new_loss_percent > 100 || new_loss < 0) {
-                        new_loss_percent = 100
-                        new_loss = 0
-                    }
+                    // if (new_loss_percent > 100 || new_loss < 0) {
+                    //     new_loss_percent = 100
+                    //     new_loss = 0
+                    // }
 
-                    currentBot.loss_threshold = new_loss
-                    currentBot.loss_percent = new_loss_percent
-                    currentBot.status = 2
+                    // currentBot.loss_threshold = new_loss
+                    // currentBot.loss_percent = new_loss_percent
+                    // currentBot.status = 2
 
-                    await currentBot.save()
-                    botObj.loss_threshold = new_loss
-                    botObj.loss_percent = new_loss_percent
-                    botObj.status = 2
-                    status = 2
-                    if (currentWallet - botObj.profit_wallet < 50) {
-                        isStop = true
-                    }
+                    // await currentBot.save()
+                    // botObj.loss_threshold = new_loss
+                    // botObj.loss_percent = new_loss_percent
+                    // botObj.status = 2
+                    // status = 2
+                    // if (currentWallet - botObj.profit_wallet < 50) {
+                    //     isStop = true
+                    // }
                     parentPort.postMessage({ action: 'info', botObj: botObj, playData: playData, turnover: turnover, userId: botObj.userId, table: table, current: current })
                     parentPort.postMessage({
                         action: 'process_result',
@@ -1279,7 +1279,7 @@ async function processResultBet(betStatus, botTransactionId, botTransaction, gam
                         is_opposite: current.is_opposite,
                         botTransactionId: botTransactionId,
                         botTransaction: botTransaction,
-                        isStop: currentWallet - botObj.profit_wallet < 50 ? true : false,
+                        isStop: true,
                         turnover: turnover,
                         is_mock: is_mock,
                         bet_time: bet_time
