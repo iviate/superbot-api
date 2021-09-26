@@ -46,6 +46,7 @@ registerForEventListening();
 var is_connect = false
 var is_reconnect = false
 var betting = false
+var zeroVal = 0
 
 var userSeToken = null
 var userSeTokenTime = 0
@@ -651,7 +652,7 @@ async function bet(data) {
             bPayload["categoryStakes"].push({ "idx": element, "stake": betVal })
         })
 
-        let zeroVal = 0
+        zeroVal = 0
         // console.log(`bet bet zero ${botObj.open_zero} ${botObj.zero_bet}`)
         if (botObj.open_zero && botObj.zero_bet > 9) {
             if (botObj.zero_bet < minZero) {
@@ -904,7 +905,7 @@ async function processResultBet(betStatus, botTransactionId, botTransaction, gam
 
         }
     } else if (botObj.money_system == 8) {
-        if (betStatus == "WIN") {
+        if (betStatus == "WIN" && score != 0) {
             XRWinStreak += 1
         }
         // console.log(` XR SYSTEM ${playTurn}, ${XRWinStreak}, ${XRPreviousWinStreak}`)
@@ -994,23 +995,23 @@ async function processResultBet(betStatus, botTransactionId, botTransaction, gam
         // currentWallet = await utils.getUserWallet(user.cookie)
         if (score == 0) {
             if ((botObj.bet_side == 14 && current.is_opposite == false) || (botObj.bet_side == 15 && current.is_opposite == true)) {
-                botProfit -= (current.betVal * 2)
+                botProfit -= (current.betVal * 2) + (zeroVal * 35)
             } else {
-                botProfit -= current.betVal
+                botProfit -= current.betVal + (zeroVal * 35)
             }
         }
-        if ((betStatus == 'WIN' && current.is_opposite == false) || (betStatus == 'LOSE' && current.is_opposite == true)) {
+        else if ((betStatus == 'WIN' && current.is_opposite == false) || (betStatus == 'LOSE' && current.is_opposite == true)) {
             if ((botObj.bet_side == 14 && current.is_opposite == true) || (botObj.bet_side == 15 && current.is_opposite == false)) {
-                botProfit += (current.betVal * 2)
+                botProfit += (current.betVal * 2) - zeroVal
             } else {
-                botProfit += current.betVal
+                botProfit += current.betVal - zeroVal
             }
 
         } else if ((betStatus == 'LOSE' && current.is_opposite == false) || (betStatus == 'WIN' && current.is_opposite == true)) {
             if ((botObj.bet_side == 14 && current.is_opposite == false) || (botObj.bet_side == 15 && current.is_opposite == true)) {
-                botProfit -= (current.betVal * 2)
+                botProfit -= (current.betVal * 2) - zeroVal
             } else {
-                botProfit -= current.betVal
+                botProfit -= current.betVal - zeroVal
             }
 
         } else if (betStatus == 'TIE') {
