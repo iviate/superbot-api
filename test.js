@@ -4,22 +4,22 @@ var qs = require('qs');
 const puppeteer = require("puppeteer");
 const timeout = 30000
 var request = require('request');
-
+test()
 async function test() {
   var options = {
     'method': 'POST',
     'url': 'https://imba69.com/users/sign_in',
     formData: {
-      'user[username]': '0643258932',
-      'user[password]': 'ฤฟ696969'
+      'user[username]': '0894958453',
+      'user[password]': 'Aa112233'
     }
   };
   request(options, function (error, response) {
     if (error) throw new Error(error);
     console.log(response.headers["set-cookie"]);
     var data = new FormData();
-    data.append('user[username]', '0643258932');
-    data.append('user[password]', 'ฤฟ696969');
+    data.append('user[username]', '0894958453');
+    data.append('user[password]', 'Aa112233');
 
     var config = {
       method: 'post',
