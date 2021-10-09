@@ -56,7 +56,7 @@ async function test() {
 async function test2() {
   var options = {
     'method': 'POST',
-    'timeout': 500,
+    'timeout': 1000,
     'url': 'https://imba69.com/users/sign_in',
     formData: {
         'user[username]': "0894958453",
@@ -67,6 +67,7 @@ try {
     request(options, async function (error, res) {
         try {
             if (error) {
+                console.log(error)
                 console.log(error.code === 'ETIMEDOUT');
                 throw new Error(error);
                 // console.log(error);
