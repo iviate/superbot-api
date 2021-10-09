@@ -2176,7 +2176,7 @@ myApp.get('/wallet/:id', async function (request, response) {
         // }
         var options = {
             'method': 'POST',
-            'timeout': 500,
+            'timeout': 1500,
             'url': 'https://imba69.com/users/sign_in',
             formData: {
                 'user[username]': user.username,
@@ -2268,7 +2268,7 @@ myApp.get('/wallet/:id', async function (request, response) {
                     // });
 
                 } catch (e) {
-                    // console.log(e)
+                    console.log(e)
                     io.emit(`wallet${user_id}`, { wallet: null })
                     response.json({
                         success: false,
