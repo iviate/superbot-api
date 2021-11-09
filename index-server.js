@@ -3355,7 +3355,7 @@ function dtBetInterval() {
     } else {
         // console.log('betting')
         // console.log(dtBotWorkerDict)
-        io.emit(`ws_bet`, { data: currentBetData, bot_type: "DT" })
+        io.emit(`ws_bet`, { data: dtCurrentBetData, bot_type: "DT" })
         // if (Object.keys(dtBotWorkerDict).length > 0) {
         //     Object.keys(dtBotWorkerDict).forEach(function (key) {
         //         var val = dtBotWorkerDict[key];
@@ -3395,7 +3395,7 @@ function rotBetInterval(start, data, tableId) {
         // }
     } else {
         // console.log('betting')
-        io.emit(`ws_bet`, { data: currentBetData, bot_type: "RT" })
+        io.emit(`ws_bet`, { data: data, bot_type: "RT" })
         // if (Object.keys(rotBotWorkerDict).length > 0) {
         //     Object.keys(rotBotWorkerDict).forEach(function (key) {
         //         var val = rotBotWorkerDict[key];
