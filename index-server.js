@@ -1668,11 +1668,12 @@ myApp.get('/user_bot/:id', async function (request, response) {
                 }
 
             }).then((res2) => {
-                if (res2 && ((botWorkerDict.hasOwnProperty(user.id) && botWorkerDict[user.id] != undefined) ||
-                    (rotBotWorkerDict.hasOwnProperty(user.id) && rotBotWorkerDict[user.id] != undefined) ||
-                    (dtBotWorkerDict.hasOwnProperty(user.id) && dtBotWorkerDict[user.id] != undefined))) {
+                if (res2){
+                    // && ((botWorkerDict.hasOwnProperty(user.id) && botWorkerDict[user.id] != undefined) ||
+                    // (rotBotWorkerDict.hasOwnProperty(user.id) && rotBotWorkerDict[user.id] != undefined) ||
+                    // (dtBotWorkerDict.hasOwnProperty(user.id) && dtBotWorkerDict[user.id] != undefined))) {
                     // console.log("has bot")
-                    hasBot = res2
+                    // hasBot = res2
                     response.json({
                         success: true,
                         data: {
@@ -1681,9 +1682,9 @@ myApp.get('/user_bot/:id', async function (request, response) {
                     });
                 } else {
                     // console.log("no bot")
-                    delete botWorkerDict[user.id]
-                    delete rotBotWorkerDict[user.id]
-                    delete dtBotWorkerDict[user.id]
+                    // delete botWorkerDict[user.id]
+                    // delete rotBotWorkerDict[user.id]
+                    // delete dtBotWorkerDict[user.id]
                     response.json({
                         success: true,
                         data: {
