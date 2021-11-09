@@ -95,6 +95,20 @@ var io = require('socket.io')(http);
 var currentSv = 0
 
 io.on('connection', (socket) => {
+
+    socket.on('user', (msg) => {
+        console.log(user, msg)
+        io.emit(`user${msg.id}`, msg.data)
+    })
+    
+    socket.on('connection_status', (msg) => {
+        console.log('connection_status', msg)
+        io.emit(`connection_status_${msg.id}`, msg.data)
+    })
+    
+    socket.on('history', (msg) => {
+        io.emit(`history_${msg.id}`, msg.data)
+    })
     // console.log('socket connection')
     // console.log('socket connection')
     // socket.on('restart', (msg) => {
@@ -117,18 +131,18 @@ io.on('connection', (socket) => {
     });
 });
 
-io.on('user', (msg) => {
-    console.log(user, msg)
-    io.emit(`user${msg.id}`, msg.data)
-})
+// io.on('user', (msg) => {
+//     console.log(user, msg)
+//     io.emit(`user${msg.id}`, msg.data)
+// })
 
-io.on('connection_status', (msg) => {
-    io.emit(`connection_status_${msg.id}`, msg.data)
-})
+// io.on('connection_status', (msg) => {
+//     io.emit(`connection_status_${msg.id}`, msg.data)
+// })
 
-io.on('history', (msg) => {
-    io.emit(`history_${msg.id}`, msg.data)
-})
+// io.on('history', (msg) => {
+//     io.emit(`history_${msg.id}`, msg.data)
+// })
 
 async function getBank(token) {
     const res = await axios.get('https://truthbet.com/api/m/request/withdraw', {
