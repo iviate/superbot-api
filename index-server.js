@@ -97,7 +97,7 @@ var currentSv = 0
 io.on('connection', (socket) => {
 
     socket.on('user', (msg) => {
-        console.log(user, msg)
+        console.log('user', msg)
         io.emit(`user${msg.id}`, msg.data)
     })
     
