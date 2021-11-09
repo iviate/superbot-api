@@ -1803,7 +1803,7 @@ myApp.get('/check_connection/:id', async function (request, response) {
                     })
                 } else if (res2 && res2.bot_type == 2) {
                     // console.log('get rot bot info')
-                    rotBotWorkerDict[user.id].postMessage({ action: 'check_connection' })
+                    // rotBotWorkerDict[user.id].postMessage({ action: 'check_connection' })
                     io.emit(`ws_check_connection`, {
                         user_id: user.id, 
                         type: "RT"
@@ -1815,7 +1815,7 @@ myApp.get('/check_connection/:id', async function (request, response) {
                     })
                 }
                 else if (res2 && res2.bot_type == 2) {
-                    dtBotWorkerDict[user.id].postMessage({ action: 'check_connection' })
+                    // dtBotWorkerDict[user.id].postMessage({ action: 'check_connection' })
                     io.emit(`ws_check_connection`, {
                         user_id: user.id, 
                         type: "DT"
