@@ -342,7 +342,7 @@ socket.on('ws_check_reconnect', function (msg) {
 });
 
 socket.on('ws_bet', function (msg) {
-    console.log('ws_bet!', msg);
+    console.log('ws_bet!', msg.type);
 
     if (msg.type == "BC" && Object.keys(botWorkerDict).length > 0) {
         Object.keys(botWorkerDict).forEach(function (key) {
@@ -2871,7 +2871,7 @@ function createBotWorker(obj, playData, is_mock) {
             console.log(`bac bot ${result.data.current.botObj.userId} bet success`)
         }
         if (result.action == 'bet_failed') {
-            console.log(`bac bot ${result.botObj.userId} bet failed`)
+            console.log(`bac bot ${result.botObj.userId} bet failed`, result.error)
         }
         if (result.action == 'restart_result') {
             socket.emit(`user`, {id: result.userId, data: result})
@@ -3055,7 +3055,7 @@ function createRotBotWorker(obj, playData, is_mock) {
             console.log(`rot bot ${result.data.current.botObj.userId} bet success`)
         }
         if (result.action == 'bet_failed') {
-            console.log(`rot bot ${result.botObj.userId} bet failed`)
+            console.log(`rot bot ${result.botObj.userId} bet failed`, result.error)
         }
         // if (result.action == 'restart_result') {
         //     io.emit(`user${result.userId}`, result)

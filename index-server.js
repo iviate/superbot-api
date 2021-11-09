@@ -1359,30 +1359,23 @@ myApp.post('/start', async function (request, response) {
                 if (botObj) {
                     botObj.status = 1
                     await botObj.save()
-                    if (botWorkerDict[user.id] != undefined) {
-                        botWorkerDict[user.id].postMessage({
-                            action: 'start'
-                        })
+                    if (botObj.bot_type == 1) {
 
                         io.emit(`ws_start`, {
                             user_id: user.id, 
                             type: "BC"
                         })
                     }
-                    if (rotBotWorkerDict[user.id] != undefined) {
-                        rotBotWorkerDict[user.id].postMessage({
-                            action: 'start'
-                        })
+                    else if (botObj.bot_type == 2) {
+                        
 
                         io.emit(`ws_start`, {
                             user_id: user.id, 
                             type: "RT"
                         })
                     }
-                    if (dtBotWorkerDict[user.id] != undefined) {
-                        dtBotWorkerDict[user.id].postMessage({
-                            action: 'start'
-                        })
+                    else if (botObj.bot_type == 3) {
+                        
 
                         io.emit(`ws_start`, {
                             user_id: user.id, 
