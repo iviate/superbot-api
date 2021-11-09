@@ -445,7 +445,7 @@ async function getBetLimitCode(betSide, value) {
 
 async function bet(data) {
     table = data.table
-    // console.log(status, betFailed, botObj.bet_side, botObj.is_infinite, data.playList)
+    console.log(status, betFailed, botObj.bet_side, botObj.is_infinite, data.playList)
     if (isRecookie) {
         return
     }
