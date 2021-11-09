@@ -342,8 +342,7 @@ socket.on('ws_check_reconnect', function (msg) {
 });
 
 socket.on('ws_bet', function (msg) {
-    console.log('ws_bet!');
-    console.log(msg);
+    console.log('ws_bet!', msg);
 
     if (msg.type == "BC" && Object.keys(botWorkerDict).length > 0) {
         Object.keys(botWorkerDict).forEach(function (key) {

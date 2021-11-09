@@ -3307,19 +3307,19 @@ function betInterval() {
     if (n - startBet > (remainingBet - 2) * 1000) {
         clearInterval(betInt)
         io.emit(`ws_check_reconnect`, { type: "BC" })
-        if (Object.keys(botWorkerDict).length > 0) {
-            Object.keys(botWorkerDict).forEach(function (key) {
-                var val = botWorkerDict[key];
-                // console.log(key, val)
-                val.postMessage({
-                    action: 'check_reconnect'
-                })
+        // if (Object.keys(botWorkerDict).length > 0) {
+        //     Object.keys(botWorkerDict).forEach(function (key) {
+        //         var val = botWorkerDict[key];
+        //         // console.log(key, val)
+        //         val.postMessage({
+        //             action: 'check_reconnect'
+        //         })
                 
-            });
-        }
+        //     });
+        // }
     } else {
         // console.log('betting')
-        io.emit(`ws_bet`, { data: currentBetData, bot_type: "BC" })
+        io.emit(`ws_bet`, { data: currentBetData, type: "BC" })
         // if (Object.keys(botWorkerDict).length > 0) {
         //     Object.keys(botWorkerDict).forEach(function (key) {
         //         var val = botWorkerDict[key];
@@ -3355,7 +3355,7 @@ function dtBetInterval() {
     } else {
         // console.log('betting')
         // console.log(dtBotWorkerDict)
-        io.emit(`ws_bet`, { data: dtCurrentBetData, bot_type: "DT" })
+        io.emit(`ws_bet`, { data: dtCurrentBetData, type: "DT" })
         // if (Object.keys(dtBotWorkerDict).length > 0) {
         //     Object.keys(dtBotWorkerDict).forEach(function (key) {
         //         var val = dtBotWorkerDict[key];
@@ -3381,7 +3381,7 @@ function rotBetInterval(start, data, tableId) {
     if (n - start > (data.remaining - 2) * 1000) {
         // console.log('clearInterval ', rotBetInt[tableId])
         clearInterval(rotBetInt[tableId])
-        io.emit(`ws_check_reconnect`, { bot_type: "RT" })
+        io.emit(`ws_check_reconnect`, { type: "RT" })
         // if (Object.keys(rotBotWorkerDict).length > 0) {
         //     Object.keys(rotBotWorkerDict).forEach(function (key) {
         //         var val = rotBotWorkerDict[key];
@@ -3394,8 +3394,8 @@ function rotBetInterval(start, data, tableId) {
 
         // }
     } else {
-        // console.log('betting')
-        io.emit(`ws_bet`, { data: data, bot_type: "RT" })
+        console.log('betting', data)
+        io.emit(`ws_bet`, { data: data, type: "RT" })
         // if (Object.keys(rotBotWorkerDict).length > 0) {
         //     Object.keys(rotBotWorkerDict).forEach(function (key) {
         //         var val = rotBotWorkerDict[key];
