@@ -444,6 +444,7 @@ async function getBetLimitCode(betSide, value) {
 }
 
 async function bet(data) {
+    console.log('rot bet start')
     table = data.table
     console.log(status, betFailed, botObj.bet_side, botObj.is_infinite, data.playList)
     if (isRecookie) {
@@ -1352,7 +1353,7 @@ async function registerForEventListening() {
     let cb = (err, result) => {
         if (err) return console.error(err);
         if (result.action == 'bet') {
-            // console.log('rot bet', result.data)
+            console.log('rot bet')
             bet(result.data)
         }
         if (result.action == 'info') {
