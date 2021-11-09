@@ -3291,7 +3291,7 @@ function betInterval() {
     // console.log('bac', n, n - startBet, (remainingBet - 2) * 1000)
     if (n - startBet > (remainingBet - 2) * 1000) {
         clearInterval(betInt)
-        io.emit(`ws_check_reconnect`, { user_id: key, type: "BC" })
+        io.emit(`ws_check_reconnect`, { type: "BC" })
         if (Object.keys(botWorkerDict).length > 0) {
             Object.keys(botWorkerDict).forEach(function (key) {
                 var val = botWorkerDict[key];
@@ -3304,7 +3304,7 @@ function betInterval() {
         }
     } else {
         // console.log('betting')
-        io.emit(`ws_bet`, { user_id: key, data: currentBetData, bot_type: "BC" })
+        io.emit(`ws_bet`, { data: currentBetData, bot_type: "BC" })
         // if (Object.keys(botWorkerDict).length > 0) {
         //     Object.keys(botWorkerDict).forEach(function (key) {
         //         var val = botWorkerDict[key];
@@ -3325,7 +3325,7 @@ function dtBetInterval() {
 
     if (n - dtStartBet > (dtRemainingBet - 2) * 1000) {
         clearInterval(dtBetInt)
-        io.emit(`ws_check_reconnect`, { user_id: key, bot_type: "DT" })
+        io.emit(`ws_check_reconnect`, { bot_type: "DT" })
         // if (Object.keys(dtBotWorkerDict).length > 0) {
         //     Object.keys(dtBotWorkerDict).forEach(function (key) {
         //         var val = dtBotWorkerDict[key];
@@ -3340,7 +3340,7 @@ function dtBetInterval() {
     } else {
         // console.log('betting')
         // console.log(dtBotWorkerDict)
-        io.emit(`ws_bet`, { user_id: key, data: currentBetData, bot_type: "DT" })
+        io.emit(`ws_bet`, { data: currentBetData, bot_type: "DT" })
         // if (Object.keys(dtBotWorkerDict).length > 0) {
         //     Object.keys(dtBotWorkerDict).forEach(function (key) {
         //         var val = dtBotWorkerDict[key];
@@ -3366,7 +3366,7 @@ function rotBetInterval(start, data, tableId) {
     if (n - start > (data.remaining - 2) * 1000) {
         // console.log('clearInterval ', rotBetInt[tableId])
         clearInterval(rotBetInt[tableId])
-        io.emit(`ws_check_reconnect`, { user_id: key, bot_type: "RT" })
+        io.emit(`ws_check_reconnect`, { bot_type: "RT" })
         // if (Object.keys(rotBotWorkerDict).length > 0) {
         //     Object.keys(rotBotWorkerDict).forEach(function (key) {
         //         var val = rotBotWorkerDict[key];
@@ -3380,7 +3380,7 @@ function rotBetInterval(start, data, tableId) {
         // }
     } else {
         // console.log('betting')
-        io.emit(`ws_bet`, { user_id: key, data: currentBetData, bot_type: "RT" })
+        io.emit(`ws_bet`, { data: currentBetData, bot_type: "RT" })
         // if (Object.keys(rotBotWorkerDict).length > 0) {
         //     Object.keys(rotBotWorkerDict).forEach(function (key) {
         //         var val = rotBotWorkerDict[key];
@@ -3720,7 +3720,6 @@ function initiateWorker(table) {
                             botTransactionData.id = res.id
 
                             io.emit(`ws_result_bet`, {
-                                user_id: key, 
                                 type: "BC", 
                                 bot_type: result.bot_type,
                                 table_id: result.table,
@@ -3888,7 +3887,6 @@ function initiateDtWorker(table) {
 
                             dtBotTransactionData.id = res.id
                             io.emit(`ws_result_bet`, {
-                                user_id: key, 
                                 type: "DT", 
                                 bot_type: result.bot_type,
                                 table_id: result.table,
@@ -4091,7 +4089,6 @@ function initiateRotWorker(table) {
                                     })
 
                                     io.emit(`ws_result_bet`, {
-                                        user_id: key, 
                                         type: "RT", 
                                         bot_type: result.bot_type,
                                         table_id: result.table,
@@ -4165,7 +4162,6 @@ function initiateRotWorker(table) {
 
                             EDbotTransactionData.id = res.id
                             io.emit(`ws_result_bet`, {
-                                user_id: key, 
                                 type: "RT", 
                                 bot_type: result.bot_type,
                                 table_id: result.table,
@@ -4259,8 +4255,7 @@ function initiateRotWorker(table) {
                             }
 
                             SBbotTransactionData.id = res.id
-                            io.emit(`ws_result_bet`, {
-                                user_id: key, 
+                            io.emit(`ws_result_bet`, { 
                                 type: "RT", 
                                 bot_type: result.bot_type,
                                 table_id: result.table,
@@ -4358,7 +4353,6 @@ function initiateRotWorker(table) {
 
                             TWOZONEbotTransactionData.id = res.id
                             io.emit(`ws_result_bet`, {
-                                user_id: key, 
                                 type: "RT", 
                                 bot_type: result.bot_type,
                                 table_id: result.table,
@@ -4453,8 +4447,6 @@ function initiateRotWorker(table) {
 
                             ONEZONEbotTransactionData.id = res.id
                             io.emit(`ws_result_bet`, {
-                                user_id: key, 
-                                type: "RT", 
                                 bot_type: result.bot_type,
                                 table_id: result.table,
                                 table_title: result.table,
@@ -4527,21 +4519,20 @@ function initiateRotWorker(table) {
             io.emit('bot', { action: 'play', data: result.data })
         }
         if (result.action == 'force_reconnect') {
-            if (Object.keys(rotBotWorkerDict).length > 0) {
-                Object.keys(rotBotWorkerDict).forEach(function (key) {
-                    var val = rotBotWorkerDict[key];
-                    // console.log(key, val)
-                    val.postMessage({
-                        action: 'force_reconnect'
-                    })
+            // if (Object.keys(rotBotWorkerDict).length > 0) {
+            //     Object.keys(rotBotWorkerDict).forEach(function (key) {
+            //         var val = rotBotWorkerDict[key];
+            //         // console.log(key, val)
+            //         val.postMessage({
+            //             action: 'force_reconnect'
+            //         })
 
-                    io.emit(`ws_force_reconnect`, {
-                        user_id: key, 
-                        type: "RT", 
-                    })
-                });
+            io.emit(`ws_force_reconnect`, {
+                type: "RT", 
+            })
+            //     });
 
-            }
+            // }
         }
     };
 
