@@ -1789,9 +1789,9 @@ myApp.get('/check_connection/:id', async function (request, response) {
                 }
 
             }).then((res2) => {
-                if (res2 && (botWorkerDict.hasOwnProperty(user.id) && botWorkerDict[user.id] != undefined)) {
+                if (res2 && res2.bot_type == 1) {
                     // console.log('bac check_connection')
-                    botWorkerDict[user.id].postMessage({ action: 'check_connection' })
+                    // botWorkerDict[user.id].postMessage({ action: 'check_connection' })
                     io.emit(`ws_check_connection`, {
                         user_id: user.id, 
                         type: "BC"
@@ -1801,8 +1801,7 @@ myApp.get('/check_connection/:id', async function (request, response) {
                         error_code: null,
                         data: {}
                     })
-                } else if (res2 && res2.bot_type == 2 && ((rotBotWorkerDict.hasOwnProperty(user.id) && rotBotWorkerDict[user.id] != undefined) ||
-                    (rotBotWorkerDict.hasOwnProperty(user.id) && rotBotWorkerDict[user.id] != undefined))) {
+                } else if (res2 && res2.bot_type == 2) {
                     // console.log('get rot bot info')
                     rotBotWorkerDict[user.id].postMessage({ action: 'check_connection' })
                     io.emit(`ws_check_connection`, {
@@ -1815,7 +1814,7 @@ myApp.get('/check_connection/:id', async function (request, response) {
                         data: {}
                     })
                 }
-                else if (res2 && (dtBotWorkerDict.hasOwnProperty(user.id) && dtBotWorkerDict[user.id] != undefined)) {
+                else if (res2 && res2.bot_type == 2) {
                     dtBotWorkerDict[user.id].postMessage({ action: 'check_connection' })
                     io.emit(`ws_check_connection`, {
                         user_id: user.id, 
@@ -2642,6 +2641,7 @@ function createBotWorker(obj, playData, is_mock) {
         }
 
         if (result.action == 'connection_status') {
+            console.log('connection_status', resule.data)
             io.emit(`connection_status_${result.data.id}`, result.data)
         }
 
