@@ -449,6 +449,11 @@ async function bet(data) {
     if (isRecookie) {
         return
     }
+
+    if(isStop){
+        return
+    }
+    
     if (is_reconnect) {
         return
     }

@@ -18,8 +18,11 @@
     "qs": "^6.9.6",
     "request-promise": "^4.2.6",
     "sequelize": "^6.3.3",
-    "socket.io": "^2.3.0",
-    "sqlite3": "^5.0.0"
+    "socket.io": "^2.4.1",
+    "socket.io-client": "^2.0.2",
+    "sqlite3": "^5.0.0",
+    "websocket": "^1.0.34",
+    "ws": "^8.2.3"
   },
   "devDependencies": {},
   "scripts": {

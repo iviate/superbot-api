@@ -326,6 +326,10 @@ async function bet(data) {
         return
     }
 
+    if(isStop){
+        return
+    }
+
     if(!is_connect){
         return
     }

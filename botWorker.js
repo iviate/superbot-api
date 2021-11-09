@@ -334,6 +334,10 @@ async function bet(data) {
         return
     }
 
+    if(isStop){
+        return
+    }
+
     if (betting) {
         return
     }
