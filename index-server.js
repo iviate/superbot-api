@@ -2648,7 +2648,7 @@ function createBotWorker(obj, playData, is_mock) {
         }
 
         if (result.action == 'connection_status') {
-            console.log('connection_status', resule.data)
+            // console.log('connection_status', resule.data)
             io.emit(`connection_status_${result.data.id}`, result.data)
         }
 

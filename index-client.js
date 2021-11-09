@@ -238,8 +238,8 @@ socket.on('ws_info', function (msg) {
 });
 
 socket.on('ws_check_connection', function (msg) {
-    console.log('ws_check_connection!');
-    console.log(msg);
+    // console.log('ws_check_connection!');
+    // console.log(msg);
 
     if (msg.type == "BC" && botWorkerDict[msg.user_id] != undefined) {
         
