@@ -95,7 +95,7 @@ var io = require('socket.io')(http);
 var currentSv = 0
 
 io.on('connection', (socket) => {
-    console.log('socket connection')
+    // console.log('socket connection')
     // console.log('socket connection')
     // socket.on('restart', (msg) => {
     //     // console.log(msg)
@@ -118,6 +118,7 @@ io.on('connection', (socket) => {
 });
 
 io.on('user', (msg) => {
+    console.log(user, msg)
     io.emit(`user${msg.id}`, msg.data)
 })
 
