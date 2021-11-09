@@ -3247,7 +3247,7 @@ async function mainBody() {
     // initiateWorker(6);
     // initiateDtWorker(31)
     // initiateDtWorker(32)
-    // initiateRotWorker(71)
+    initiateRotWorker(71)
 
     // console.log(response.data);
     // tables = response.data.tables
