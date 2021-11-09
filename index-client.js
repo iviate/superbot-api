@@ -3063,7 +3063,7 @@ function createRotBotWorker(obj, playData, is_mock) {
         // }
         if (result.action == 'connection_status') {
             // console.log('bot info')
-            // console.log('bot connection status', { ...result.data })
+            console.log('bot connection status', {id: result.data.id, data: result.data})
             socket.emit(`connection_status`, {id: result.data.id, data: result.data})
         }
 
