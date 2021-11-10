@@ -6,7 +6,7 @@ require('log-timestamp');
 // const io = require('socket.io-client');
 const io = require("socket.io-client");
 // console.log(io)
-const socket = io.connect('ws://localhost/');
+const socket = io.connect('ws://api.superbot.bet/');
 
 // console.log(socket)
 // const socket = io.connect('ws://localhost', {
