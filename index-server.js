@@ -97,7 +97,7 @@ var currentSv = 0
 io.on('connection', (socket) => {
 
     socket.on('user', (msg) => {
-        console.log('user', msg)
+        // console.log('user', msg)
         io.emit(`user${msg.id}`, msg.data)
     })
 
@@ -281,7 +281,7 @@ myApp.get('/stop_bot_table/:id', async function (request, response) {
             }
         });
     } else if (rotWorkerDict[tableId] != undefined) {
-        console.log(rotWorkerDict[tableId])
+        // console.log(rotWorkerDict[tableId])
         rotWorkerDict[tableId].worker.postMessage({ action: 'stop' })
 
         delete rotWorkerDict[tableId]

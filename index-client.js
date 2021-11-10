@@ -113,7 +113,7 @@ socket.on("disconnect", () => {
 
 socket.on('ws_create', function (msg) {
     console.log('create!');
-    console.log(msg);
+    // console.log(msg);
     if(msg.sv == env.sv){
         if (msg.type == "BC") {
             createBotWorker(msg.data, msg.playData, msg.is_mock)
@@ -127,7 +127,7 @@ socket.on('ws_create', function (msg) {
 
 socket.on('ws_set_opposite', function (msg) {
     console.log('set_opposite!');
-    console.log(msg);
+    // console.log(msg);
 
     if (msg.type == "BC" && botWorkerDict[msg.user_id] != undefined) {
         
@@ -150,7 +150,7 @@ socket.on('ws_set_opposite', function (msg) {
 
 socket.on('ws_set_zero', function (msg) {
     console.log('ws_set_zero!');
-    console.log(msg);
+    // console.log(msg);
     if(rotBotWorkerDict[msg.user_id] != undefined){
         rotBotWorkerDict[msg.user_id].postMessage({
             action: 'set_zero',
@@ -163,7 +163,7 @@ socket.on('ws_set_zero', function (msg) {
 
 socket.on('ws_set_tie', function (msg) {
     console.log('ws_set_tie!');
-    console.log(msg);
+    // console.log(msg);
     if(botWorkerDict[msg.user_id] != undefined){
         botWorkerDict[msg.user_id].postMessage({
             action: 'set_tie',
@@ -176,7 +176,7 @@ socket.on('ws_set_tie', function (msg) {
 
 socket.on('ws_start', function (msg) {
     console.log('ws_start!');
-    console.log(msg);
+    // console.log(msg);
 
     if (msg.type == "BC" && botWorkerDict[msg.user_id] != undefined) {
         
@@ -196,7 +196,7 @@ socket.on('ws_start', function (msg) {
 
 socket.on('ws_pause', function (msg) {
     console.log('ws_pause!');
-    console.log(msg);
+    // console.log(msg);
 
     if (msg.type == "BC" && botWorkerDict[msg.user_id] != undefined) {
         
@@ -216,7 +216,7 @@ socket.on('ws_pause', function (msg) {
 
 socket.on('ws_info', function (msg) {
     console.log('ws_info!');
-    console.log(msg);
+    // console.log(msg);
 
     if (msg.type == "BC" && botWorkerDict[msg.user_id] != undefined) {
         
@@ -263,7 +263,7 @@ socket.on('ws_check_connection', function (msg) {
 
 socket.on('ws_stop', function (msg) {
     console.log('ws_stop!');
-    console.log(msg);
+    // console.log(msg);
 
     if (msg.type == "BC" && botWorkerDict[msg.user_id] != undefined) {
         
@@ -289,7 +289,7 @@ socket.on('ws_stop', function (msg) {
 
 socket.on('ws_get_history', function (msg) {
     console.log('ws_get_history!');
-    console.log(msg);
+    // console.log(msg);
 
     if (msg.type == "BC" && botWorkerDict[msg.user_id] != undefined) {
         
@@ -309,7 +309,7 @@ socket.on('ws_get_history', function (msg) {
 
 socket.on('ws_check_reconnect', function (msg) {
     console.log('ws_check_reconnect!');
-    console.log(msg);
+    // console.log(msg);
 
     if (msg.type == "BC" && Object.keys(botWorkerDict).length > 0) {
         Object.keys(botWorkerDict).forEach(function (key) {
@@ -436,7 +436,7 @@ socket.on('ws_result_bet', function (msg) {
 
 socket.on('ws_force_reconnect', function (msg) {
     console.log('ws_force_reconnect!');
-    console.log(msg);
+    // console.log(msg);
     if(rotBotWorkerDict[msg.user_id] != undefined){
         rotBotWorkerDict[msg.user_id].postMessage({
             action: 'force_reconnect'
