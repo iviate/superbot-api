@@ -6,7 +6,7 @@ require('log-timestamp');
 // const io = require('socket.io-client');
 const io = require("socket.io-client");
 // console.log(io)
-const socket = io.connect('ws://api.superbot.bet/');
+const socket = io.connect('ws://localhost/');
 
 // console.log(socket)
 // const socket = io.connect('ws://localhost', {
@@ -377,9 +377,9 @@ socket.on('ws_bet', function (msg) {
     }
 });
 
-socket.on('result_bet', function (msg) {
-    console.log('result_bet!');
-    console.log(msg);
+socket.on('ws_result_bet', function (msg) {
+    console.log('ws_result_bet!', msg.type);
+    // console.log(msg);
 
     if (msg.type == "BC" && Object.keys(botWorkerDict).length > 0) {
         Object.keys(botWorkerDict).forEach(function (key) {
@@ -392,7 +392,7 @@ socket.on('result_bet', function (msg) {
                 table_title: msg.table_title,
                 shoe: msg.shoe,
                 round: msg.round,
-                bet: msg.bot,
+                bet: msg.bet,
                 result: msg.result,
                 status: msg.status,
                 user_count: msg.user_count,
@@ -407,22 +407,7 @@ socket.on('result_bet', function (msg) {
         Object.keys(rotBotWorkerDict).forEach(function (key) {
             var val = rotBotWorkerDict[key];
             // console.log(key, val)
-            val.postMessage({
-                action: 'result_bet',
-                bot_type: result.bot_type,
-                table_id: result.table,
-                table_title: result.table,
-                shoe: result.shoe,
-                round: result.stats.round,
-                bet: result.stats.bot.EO,
-                result: JSON.stringify(result.stats),
-                status: result.status.EO,
-                user_count: 0,
-                botTransactionId: res.id,
-                botTransaction: EDbotTransactionData
-
-            })
-            
+            val.postMessage({ ...msg, action: 'result_bet'})
         });
     } else if (msg.type == "DT" && Object.keys(dtBotWorkerDict).length > 0) {
         Object.keys(dtBotWorkerDict).forEach(function (key) {

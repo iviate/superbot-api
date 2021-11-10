@@ -62,6 +62,7 @@ async function getHistory() {
 }
 
 async function checkAndReconnect(force = false) {
+    console.log(is_connect, is_mock)
     if (is_reconnect) {
         return
     }
@@ -106,7 +107,7 @@ async function checkAndReconnect(force = false) {
         let cTime = parseFloat(userSeTokenTime) || 0
         let cookieAge = Math.round((moment() - cTime) / 1000)
         let reing = false
-        // console.log(cookieAge)
+        console.log(cookieAge)
         if (cookieAge > 1600 || !userSeToken) {
             is_reconnect = true
             is_connect = false
@@ -445,7 +446,7 @@ async function getBetLimitCode(betSide, value) {
 
 async function bet(data) {
     table = data.table
-    // console.log(status, betFailed, botObj.bet_side, botObj.is_infinite, data.playList)
+    console.log(status, isStop, isRecookie, is_reconnect, betting, betFailed, botObj.bet_side, botObj.is_infinite, data.playList)
     if (isRecookie) {
         return
     }
@@ -1316,6 +1317,7 @@ async function processResultBet(betStatus, botTransactionId, botTransaction, gam
 }
 
 async function registerForEventListening() {
+    console.log('start rot bot worker')
     is_mock = workerData.is_mock
     playData = workerData.playData
     botObj = workerData.obj

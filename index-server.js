@@ -100,12 +100,12 @@ io.on('connection', (socket) => {
         console.log('user', msg)
         io.emit(`user${msg.id}`, msg.data)
     })
-    
+
     socket.on('connection_status', (msg) => {
-        console.log('connection_status', msg)
+        // console.log('connection_status', msg)
         io.emit(`connection_status_${msg.id}`, msg.data)
     })
-    
+
     socket.on('history', (msg) => {
         io.emit(`history_${msg.id}`, msg.data)
     })
@@ -398,22 +398,19 @@ myApp.post('/login', async function (request, response) {
                         }
                         // let resultTransfer = await utils.transferWallet(user.ufa_account, user.type_password)
                         // console.log(`resultTransfer ${resultTransfer}`)
-                        if ((botWorkerDict.hasOwnProperty(user.id) && botWorkerDict[user.id] != undefined) ||
-                            (rotBotWorkerDict.hasOwnProperty(user.id) && botWorkerDict[user.id] != undefined) ||
-                            (dtBotWorkerDict.hasOwnProperty(user.id) && dtBotWorkerDict[user.id] != undefined)) {
-                            let hasBot = null
-                            if (res2) {
-                                hasBot = res2
-                            }
+
+                        if (res2) {
+
                             response.json({
                                 success: true,
                                 data: {
                                     user_id: user.id,
-                                    bot: hasBot,
+                                    bot: res2,
                                     username: USERNAME
                                 }
                             });
-                        } else {
+                        }
+                        else {
                             response.json({
                                 success: true,
                                 data: {
@@ -760,38 +757,24 @@ myApp.post('/bot/set_opposite', async function (request, response) {
                 if (botObj) {
                     botObj.is_opposite = is_opposite
                     await botObj.save()
-                    if (botWorkerDict[user.id] != undefined) {
-                        botWorkerDict[user.id].postMessage({
-                            action: 'set_opposite',
-                            is_opposite: is_opposite
-                        })
-
+                    if (botObj.bot_type == 1) {
                         io.emit(`ws_set_opposite`, {
-                            user_id: user.id, 
+                            user_id: user.id,
                             type: "BC",
                             is_opposite: is_opposite
                         })
                     }
-                    if (rotBotWorkerDict[user.id] != undefined) {
-                        rotBotWorkerDict[user.id].postMessage({
-                            action: 'set_opposite',
-                            is_opposite: is_opposite
-                        })
-
+                    else if (botObj.bot_type == 2) {
                         io.emit(`ws_set_opposite`, {
-                            user_id: user.id, 
+                            user_id: user.id,
                             type: "RT",
                             is_opposite: is_opposite
                         })
                     }
-                    if (dtBotWorkerDict[user.id] != undefined) {
-                        dtBotWorkerDict[user.id].postMessage({
-                            action: 'set_opposite',
-                            is_opposite: is_opposite
-                        })
+                    else if (botObj.bot_type == 3) {
 
                         io.emit(`ws_set_opposite`, {
-                            user_id: user.id, 
+                            user_id: user.id,
                             type: "DT",
                             is_opposite: is_opposite
                         })
@@ -1109,20 +1092,14 @@ myApp.post('/bot/set_zero', async function (request, response) {
                         botObj.zero_bet = zero_bet
                         botObj.open_zero = open_zero
                         await botObj.save()
-                        if (rotBotWorkerDict[user.id] != undefined) {
-                            rotBotWorkerDict[user.id].postMessage({
-                                action: 'set_zero',
-                                zero_bet: zero_bet,
-                                open_zero: open_zero
-                            })
 
-                            io.emit(`ws_set_zero`, {
-                                user_id: user.id, 
-                                type: "RT",
-                                zero_bet: zero_bet,
-                                open_zero: open_zero
-                            })
-                        }
+                        io.emit(`ws_set_zero`, {
+                            user_id: user.id,
+                            type: "RT",
+                            zero_bet: zero_bet,
+                            open_zero: open_zero
+                        })
+
                     }
 
                     response.json({
@@ -1179,28 +1156,21 @@ myApp.post('/bot/set_tie', async function (request, response) {
                         botObj.b_tie_val = b_tie_val
                         botObj.b_tie = b_tie
                         await botObj.save()
-                        if (botWorkerDict[user.id] != undefined) {
-                            botWorkerDict[user.id].postMessage({
-                                action: 'set_tie',
-                                b_tie_val: b_tie_val,
-                                b_tie: b_tie
-                            })
 
-                            io.emit(`ws_set_tie`, {
-                                user_id: user.id, 
-                                type: "BC",
-                                b_tie_val: b_tie_val,
-                                b_tie: b_tie
-                            })
-                            
-                        }
+                        io.emit(`ws_set_tie`, {
+                            user_id: user.id,
+                            type: "BC",
+                            b_tie_val: b_tie_val,
+                            b_tie: b_tie
+                        })
+
+                        response.json({
+                            success: true,
+                            error_code: null
+                        })
+
                     }
-
-
-                    response.json({
-                        success: true,
-                        error_code: null
-                    })
+                   
 
                 } else {
                     response.json({
@@ -1285,10 +1255,6 @@ myApp.post('/bot', async function (request, response) {
                     ]
                 }).then((res) => {
                     // console.log(res)
-                    delete botWorkerDict[user.id]
-                    delete rotBotWorkerDict[user.id]
-                    delete dtBotWorkerDict[user.id]
-
                     db.bot.update({
                         status: 3
                     }, {
@@ -1307,16 +1273,16 @@ myApp.post('/bot', async function (request, response) {
                         // console.log(botData)
                         if (botData.bot_type == 1) {
                             // createBotWorker(botData, playData, user.is_mock)
-                            io.emit('ws_create', {sv: currentSv, type: "BC", data: botData, playData: playData, is_mock: user.is_mock})
+                            io.emit('ws_create', { sv: ((currentSv + 1) % env.totalSv) + 1, type: "BC", data: botData, playData: playData, is_mock: user.is_mock })
                         } else if (botData.bot_type == 2) {
                             // createRotBotWorker(botData, playData, user.is_mock)
-                            io.emit('ws_create', {sv: currentSv, type: "RT", data: botData, playData: playData, is_mock: user.is_mock})
+                            io.emit('ws_create', { sv: ((currentSv + 1) % env.totalSv) + 1, type: "RT", data: botData, playData: playData, is_mock: user.is_mock })
                         } else if (botData.bot_type == 3) {
                             // createDtWorker(botData, playData, user.is_mock)
-                            io.emit('ws_create', {sv: currentSv, type: "BC", data: botData, playData: playData, is_mock: user.is_mock})
+                            io.emit('ws_create', { sv: ((currentSv + 1) % env.totalSv) + 1, type: "BC", data: botData, playData: playData, is_mock: user.is_mock })
                         }
 
-                        currentSv = ((currentSv + 1) % env.totalSv) + 1
+                        currentSv = currentSv + 1
 
                         response.json({
                             success: true,
@@ -1362,23 +1328,23 @@ myApp.post('/start', async function (request, response) {
                     if (botObj.bot_type == 1) {
 
                         io.emit(`ws_start`, {
-                            user_id: user.id, 
+                            user_id: user.id,
                             type: "BC"
                         })
                     }
                     else if (botObj.bot_type == 2) {
-                        
+
 
                         io.emit(`ws_start`, {
-                            user_id: user.id, 
+                            user_id: user.id,
                             type: "RT"
                         })
                     }
                     else if (botObj.bot_type == 3) {
-                        
+
 
                         io.emit(`ws_start`, {
-                            user_id: user.id, 
+                            user_id: user.id,
                             type: "DT"
                         })
                     }
@@ -1423,42 +1389,24 @@ myApp.post('/pause', async function (request, response) {
                 // console.log(u.id)
                 if (botObj) {
                     botObj.status = 2
-                    if (botWorkerDict[u.id] != undefined) {
-                        botWorkerDict[u.id].postMessage({
-                            action: 'pause'
-                        })
-
+                    if (botObj.bot_type == 1) {
                         io.emit(`ws_pause`, {
-                            user_id: user.id, 
+                            user_id: user.id,
                             type: "BC"
                         })
-                    } else {
-                        delete botWorkerDict[u.id]
                     }
 
-                    if (rotBotWorkerDict[u.id] != undefined) {
-                        rotBotWorkerDict[u.id].postMessage({
-                            action: 'pause'
-                        })
-
+                    else if (botObj.bot_type == 2) {
                         io.emit(`ws_pause`, {
-                            user_id: user.id, 
+                            user_id: user.id,
                             type: "RT"
                         })
-                    } else {
-                        delete rotBotWorkerDict[u.id]
                     }
-
-                    if (dtBotWorkerDict[u.id] != undefined) {
-                        dtBotWorkerDict[u.id].postMessage({
-                            action: 'pause'
-                        })
+                    else if (botObj.bot_type == 3) {
                         io.emit(`ws_pause`, {
-                            user_id: user.id, 
+                            user_id: user.id,
                             type: "DT"
                         })
-                    } else {
-                        delete dtBotWorkerDict[u.id]
                     }
 
                     await botObj.save()
@@ -1675,12 +1623,7 @@ myApp.get('/user_bot/:id', async function (request, response) {
                 }
 
             }).then((res2) => {
-                if (res2){
-                    // && ((botWorkerDict.hasOwnProperty(user.id) && botWorkerDict[user.id] != undefined) ||
-                    // (rotBotWorkerDict.hasOwnProperty(user.id) && rotBotWorkerDict[user.id] != undefined) ||
-                    // (dtBotWorkerDict.hasOwnProperty(user.id) && dtBotWorkerDict[user.id] != undefined))) {
-                    // console.log("has bot")
-                    // hasBot = res2
+                if (res2) {
                     response.json({
                         success: true,
                         data: {
@@ -1688,10 +1631,6 @@ myApp.get('/user_bot/:id', async function (request, response) {
                         }
                     });
                 } else {
-                    // console.log("no bot")
-                    // delete botWorkerDict[user.id]
-                    // delete rotBotWorkerDict[user.id]
-                    // delete dtBotWorkerDict[user.id]
                     response.json({
                         success: true,
                         data: {
@@ -1730,34 +1669,22 @@ myApp.get('/bot_info/:id', async function (request, response) {
                 }
 
             }).then((res2) => {
-                if (res2 && (botWorkerDict.hasOwnProperty(user.id) && botWorkerDict[user.id] != undefined)) {
-                    botWorkerDict[user.id].postMessage({ action: 'info' })
+                if (res2 && res2.bot_type == 1) {
 
                     io.emit(`ws_info`, {
-                        user_id: user.id, 
+                        user_id: user.id,
                         type: "BC"
                     })
 
-                } else if (res2 && res2.bot_type == 2 && ((rotBotWorkerDict.hasOwnProperty(user.id) && rotBotWorkerDict[user.id] != undefined) ||
-                    (rotBotWorkerDict.hasOwnProperty(user.id) && rotBotWorkerDict[user.id] != undefined))) {
-                    // console.log('get rot bot info')
-                    rotBotWorkerDict[user.id].postMessage({ action: 'info' })
+                } else if (res2 && res2.bot_type == 2) {
                     io.emit(`ws_info`, {
-                        user_id: user.id, 
+                        user_id: user.id,
                         type: "RT"
                     })
                 }
-                if (res2 && (rotBotWorkerDict.hasOwnProperty(user.id) && rotBotWorkerDict[user.id] != undefined)) {
-                    rotBotWorkerDict[user.id].postMessage({ action: 'info' })
+                else if (res2 && res2.bot_type == 3) {
                     io.emit(`ws_info`, {
-                        user_id: user.id, 
-                        type: "RT"
-                    })
-                }
-                if (res2 && (dtBotWorkerDict.hasOwnProperty(user.id) && dtBotWorkerDict[user.id] != undefined)) {
-                    dtBotWorkerDict[user.id].postMessage({ action: 'info' })
-                    io.emit(`ws_info`, {
-                        user_id: user.id, 
+                        user_id: user.id,
                         type: "DT"
                     })
                 }
@@ -1800,7 +1727,7 @@ myApp.get('/check_connection/:id', async function (request, response) {
                     // console.log('bac check_connection')
                     // botWorkerDict[user.id].postMessage({ action: 'check_connection' })
                     io.emit(`ws_check_connection`, {
-                        user_id: user.id, 
+                        user_id: user.id,
                         type: "BC"
                     })
                     response.json({
@@ -1812,7 +1739,7 @@ myApp.get('/check_connection/:id', async function (request, response) {
                     // console.log('get rot bot info')
                     // rotBotWorkerDict[user.id].postMessage({ action: 'check_connection' })
                     io.emit(`ws_check_connection`, {
-                        user_id: user.id, 
+                        user_id: user.id,
                         type: "RT"
                     })
                     response.json({
@@ -1824,7 +1751,7 @@ myApp.get('/check_connection/:id', async function (request, response) {
                 else if (res2 && res2.bot_type == 2) {
                     // dtBotWorkerDict[user.id].postMessage({ action: 'check_connection' })
                     io.emit(`ws_check_connection`, {
-                        user_id: user.id, 
+                        user_id: user.id,
                         type: "DT"
                     })
                     response.json({
@@ -1941,35 +1868,24 @@ myApp.post('/stop', function (request, response) {
                     botObj.stop_by = 1
                     botObj.stop_wallet = request.body.wallet
                     await botObj.save()
-                    if (botWorkerDict[user.id] != undefined) {
-                        botWorkerDict[user.id].postMessage({
-                            action: 'stop'
-                        })
+                    if (botObj.bot_type == 1) {
+
                         io.emit(`ws_stop`, {
-                            user_id: user.id, 
+                            user_id: user.id,
                             type: "BC"
                         })
-                        delete botWorkerDict[user.id]
                     }
-                    if (rotBotWorkerDict[user.id] != undefined) {
-                        rotBotWorkerDict[user.id].postMessage({
-                            action: 'stop'
-                        })
+                    if (botObj.bot_type == 2) {
                         io.emit(`ws_stop`, {
-                            user_id: user.id, 
+                            user_id: user.id,
                             type: "RT"
                         })
-                        delete rotBotWorkerDict[user.id]
                     }
-                    if (dtBotWorkerDict[user.id] != undefined) {
-                        dtBotWorkerDict[user.id].postMessage({
-                            action: 'stop'
-                        })
+                    if (botObj.bot_type == 3) {
                         io.emit(`ws_stop`, {
-                            user_id: user.id, 
+                            user_id: user.id,
                             type: "DT"
                         })
-                        delete dtBotWorkerDict[user.id]
                     }
 
                     response.json({
@@ -2449,8 +2365,7 @@ myApp.get('/history/:id', async function (request, response) {
                 }
 
             }).then((res2) => {
-                if (res2 && (botWorkerDict.hasOwnProperty(user.id) && botWorkerDict[user.id] != undefined)) {
-                    botWorkerDict[user.id].postMessage({ action: 'get_history' })
+                if (res2 && res2.bot_type == 1) {
                     io.emit(`ws_get_history`, { user_id: user.id })
                     response.json({
                         success: true,
@@ -2459,10 +2374,7 @@ myApp.get('/history/:id', async function (request, response) {
                             history: []
                         }
                     })
-                } else if (res2 && res2.bot_type == 2 && ((rotBotWorkerDict.hasOwnProperty(user.id) && rotBotWorkerDict[user.id] != undefined) ||
-                    (rotBotWorkerDict.hasOwnProperty(user.id) && rotBotWorkerDict[user.id] != undefined))) {
-                    // console.log('get rot bot info')
-                    rotBotWorkerDict[user.id].postMessage({ action: 'get_history' })
+                } else if (res2 && res2.bot_type == 2) {
                     io.emit(`ws_get_history`, { user_id: user.id })
                     response.json({
                         success: true,
@@ -2472,8 +2384,7 @@ myApp.get('/history/:id', async function (request, response) {
                         }
                     })
                 }
-                else if (res2 && (dtBotWorkerDict.hasOwnProperty(user.id) && dtBotWorkerDict[user.id] != undefined)) {
-                    dtBotWorkerDict[user.id].postMessage({ action: 'get_history' })
+                else if (res2 && res2.bot_type == 3) {
                     io.emit(`ws_get_history`, { user_id: user.id })
                     response.json({
                         success: true,
@@ -3307,7 +3218,7 @@ function betInterval() {
         //         val.postMessage({
         //             action: 'check_reconnect'
         //         })
-                
+
         //     });
         // }
     } else {
@@ -3321,7 +3232,7 @@ function betInterval() {
         //             action: 'bet',
         //             data: currentBetData
         //         })
-                
+
         //     });
         // }
     }
@@ -3342,7 +3253,7 @@ function dtBetInterval() {
         //             action: 'check_reconnect'
         //         })
 
-                
+
         //     });
         // }
     } else {
@@ -3358,7 +3269,7 @@ function dtBetInterval() {
         //             data: dtCurrentBetData
         //         })
 
-                
+
         //     });
         // }
     }
@@ -3382,12 +3293,12 @@ function rotBetInterval(start, data, tableId) {
         //         val.postMessage({
         //             action: 'check_reconnect'
         //         })
-                
+
         //     });
 
         // }
     } else {
-        console.log('betting', data)
+        // console.log('betting', data)
         io.emit(`ws_bet`, { data: data, type: "RT" })
         // if (Object.keys(rotBotWorkerDict).length > 0) {
         //     Object.keys(rotBotWorkerDict).forEach(function (key) {
@@ -3397,7 +3308,7 @@ function rotBetInterval(start, data, tableId) {
         //             action: 'bet',
         //             data: data
         //         })
-                
+
         //     });
 
         // }
@@ -3728,7 +3639,7 @@ function initiateWorker(table) {
                             botTransactionData.id = res.id
 
                             io.emit(`ws_result_bet`, {
-                                type: "BC", 
+                                type: "BC",
                                 bot_type: result.bot_type,
                                 table_id: result.table,
                                 table_title: result.table,
@@ -3762,7 +3673,7 @@ function initiateWorker(table) {
 
                             //         })
 
-                                    
+
                             //     });
                             // }
                         }
@@ -3895,7 +3806,7 @@ function initiateDtWorker(table) {
 
                             dtBotTransactionData.id = res.id
                             io.emit(`ws_result_bet`, {
-                                type: "DT", 
+                                type: "DT",
                                 bot_type: result.bot_type,
                                 table_id: result.table,
                                 table_title: result.table,
@@ -3927,7 +3838,7 @@ function initiateDtWorker(table) {
 
                             //         })
 
-                                    
+
                             //     });
                             // }
                         }
@@ -4076,42 +3987,21 @@ function initiateRotWorker(table) {
 
                             RBbotTransactionData.id = res.id
 
-                            if (Object.keys(rotBotWorkerDict).length > 0) {
-                                Object.keys(rotBotWorkerDict).forEach(function (key) {
-                                    var val = rotBotWorkerDict[key];
-                                    // console.log(key, val)
-                                    val.postMessage({
-                                        action: 'result_bet',
-                                        bot_type: result.bot_type,
-                                        table_id: result.table,
-                                        table_title: result.table,
-                                        shoe: result.shoe,
-                                        round: result.stats.round,
-                                        bet: result.stats.bot.RB,
-                                        result: JSON.stringify(result.stats),
-                                        status: result.status.RB,
-                                        user_count: 0,
-                                        botTransactionId: res.id,
-                                        botTransaction: RBbotTransactionData
+                            io.emit(`ws_result_bet`, {
+                                type: "RT",
+                                bot_type: result.bot_type,
+                                table_id: result.table,
+                                table_title: result.table,
+                                shoe: result.shoe,
+                                round: result.stats.round,
+                                bet: result.stats.bot.RB,
+                                result: JSON.stringify(result.stats),
+                                status: result.status.RB,
+                                user_count: 0,
+                                botTransactionId: res.id,
+                                botTransaction: RBbotTransactionData
+                            })
 
-                                    })
-
-                                    io.emit(`ws_result_bet`, {
-                                        type: "RT", 
-                                        bot_type: result.bot_type,
-                                        table_id: result.table,
-                                        table_title: result.table,
-                                        shoe: result.shoe,
-                                        round: result.stats.round,
-                                        bet: result.stats.bot.RB,
-                                        result: JSON.stringify(result.stats),
-                                        status: result.status.RB,
-                                        user_count: 0,
-                                        botTransactionId: res.id,
-                                        botTransaction: RBbotTransactionData
-                                    })
-                                });
-                            }
                         }
                     })
                 })
@@ -4170,7 +4060,7 @@ function initiateRotWorker(table) {
 
                             EDbotTransactionData.id = res.id
                             io.emit(`ws_result_bet`, {
-                                type: "RT", 
+                                type: "RT",
                                 bot_type: result.bot_type,
                                 table_id: result.table,
                                 table_title: result.table,
@@ -4202,7 +4092,7 @@ function initiateRotWorker(table) {
                             //             botTransaction: EDbotTransactionData
 
                             //         })
-                                    
+
                             //     });
                             // }
                         }
@@ -4263,8 +4153,8 @@ function initiateRotWorker(table) {
                             }
 
                             SBbotTransactionData.id = res.id
-                            io.emit(`ws_result_bet`, { 
-                                type: "RT", 
+                            io.emit(`ws_result_bet`, {
+                                type: "RT",
                                 bot_type: result.bot_type,
                                 table_id: result.table,
                                 table_title: result.table,
@@ -4297,7 +4187,7 @@ function initiateRotWorker(table) {
 
                             //         })
 
-                                    
+
                             //     });
                             // }
                         }
@@ -4361,7 +4251,7 @@ function initiateRotWorker(table) {
 
                             TWOZONEbotTransactionData.id = res.id
                             io.emit(`ws_result_bet`, {
-                                type: "RT", 
+                                type: "RT",
                                 bot_type: result.bot_type,
                                 table_id: result.table,
                                 table_title: result.table,
@@ -4394,7 +4284,7 @@ function initiateRotWorker(table) {
 
                             //         })
 
-                                    
+
                             //     });
                             // }
                         }
@@ -4455,6 +4345,7 @@ function initiateRotWorker(table) {
 
                             ONEZONEbotTransactionData.id = res.id
                             io.emit(`ws_result_bet`, {
+                                type: "RT",
                                 bot_type: result.bot_type,
                                 table_id: result.table,
                                 table_title: result.table,
@@ -4487,7 +4378,7 @@ function initiateRotWorker(table) {
 
                             //         })
 
-                                    
+
                             //     });
                             // }
                         }
@@ -4536,7 +4427,7 @@ function initiateRotWorker(table) {
             //         })
 
             io.emit(`ws_force_reconnect`, {
-                type: "RT", 
+                type: "RT",
             })
             //     });
 
