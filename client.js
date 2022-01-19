@@ -29,4 +29,4 @@ socket.on("connect", () => {
     console.log(socket.id); // x8WIv7-mJelg7on_ALbx
   });
 
-  socket.emit('CH01', "message");
+socket.emit('CH01', "message");

@@ -130,8 +130,8 @@ async function inititalInfo() {
             console.log(cookie)
             cookieTime = moment()
 
-            // console.log(`https://bpweb.bikimex.net/player/singleTable4.jsp?dm=1&t=${tableId}&title=1&sgt=3&hall=1`)
-            await axios.get(`https://bpweb.bikimex.net/player/singleTable4.jsp?dm=1&t=${tableId}&title=1&sgt=3&hall=1`,
+            // console.log(`https://bpweb.zeusmex555.com/player/singleTable4.jsp?dm=1&t=${tableId}&title=1&sgt=3&hall=1`)
+            await axios.get(`https://bpweb.zeusmex555.com/player/singleTable4.jsp?dm=1&t=${tableId}&title=1&sgt=3&hall=1`,
                 {
                     headers: {
                         Cookie: cookie
@@ -208,7 +208,7 @@ async function predictPlay() {
                 reing = true
                 cookie = await utils.reCookie(username, password, 4)
                 cookieTime = moment()
-                await axios.get(`https://bpweb.bikimex.net/player/singleTable4.jsp?dm=1&t=${tableId}&title=1&sgt=0&hall=1`,
+                await axios.get(`https://bpweb.zeusmex555.com/player/singleTable4.jsp?dm=1&t=${tableId}&title=1&sgt=0&hall=1`,
                     {
                         headers: {
                             Cookie: cookie
@@ -228,7 +228,7 @@ async function predictPlay() {
     }
     let res = null
     try {
-        let balanceAPI = "https://bpweb.bikimex.net/player/query/queryDealerEventV2"
+        let balanceAPI = "https://bpweb.zeusmex555.com/player/query/queryDealerEventV2"
         const ps = new URLSearchParams()
         ps.append('domainType', 1)
         ps.append('queryTableID', tableId)
@@ -263,7 +263,7 @@ async function predictPlay() {
                 reing = true
                 cookie = await utils.reCookie(username, password, 4)
                 cookieTime = moment()
-                await axios.get(`https://bpweb.bikimex.net/player/singleTable4.jsp?dm=1&t=${tableId}&title=1&sgt=0&hall=1`,
+                await axios.get(`https://bpweb.zeusmex555.com/player/singleTable4.jsp?dm=1&t=${tableId}&title=1&sgt=0&hall=1`,
                     {
                         headers: {
                             Cookie: cookie

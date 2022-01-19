@@ -446,7 +446,7 @@ async function bet(data) {
             });
             var config = {
                 method: 'post',
-                url: 'https://bpweb.bikimex.net/player/update/addLongHuTransaction',
+                url: 'https://bpweb.zeusmex555.com/player/update/addLongHuTransaction',
                 headers: {
                     'Cookie': userSeToken,
                     'Content-Type': 'application/x-www-form-urlencoded'
@@ -491,7 +491,7 @@ async function bet(data) {
 
 
 
-            // let betAPI = "https://bpweb.bikimex.net/player/update/addMyTransaction"
+            // let betAPI = "https://bpweb.zeusmex555.com/player/update/addMyTransaction"
             // let bData = [{"categoryIdx":1,"categoryName":realBet,"stake":betVal}]
             // console.log(bData, data.table, data.shoe, data.round)
 

@@ -153,7 +153,7 @@ async function inititalInfo() {
             cookie = await utils.reCookie(username, password, 4)
             console.log(cookie)
             cookieTime = moment()
-            await axios.get(`https://bpweb.bikimex.net/player/singleRouTable.jsp?dm=1&t=${tableId}&title=1&sgt=6&hall=1`,
+            await axios.get(`https://bpweb.zeusmex555.com/player/singleRouTable.jsp?dm=1&t=${tableId}&title=1&sgt=6&hall=1`,
                 {
                     headers: {
                         Cookie: cookie
@@ -229,7 +229,7 @@ async function predictPlay() {
                 reing = true
                 cookie = await utils.reCookie(username, password, 4)
                 cookieTime = moment()
-                await axios.get(`https://bpweb.bikimex.net/player/singleRouTable.jsp?dm=1&t=${tableId}&title=1&sgt=6&hall=1`,
+                await axios.get(`https://bpweb.zeusmex555.com/player/singleRouTable.jsp?dm=1&t=${tableId}&title=1&sgt=6&hall=1`,
                     {
                         headers: {
                             Cookie: cookie
@@ -249,7 +249,7 @@ async function predictPlay() {
     }
     let res = null
     try {
-        let balanceAPI = "https://bpweb.bikimex.net/player/query/queryDealerEventV2"
+        let balanceAPI = "https://bpweb.zeusmex555.com/player/query/queryDealerEventV2"
         const ps = new URLSearchParams()
         ps.append('domainType', 1)
         ps.append('queryTableID', tableId)
@@ -276,7 +276,7 @@ async function predictPlay() {
         isReCookie = true
         cookie = await utils.reCookie(username, password, 4)
         cookieTime = moment()
-        await axios.get(`https://bpweb.bikimex.net/player/singleTable4.jsp?dm=1&t=${tableId}&title=1&sgt=6&hall=1`,
+        await axios.get(`https://bpweb.zeusmex555.com/player/singleTable4.jsp?dm=1&t=${tableId}&title=1&sgt=6&hall=1`,
             {
                 headers: {
                     Cookie: cookie

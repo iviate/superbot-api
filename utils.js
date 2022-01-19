@@ -587,7 +587,7 @@ exports.getUserImbaWallet = async function getUserImbaWallet(username, password,
 exports.getUserWallet = async function getUserWallet(cookie) {
     let wallet = await (async (cookie) => {
 
-        let balanceAPI = "https://bpweb.bikimex.net/player/query/queryBalancePC"
+        let balanceAPI = "https://bpweb.zeusmex555.com/player/query/queryBalancePC"
         const ps = new URLSearchParams()
         ps.append('dm', '1')
         ps.append('hallType', '1')
@@ -627,7 +627,7 @@ exports.getUserWallet = async function getUserWallet(cookie) {
 exports.getUserHistory = async function getUserHistory(cookie) {
     let history = await (async (cookie) => {
 
-        let historyAPI = "https://bpweb.bikimex.net/player/query/queryTxnHistory"
+        let historyAPI = "https://bpweb.zeusmex555.com/player/query/queryTxnHistory"
         let startTime = new Date();
         let endTime = new Date();
         startTime.setHours(0, 0, 0, 0)

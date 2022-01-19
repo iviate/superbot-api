@@ -20,7 +20,7 @@ var data = qs.stringify({
 });
 var config = {
   method: 'post',
-  url: 'https://bpweb.bikimex.net/player/update/addMyTransaction',
+  url: 'https://bpweb.zeusmex555.com/player/update/addMyTransaction',
   headers: { 
     'Cookie': 'visid_incap_1269746=me3DFFnUR6uuqj7shn0obp6uwl4AAAAAQUIPAAAAAADVxrR7iO5RIGukVqZ9KfWR; load_balancer=e8f510afde8d4f8580a47a8edcea2bd6; _ga=GA1.2.1124003114.1589816967; ROUTEID=.bacweb03; nlbi_1269746=Vv4FD7ELhWK+kpf3Y5KApwAAAADWVcieAfz9MtWJIDIkSNNe; incap_ses_338_1269746=7tx5LtSG1R3K1bwTedGwBJarJGAAAAAAZaVA1Y1L65YrLVESnYwqYQ==; rcr=987; _gid=GA1.2.1270742777.1613015956; JSESSIONID=88B80922D9A9C3A3525DFAB424C1BF43; _gat_gtag_UA_153578037_2=1', 
     'Content-Type': 'application/x-www-form-urlencoded'
