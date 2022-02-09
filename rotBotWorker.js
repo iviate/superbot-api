@@ -7,6 +7,7 @@ const e = require('express');
 const db = require('./app/models');
 const utils = require("./utils.js")
 const moment = require('moment-timezone');
+const { reCookie } = require('./utilities');
 
 var qs = require('qs');
 var botCodeMap = {
@@ -90,7 +91,8 @@ async function checkAndReconnect(force = false) {
             console.log('reconnect with time condition')
             console.log(user.ufa_account, user.type_password, user.web)
             reing = true
-            let c = await utils.reCookie(user.ufa_account, user.type_password, user.web)
+            // let c = await utils.reCookie(user.ufa_account, user.type_password, user.web)
+            let c = await reCookie(user.ufa_account, user.type_password)
             reing = false
             if (c != null) {
                 userSeToken = c
@@ -119,7 +121,8 @@ async function checkAndReconnect(force = false) {
                 console.log('reconnect with time condition')
                 console.log(user.ufa_account, user.type_password, user.web)
                 reing = true
-                let c = await utils.reCookie(user.ufa_account, user.type_password, user.web)
+                // let c = await utils.reCookie(user.ufa_account, user.type_password, user.web)
+                let c = await reCookie(user.ufa_account, user.type_password)
                 reing = false
                 if (c != null) {
                     userSeToken = c
