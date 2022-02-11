@@ -12,7 +12,7 @@ async function getCredit(token) {
     };
   }
 
-  config = {
+  const config = {
     method: 'get',
     url: `https://imba69.com/member/get_credit_limit?token=${token}`,
     headers: {
