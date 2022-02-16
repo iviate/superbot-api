@@ -8,6 +8,7 @@ axios.interceptors.response.use(
     return response;
   },
   (error) => {
+    // console.log(error)
     if (error.response.status === 302) {
       return Promise.resolve(error.response);
     } else {
@@ -20,9 +21,9 @@ async function loginImba(username, password) {
   const config = {
     maxRedirects: 0,
     method: 'post',
-    url: 'https://imba69.com/users/sign_in',
+    url: 'https://imba77.com/users/sign_in',
     headers: {
-      Host: 'imba69.com',
+      Host: 'imba77.com',
       'Content-Length': '57',
       'Cache-Control': 'max-age=0',
       'Sec-Ch-Ua':
@@ -30,7 +31,7 @@ async function loginImba(username, password) {
       'Sec-Ch-Ua-Mobile': '?0',
       'Sec-Ch-Ua-Platform': '"macOS"',
       'Upgrade-Insecure-Requests': '1',
-      Origin: 'https://imba69.com',
+      Origin: 'https://imba77.com',
       'Content-Type': 'application/x-www-form-urlencoded',
       'User-Agent':
         'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.71 Safari/537.36',
@@ -40,7 +41,7 @@ async function loginImba(username, password) {
       'Sec-Fetch-Mode': 'navigate',
       'Sec-Fetch-User': '?1',
       'Sec-Fetch-Dest': 'document',
-      Referer: 'https://imba69.com/users/sign_in',
+      Referer: 'https://imba77.com/users/sign_in',
       'Accept-Encoding': 'gzip, deflate',
       'Accept-Language': 'en-US,en;q=0.9',
     },
@@ -64,9 +65,9 @@ async function getOnlineGameLoginInfo() {
   const vendorResponse = await axios({
     maxRedirects: 0,
     method: 'get',
-    url: 'https://imba69.com/member/gamelink?vendor=sexy&game_id=undefined&game_code=undefined&mobile=false',
+    url: 'https://imba77.com/member/gamelink?vendor=sexy&game_id=undefined&game_code=undefined&mobile=false',
     headers: {
-      Host: 'imba69.com',
+      Host: 'imba77.com',
       'Sec-Ch-Ua':
         '" Not;A Brand";v="99", "Google Chrome";v="97", "Chromium";v="97"',
       Accept: '*/*',
@@ -78,7 +79,7 @@ async function getOnlineGameLoginInfo() {
       'Sec-Fetch-Site': 'same-origin',
       'Sec-Fetch-Mode': 'cors',
       'Sec-Fetch-Dest': 'empty',
-      Referer: 'https://imba69.com/member/games?game=casino',
+      Referer: 'https://imba77.com/member/games?game=casino',
       'Accept-Encoding': 'gzip, deflate',
       'Accept-Language': 'en-US,en;q=0.9',
       Cookie: getCookieString(),

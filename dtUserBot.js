@@ -8,6 +8,7 @@ const db = require('./app/models');
 const utils = require("./utils.js")
 const moment = require('moment-timezone');
 var qs = require('qs');
+const { reCookie } = require('./utilities');
 
 let is_mock = false
 let interval;
@@ -79,7 +80,8 @@ async function checkAndReconnect() {
             console.log('reconnect with time condition')
             console.log(user.ufa_account, user.type_password, user.web)
             reing = true
-            let c = await utils.reCookie(user.ufa_account, user.type_password, user.web)
+            // let c = await utils.reCookie(user.ufa_account, user.type_password, user.web)
+            let c = await reCookie(user.ufa_account, user.type_password)
             reing = false
             if (c != null) {
                 userSeToken = c
@@ -108,7 +110,8 @@ async function checkAndReconnect() {
                 console.log('reconnect with logout condition')
                 console.log(user.ufa_account, user.type_password, user.web)
                 reing = true
-                let c = await utils.reCookie(user.ufa_account, user.type_password, user.web)
+                // let c = await utils.reCookie(user.ufa_account, user.type_password, user.web)
+                let c = await reCookie(user.ufa_account, user.type_password)
                 reing = false
                 if (c != null) {
                     userSeToken = c
@@ -491,7 +494,7 @@ async function bet(data) {
 
 
 
-            // let betAPI = "https://bpweb.zeusmex555.com/player/update/addMyTransaction"
+            // let betAPI = "https://bpweb.bikimex.net/player/update/addMyTransaction"
             // let bData = [{"categoryIdx":1,"categoryName":realBet,"stake":betVal}]
             // console.log(bData, data.table, data.shoe, data.round)
 

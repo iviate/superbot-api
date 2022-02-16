@@ -6,6 +6,7 @@ const axios = require('axios');
 const puppeteer = require("puppeteer");
 const utils = require("./utils.js")
 const moment = require('moment-timezone');
+const { reCookie } = require('./utilities');
 
 
 let interval;
@@ -19,7 +20,7 @@ let info = [];
 let shoe;
 let round;
 let username = null
-let password = "Aa112233"
+let password = null
 // let stats;
 let predictStats = { shoe: '', correct: 0, wrong: 0, tie: 0, info: {}, predict: [] };
 // let predictStatsHistory = [];
@@ -81,7 +82,8 @@ function getCurrent() {
 function registerForEventListening() {
 
     tableId = workerData.table
-    username = workerData.username
+    username = workerData.username.username
+    password = workerData.username.pwd
     console.log(`start table ${tableId} - ${username}`)
     inititalInfo()
     // callback method is defined to receive data from main thread
@@ -125,9 +127,9 @@ async function inititalInfo() {
         try {
             reing = true
             isReCookie = true
-            cookie = await utils.reCookie(username, password, 4)
-            
-            console.log(cookie)
+            // cookie = await utils.reCookie(username, password, 4)
+            cookie = await reCookie(username, password)
+            // console.log(cookie)
             cookieTime = moment()
 
             // console.log(`https://bpweb.zeusmex555.com/player/singleTable4.jsp?dm=1&t=${tableId}&title=1&sgt=3&hall=1`)
@@ -206,7 +208,8 @@ async function predictPlay() {
 
                 isReCookie = true
                 reing = true
-                cookie = await utils.reCookie(username, password, 4)
+                // cookie = await utils.reCookie(username, password, 4)
+                cookie = await reCookie(username, password)
                 cookieTime = moment()
                 await axios.get(`https://bpweb.zeusmex555.com/player/singleTable4.jsp?dm=1&t=${tableId}&title=1&sgt=0&hall=1`,
                     {
@@ -261,7 +264,8 @@ async function predictPlay() {
 
                 isReCookie = true
                 reing = true
-                cookie = await utils.reCookie(username, password, 4)
+                // cookie = await utils.reCookie(username, password, 4)
+                cookie = await reCookie(username, password)
                 cookieTime = moment()
                 await axios.get(`https://bpweb.zeusmex555.com/player/singleTable4.jsp?dm=1&t=${tableId}&title=1&sgt=0&hall=1`,
                     {

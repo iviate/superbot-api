@@ -1,5 +1,5 @@
 module.exports = {
-    web : 'https://www.usa2468.com/',
+    web : 'https://www.imba77.com/',
     sv: 1,
     totalSv: 1
 }
