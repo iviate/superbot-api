@@ -2247,7 +2247,7 @@ myApp.get('/wallet/:id', async function (request, response) {
                     // axios(config)
                     //     .then(async function (res) {
                     // console.log(response.headers['set-cookie']);
-                    let walletAPI = `https://imba66.com/member/get_credit_limit?token=${user.token}`
+                    let walletAPI = `https://imba69.com/member/get_credit_limit?token=${user.token}`
                     let config = {
                         headers: {
                             'Content-Type': 'application/x-www-form-urlencoded',
