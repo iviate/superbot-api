@@ -2,6 +2,9 @@ const axios = require('axios');
 const qs = require('qs');
 
 const { addCookieFromResponse, getCookieString } = require('./cookie');
+const { sleep } = require('./sleep');
+
+let isInProgress = false;
 
 axios.interceptors.response.use(
   (response) => {
@@ -194,19 +197,32 @@ async function loginOnlineGameAndZeus() {
 }
 
 async function reCookie(username, password) {
-  const isLoginImbaSuccess = await loginImba(username, password);
+  try {
+    if (isInProgress) {
+      await sleep(5000);
+      return reCookie(username, password);
+    }
+    isInProgress = true;
+    const isLoginImbaSuccess = await loginImba(username, password);
 
-  if (!isLoginImbaSuccess) {
-    return;
+    if (!isLoginImbaSuccess) {
+      isInProgress = false;
+      return;
+    }
+
+    const isLoginZeusSuccess = await loginOnlineGameAndZeus();
+
+    if (!isLoginZeusSuccess) {
+      isInProgress = false;
+      return;
+    }
+
+    isInProgress = false;
+    return getCookieString(false);
+  } catch (error) {
+    isInProgress = false;
+    throw error;
   }
-
-  const isLoginZeusSuccess = await loginOnlineGameAndZeus();
-
-  if (!isLoginZeusSuccess) {
-    return;
-  }
-
-  return getCookieString(false);
 }
 
 module.exports = {
