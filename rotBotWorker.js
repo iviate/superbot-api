@@ -699,7 +699,7 @@ async function bet(data) {
             });
             var config = {
                 method: 'post',
-                url: 'https://bpweb.zeusmex555.com/player/update/addRouTransaction',
+                url: 'https://bpweb.semgbow777.com/player/update/addRouTransaction',
                 headers: {
                     'Cookie': userSeToken,
                     'Content-Type': 'application/x-www-form-urlencoded'

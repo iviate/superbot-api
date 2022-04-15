@@ -9,7 +9,7 @@ test2();
 async function test() {
   // var options = {
   //   method: 'POST',
-  //   url: 'https://imba66.com/users/sign_in',
+  //   url: 'https://imba69.com/users/sign_in',
   //   formData: {
   //     'user[username]': '0894958453',
   //     'user[password]': 'Aa112233',
@@ -27,7 +27,7 @@ async function test() {
     args: ['--no-sandbox', '--disable-setuid-sandbox']
 });
 const page = await browser.newPage();
-await page.goto('https://imba66.com/login?token=7qVRu7b77Vc', {
+await page.goto('https://imba69.com/login?token=uRuczWv7UGA', {
     waitUntil: "networkidle2"
 });
 
@@ -48,7 +48,7 @@ const cookiesImba = await page.cookies()
 
     var config = {
       method: 'post',
-      url: 'https://imba66.com/users/sign_in',
+      url: 'https://imba69.com/users/sign_in',
       headers: {
         Cookie: cookieHeader,
         ...data.getHeaders(),
@@ -60,7 +60,7 @@ const cookiesImba = await page.cookies()
       .then(async function (response) {
         console.log(response.headers['set-cookie']);
         let token = '7qVRu7b77Vc';
-        let walletAPI = `https://imba66.com/member/get_credit_limit?token=${token}`;
+        let walletAPI = `https://imba69.com/member/get_credit_limit?token=${token}`;
         let config = {
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
@@ -80,10 +80,10 @@ async function test2() {
   var options = {
     method: 'POST',
     timeout: 1000,
-    url: 'https://imba66.com/users/sign_in',
+    url: 'https://imba69.com/users/sign_in',
     formData: {
-      'user[username]': '0894958453',
-      'user[password]': 'Aa112233',
+      'user[username]': '0625059023',
+      'user[password]': '045823',
     },
   };
   // try {
@@ -115,12 +115,12 @@ async function test2() {
         // }
 
         const browser = await puppeteer.launch({
-          headless: true,
+          headless: false,
           devtools: false,
           args: ['--no-sandbox', '--disable-setuid-sandbox']
       });
       const page = await browser.newPage();
-      await page.goto('https://imba66.com/login?token=7qVRu7b77Vc', {
+      await page.goto('https://imba69.com/login?token=uRuczWv7UGA', {
           waitUntil: "networkidle2"
       });
       
@@ -135,12 +135,12 @@ async function test2() {
                   })
                   browser.close()
         var data = new FormData();
-        data.append('user[username]', '0894958453');
-        data.append('user[password]', 'Aa112233');
+        data.append('user[username]', '0625059023');
+        data.append('user[password]', '045823');
 
         // var config = {
         //     method: 'post',
-        //     url: 'https://imba66.com/users/sign_in',
+        //     url: 'https://imba69.com/users/sign_in',
         //     headers: {
         //         'Cookie': res.headers["set-cookie"].join(),
         //         ...data.getHeaders()
@@ -151,7 +151,7 @@ async function test2() {
         // axios(config)
         //     .then(async function (res) {
         // console.log(response.headers['set-cookie']);
-        let walletAPI = `https://imba66.com/member/get_credit_limit?token=7qVRu7b77Vc`;
+        let walletAPI = `https://imba69.com/member/get_credit_limit?token=uRuczWv7UGA`;
         let config = {
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
@@ -171,6 +171,7 @@ async function test2() {
           // })
         } else {
           console.log('NULL');
+          console.log(res1.data)
           // io.emit(`wallet${user_id}`, { wallet: null })
           // // parentPort.postMessage({ action: 'credit', data: { userId: userData.id, wallet: null } })
           // response.json({

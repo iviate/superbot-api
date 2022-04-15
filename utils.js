@@ -162,7 +162,7 @@ exports.getUserToken = async function getUserToken(username, password) {
             const page = await browser.newPage();
             await page.setUserAgent('Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36');
             page.setDefaultTimeout(timeout)
-            await page.goto('https://imba66.com/users/sign_in', {
+            await page.goto('https://imba69.com/users/sign_in', {
                 waitUntil: "networkidle2"
             });
 
@@ -197,7 +197,7 @@ async function reCookieImbaNew(username, password) {
     let cookie = await (async (username, password) => {
         var options = {
             'method': 'POST',
-            'url': 'https://imba66.com/users/sign_in',
+            'url': 'https://imba69.com/users/sign_in',
             formData: {
                 'user[username]': username,
                 'user[password]': password
@@ -212,7 +212,7 @@ async function reCookieImbaNew(username, password) {
 
             var config = {
                 method: 'post',
-                url: 'https://imba66.com/users/sign_in',
+                url: 'https://imba69.com/users/sign_in',
                 headers: {
                     'Cookie': response.headers["set-cookie"].join(),
                     ...data.getHeaders()
@@ -225,7 +225,7 @@ async function reCookieImbaNew(username, password) {
                     console.log(response.headers['set-cookie']);
                     var config = {
                         method: 'get',
-                        url: 'https://imba66.com/member/gamelink?vendor=sexy&game_id=undefined&game_code=undefined&mobile=false',
+                        url: 'https://imba69.com/member/gamelink?vendor=sexy&game_id=undefined&game_code=undefined&mobile=false',
                         headers: {
                             'Cookie': response.headers['set-cookie'].join()
                         }
@@ -292,7 +292,7 @@ async function reCookieImba(username, password) {
             const page = await browser.newPage();
             await page.setUserAgent('Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36');
             page.setDefaultTimeout(timeout)
-            await page.goto('https://imba66.com/users/sign_in', {
+            await page.goto('https://imba69.com/users/sign_in', {
                 waitUntil: "networkidle2"
             });
 
@@ -315,7 +315,7 @@ async function reCookieImba(username, password) {
             })
             const ps = new URLSearchParams()
             // console.log(cookieHeader)
-            const URL = "https://imba66.com/member/gamelink?vendor=sexy&game_id=undefined&game_code=undefined&mobile=false"
+            const URL = "https://imba69.com/member/gamelink?vendor=sexy&game_id=undefined&game_code=undefined&mobile=false"
             const config = {
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
@@ -514,7 +514,7 @@ exports.transferWallet = async function (username, password) {
 
 exports.getUserImbaWallet = async function getUserImbaWallet(username, password, token, imbaCookie) {
     console.log("getUserImbaWallet <<< ", imbaCookie)
-    let walletAPI = `https://imba66.com/`
+    let walletAPI = `https://imba69.com/`
     let config = {
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
@@ -537,7 +537,7 @@ exports.getUserImbaWallet = async function getUserImbaWallet(username, password,
             const page = await browser.newPage();
             await page.setUserAgent('Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36');
             page.setDefaultTimeout(timeout)
-            await page.goto('https://imba66.com/users/sign_in', {
+            await page.goto('https://imba69.com/users/sign_in', {
                 waitUntil: "networkidle2"
             });
 
@@ -587,7 +587,7 @@ exports.getUserImbaWallet = async function getUserImbaWallet(username, password,
 exports.getUserWallet = async function getUserWallet(cookie) {
     let wallet = await (async (cookie) => {
 
-        let balanceAPI = "https://bpweb.zeusmex555.com/player/query/queryBalancePC"
+        let balanceAPI = "https://bpweb.semgbow777.com/player/query/queryBalancePC"
         const ps = new URLSearchParams()
         ps.append('dm', '1')
         ps.append('hallType', '1')
@@ -627,7 +627,7 @@ exports.getUserWallet = async function getUserWallet(cookie) {
 exports.getUserHistory = async function getUserHistory(cookie) {
     let history = await (async (cookie) => {
 
-        let historyAPI = "https://bpweb.zeusmex555.com/player/query/queryTxnHistory"
+        let historyAPI = "https://bpweb.semgbow777.com/player/query/queryTxnHistory"
         let startTime = new Date();
         let endTime = new Date();
         startTime.setHours(0, 0, 0, 0)
