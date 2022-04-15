@@ -14,9 +14,9 @@ async function getCredit(token) {
 
   const config = {
     method: 'get',
-    url: `https://imba66.com/member/get_credit_limit?token=${token}`,
+    url: `https://imba77.com/member/get_credit_limit?token=${token}`,
     headers: {
-      Host: 'imba66.com',
+      Host: 'imba77.com',
       Pragma: 'no-cache',
       'Cache-Control': 'no-cache',
       'Sec-Ch-Ua':

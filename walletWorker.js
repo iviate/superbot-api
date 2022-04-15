@@ -27,7 +27,7 @@ async function test(username, password, token) {
     else {
         var options = {
             'method': 'POST',
-            'url': 'https://imba66.com/users/sign_in',
+            'url': 'https://imba77.com/users/sign_in',
             formData: {
                 'user[username]': username,
                 'user[password]': password
@@ -42,7 +42,7 @@ async function test(username, password, token) {
 
             var config = {
                 method: 'post',
-                url: 'https://imba66.com/users/sign_in',
+                url: 'https://imba77.com/users/sign_in',
                 headers: {
                     'Cookie': response.headers["set-cookie"].join(),
                     ...data.getHeaders()
@@ -53,7 +53,7 @@ async function test(username, password, token) {
             axios(config)
                 .then(async function (response) {
                     // console.log(response.headers['set-cookie']);
-                    let walletAPI = `https://imba66.com/member/get_credit_limit?token=${token}`
+                    let walletAPI = `https://imba77.com/member/get_credit_limit?token=${token}`
                     let config = {
                         headers: {
                             'Content-Type': 'application/x-www-form-urlencoded',
@@ -89,7 +89,7 @@ async function getUserImbaWallet(username, password, token) {
         })
         return user.mock_wallet
     } else {
-        let walletAPI = `https://imba66.com/member/get_credit_limit?token=${token}`
+        let walletAPI = `https://imba77.com/member/get_credit_limit?token=${token}`
         let config = {
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
@@ -111,7 +111,7 @@ async function getUserImbaWallet(username, password, token) {
                 page = await browser.newPage();
                 await page.setUserAgent('Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36');
                 page.setDefaultTimeout(50000)
-                await page.goto('https://imba66.com/users/sign_in', {
+                await page.goto('https://imba77.com/users/sign_in', {
                     waitUntil: "networkidle2"
                 });
 
