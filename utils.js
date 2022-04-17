@@ -5,6 +5,7 @@ const timeout = 50000
 const env = require('./config/web.config.js')
 var FormData = require('form-data');
 var request = require('request');
+const { webHostname } = require("./config/web.config.js");
 
 exports.reCookie = async function reCookie(username, password, web) {
     let cookie = null
@@ -162,7 +163,7 @@ exports.getUserToken = async function getUserToken(username, password) {
             const page = await browser.newPage();
             await page.setUserAgent('Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36');
             page.setDefaultTimeout(timeout)
-            await page.goto('https://imba66.com/users/sign_in', {
+            await page.goto(`${webHostname}/users/sign_in`, {
                 waitUntil: "networkidle2"
             });
 
@@ -197,7 +198,7 @@ async function reCookieImbaNew(username, password) {
     let cookie = await (async (username, password) => {
         var options = {
             'method': 'POST',
-            'url': 'https://imba66.com/users/sign_in',
+            'url': `${webHostname}/users/sign_in`,
             formData: {
                 'user[username]': username,
                 'user[password]': password
@@ -212,7 +213,7 @@ async function reCookieImbaNew(username, password) {
 
             var config = {
                 method: 'post',
-                url: 'https://imba66.com/users/sign_in',
+                url: `${webHostname}/users/sign_in`,
                 headers: {
                     'Cookie': response.headers["set-cookie"].join(),
                     ...data.getHeaders()
@@ -225,7 +226,7 @@ async function reCookieImbaNew(username, password) {
                     console.log(response.headers['set-cookie']);
                     var config = {
                         method: 'get',
-                        url: 'https://imba66.com/member/gamelink?vendor=sexy&game_id=undefined&game_code=undefined&mobile=false',
+                        url: `${webHostname}/member/gamelink?vendor=sexy&game_id=undefined&game_code=undefined&mobile=false`,
                         headers: {
                             'Cookie': response.headers['set-cookie'].join()
                         }
@@ -292,7 +293,7 @@ async function reCookieImba(username, password) {
             const page = await browser.newPage();
             await page.setUserAgent('Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36');
             page.setDefaultTimeout(timeout)
-            await page.goto('https://imba66.com/users/sign_in', {
+            await page.goto(`${webHostname}/users/sign_in`, {
                 waitUntil: "networkidle2"
             });
 
@@ -315,7 +316,7 @@ async function reCookieImba(username, password) {
             })
             const ps = new URLSearchParams()
             // console.log(cookieHeader)
-            const URL = "https://imba66.com/member/gamelink?vendor=sexy&game_id=undefined&game_code=undefined&mobile=false"
+            const URL = `${webHostname}/member/gamelink?vendor=sexy&game_id=undefined&game_code=undefined&mobile=false`
             const config = {
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
@@ -514,7 +515,7 @@ exports.transferWallet = async function (username, password) {
 
 exports.getUserImbaWallet = async function getUserImbaWallet(username, password, token, imbaCookie) {
     console.log("getUserImbaWallet <<< ", imbaCookie)
-    let walletAPI = `https://imba66.com/`
+    let walletAPI = `${webHostname}`
     let config = {
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
@@ -537,7 +538,7 @@ exports.getUserImbaWallet = async function getUserImbaWallet(username, password,
             const page = await browser.newPage();
             await page.setUserAgent('Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36');
             page.setDefaultTimeout(timeout)
-            await page.goto('https://imba66.com/users/sign_in', {
+            await page.goto(`${webHostname}/users/sign_in`, {
                 waitUntil: "networkidle2"
             });
 
