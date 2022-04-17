@@ -1,5 +1,5 @@
 // import * as http from 'http';
-
+require('dotenv').config();
 
 require('log-timestamp');
 // module included to create worker threads
