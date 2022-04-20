@@ -6,7 +6,7 @@ const axios = require('axios');
 const puppeteer = require("puppeteer");
 const utils = require("./utils.js")
 const moment = require('moment-timezone');
-const { reCookie } = require('./utilities');
+const { reCookie, sleep } = require('./utilities');
 
 
 let interval;
@@ -145,6 +145,7 @@ async function inititalInfo() {
             cookie = null
             isReCookie = true
             reing = false
+            sleep(5000)
 
         }
 
