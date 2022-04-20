@@ -6,7 +6,7 @@ async function example() {
   const cookie = await reCookie(username, password);
 
   const userToken = 'token';
-  const creditResponse = await getCredit(userToken);
+  const creditResponse = await getCredit(username, userToken);
 
   console.log(cookie);
   console.log(creditResponse); // { success: true, credit: 0.14 }
