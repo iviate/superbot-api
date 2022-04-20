@@ -1,9 +1,10 @@
 const axios = require('axios');
+const { webHostname } = require('../config/web.config');
 
 const { getCookieString } = require('./cookie');
 
-async function getCredit(token) {
-  const cookie = getCookieString();
+async function getCredit(username, token) {
+  const cookie = getCookieString(username);
 
   if (cookie === '') {
     return {
@@ -14,9 +15,9 @@ async function getCredit(token) {
 
   const config = {
     method: 'get',
-    url: `https://imba66.com/member/get_credit_limit?token=${token}`,
+    url: `${webHostname}/member/get_credit_limit?token=${token}`,
     headers: {
-      Host: 'imba66.com',
+      // Host: 'imba66.com',
       Pragma: 'no-cache',
       'Cache-Control': 'no-cache',
       'Sec-Ch-Ua':

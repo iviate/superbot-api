@@ -1,5 +1,5 @@
 module.exports = {
-    web : 'https://www.imba66.com/',
-    sv: 1,
-    totalSv: 1
-}
+  webHostname: process.env.WEB_HOSTNAME || 'https://imba66.com',
+  sv: 1,
+  totalSv: 1,
+};

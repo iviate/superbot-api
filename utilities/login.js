@@ -1,5 +1,6 @@
 const axios = require('axios');
 const qs = require('qs');
+const { webHostname } = require('../config/web.config');
 
 const { addCookieFromResponse, getCookieString } = require('./cookie');
 const { sleep } = require('./sleep');
@@ -24,9 +25,9 @@ async function loginImba(username, password) {
   const config = {
     maxRedirects: 0,
     method: 'post',
-    url: 'https://imba66.com/users/sign_in',
+    url: `${webHostname}/users/sign_in`,
     headers: {
-      Host: 'imba66.com',
+      // Host: 'imba66.com',
       'Content-Length': '57',
       'Cache-Control': 'max-age=0',
       'Sec-Ch-Ua':
@@ -34,7 +35,7 @@ async function loginImba(username, password) {
       'Sec-Ch-Ua-Mobile': '?0',
       'Sec-Ch-Ua-Platform': '"macOS"',
       'Upgrade-Insecure-Requests': '1',
-      Origin: 'https://imba66.com',
+      Origin: `${webHostname}`,
       'Content-Type': 'application/x-www-form-urlencoded',
       'User-Agent':
         'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.71 Safari/537.36',
@@ -44,7 +45,7 @@ async function loginImba(username, password) {
       'Sec-Fetch-Mode': 'navigate',
       'Sec-Fetch-User': '?1',
       'Sec-Fetch-Dest': 'document',
-      Referer: 'https://imba66.com/users/sign_in',
+      Referer: `${webHostname}/users/sign_in`,
       'Accept-Encoding': 'gzip, deflate',
       'Accept-Language': 'en-US,en;q=0.9',
     },
@@ -59,18 +60,18 @@ async function loginImba(username, password) {
     return false;
   }
 
-  addCookieFromResponse(resLogin);
+  addCookieFromResponse(username, resLogin);
 
   return true;
 }
 
-async function getOnlineGameLoginInfo() {
+async function getOnlineGameLoginInfo(username) {
   const vendorResponse = await axios({
     maxRedirects: 0,
     method: 'get',
-    url: 'https://imba66.com/member/gamelink?vendor=sexy&game_id=undefined&game_code=undefined&mobile=false',
+    url: `${webHostname}/member/gamelink?vendor=sexy&game_id=undefined&game_code=undefined&mobile=false`,
     headers: {
-      Host: 'imba66.com',
+      // Host: 'imba66.com',
       'Sec-Ch-Ua':
         '" Not;A Brand";v="99", "Google Chrome";v="97", "Chromium";v="97"',
       Accept: '*/*',
@@ -82,10 +83,10 @@ async function getOnlineGameLoginInfo() {
       'Sec-Fetch-Site': 'same-origin',
       'Sec-Fetch-Mode': 'cors',
       'Sec-Fetch-Dest': 'empty',
-      Referer: 'https://imba66.com/member/games?game=casino',
+      Referer: `${webHostname}/member/games?game=casino`,
       'Accept-Encoding': 'gzip, deflate',
       'Accept-Language': 'en-US,en;q=0.9',
-      Cookie: getCookieString(),
+      Cookie: getCookieString(username),
     },
   });
 
@@ -111,7 +112,7 @@ async function getOnlineGameLoginInfo() {
   };
 }
 
-async function loginOnlineGame({ userId, tokenId }) {
+async function loginOnlineGame(username, { userId, tokenId }) {
   const loginData = qs.stringify({
     userId,
     tokenId,
@@ -158,12 +159,12 @@ async function loginOnlineGame({ userId, tokenId }) {
     return false;
   }
 
-  addCookieFromResponse(resLogin);
+  addCookieFromResponse(username, resLogin);
 
   return resLogin.headers.location;
 }
 
-async function loginZeusWithLoginLink(zeusLoginLink) {
+async function loginZeusWithLoginLink(username, zeusLoginLink) {
   const zeusLoginURL = new URL(zeusLoginLink);
 
   const zeusLoginParams = zeusLoginURL.searchParams.toString();
@@ -175,23 +176,23 @@ async function loginZeusWithLoginLink(zeusLoginLink) {
 
   const resLogin = await axios.get(newZeusLoginURL.toString());
 
-  addCookieFromResponse(resLogin);
+  addCookieFromResponse(username, resLogin);
 }
 
-async function loginOnlineGameAndZeus() {
-  const loginInfo = await getOnlineGameLoginInfo();
+async function loginOnlineGameAndZeus(username) {
+  const loginInfo = await getOnlineGameLoginInfo(username);
 
   if (!loginInfo) {
     return loginInfo;
   }
 
-  const zeusLoginLink = await loginOnlineGame(loginInfo);
+  const zeusLoginLink = await loginOnlineGame(username, loginInfo);
 
   if (!zeusLoginLink) {
     return zeusLoginLink;
   }
 
-  await loginZeusWithLoginLink(zeusLoginLink);
+  await loginZeusWithLoginLink(username, zeusLoginLink);
 
   return true;
 }
@@ -210,7 +211,7 @@ async function reCookie(username, password) {
       return;
     }
 
-    const isLoginZeusSuccess = await loginOnlineGameAndZeus();
+    const isLoginZeusSuccess = await loginOnlineGameAndZeus(username);
 
     if (!isLoginZeusSuccess) {
       isInProgress = false;
@@ -218,7 +219,7 @@ async function reCookie(username, password) {
     }
 
     isInProgress = false;
-    return getCookieString(false);
+    return getCookieString(username, false);
   } catch (error) {
     isInProgress = false;
     throw error;

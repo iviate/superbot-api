@@ -1,5 +1,5 @@
 // import * as http from 'http';
-
+require('dotenv').config();
 
 require('log-timestamp');
 // module included to create worker threads
@@ -34,7 +34,8 @@ db.sequelize.sync({
     alter: true
 });
 
-const env = require('./config/web.config.js')
+const env = require('./config/web.config.js');
+const { webHostname } = require('./config/web.config.js');
 
 let BOT_CODE = ['BAC', 'ROT_RB', 'ROT_ED', 'ROT_SB', 'ROT_TWO_ZONE', 'ROT_ONE_ZONE', "DT"]
 
@@ -428,7 +429,7 @@ myApp.post('/login', async function (request, response) {
                     (async (USERNAME, PASSWORD, WEB) => {
                         // console.log(USERNAME, PASSWORD)
 
-                        console.log(`imba66 login ${USERNAME}`)
+                        console.log(`${webHostname} login ${USERNAME}`)
                         const browser = await puppeteer.launch({
                             headless: true,
                             devtools: false,
@@ -437,7 +438,7 @@ myApp.post('/login', async function (request, response) {
                         try {
                             const page = await browser.newPage();
                             // page.setDefaultTimeout(timeout)
-                            await page.goto('https://imba66.com/users/sign_in', {
+                            await page.goto(`${webHostname}/users/sign_in`, {
                                 waitUntil: "networkidle2"
                             });
 
@@ -496,7 +497,7 @@ myApp.post('/login', async function (request, response) {
             (async (USERNAME, PASSWORD, WEB) => {
                 // console.log(USERNAME, PASSWORD)
 
-                console.log(`imba66 login ${USERNAME}`)
+                console.log(`${webHostname} login ${USERNAME}`)
                 const browser = await puppeteer.launch({
                     headless: true,
                     devtools: false,
@@ -505,7 +506,7 @@ myApp.post('/login', async function (request, response) {
                 try {
                     const page = await browser.newPage();
                     // page.setDefaultTimeout(timeout)
-                    await page.goto('https://imba66.com/users/sign_in', {
+                    await page.goto(`${webHostname}/users/sign_in`, {
                         waitUntil: "networkidle2"
                     });
 
@@ -2161,7 +2162,7 @@ myApp.get('/wallet/:id', async function (request, response) {
         //     const page = await browser.newPage();
         //     // page.setDefaultTimeout(timeout)
         //     page.setDefaultTimeout(10000)
-        //     await page.goto('https://imba66.com/login?token=' + user.token, {
+        //     await page.goto(`${webHostname}/login?token=` + user.token, {
         //         waitUntil: "networkidle2"
         //     });
 
@@ -2183,7 +2184,7 @@ myApp.get('/wallet/:id', async function (request, response) {
         //         cookieHeader += value.name + '=' + value.value + '; '
         //     })
 
-        //     let walletAPI = `https://imba66.com/member/get_credit_limit?token=${user.token}`
+        //     let walletAPI = `${webHostname}/member/get_credit_limit?token=${user.token}`
         //     let config = {
         //         headers: {
         //             'Content-Type': 'application/x-www-form-urlencoded',
@@ -2225,7 +2226,7 @@ myApp.get('/wallet/:id', async function (request, response) {
         var options = {
             'method': 'POST',
             'timeout': 2000,
-            'url': 'https://imba66.com/users/sign_in',
+            'url': `${webHostname}/users/sign_in`,
             formData: {
                 'user[username]': user.username,
                 'user[password]': user.type_password
@@ -2263,7 +2264,7 @@ myApp.get('/wallet/:id', async function (request, response) {
 
                     // var config = {
                     //     method: 'post',
-                    //     url: 'https://imba66.com/users/sign_in',
+                    //     url: `${webHostname}/users/sign_in`,
                     //     headers: {
                     //         'Cookie': res.headers["set-cookie"].join(),
                     //         ...data.getHeaders()
@@ -2274,7 +2275,7 @@ myApp.get('/wallet/:id', async function (request, response) {
                     // axios(config)
                     //     .then(async function (res) {
                     // console.log(response.headers['set-cookie']);
-                    let walletAPI = `https://imba66.com/member/get_credit_limit?token=${user.token}`
+                    let walletAPI = `${webHostname}/member/get_credit_limit?token=${user.token}`
                     let config = {
                         headers: {
                             'Content-Type': 'application/x-www-form-urlencoded',
