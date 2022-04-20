@@ -60,12 +60,12 @@ async function loginImba(username, password) {
     return false;
   }
 
-  addCookieFromResponse(resLogin);
+  addCookieFromResponse(username, resLogin);
 
   return true;
 }
 
-async function getOnlineGameLoginInfo() {
+async function getOnlineGameLoginInfo(username) {
   const vendorResponse = await axios({
     maxRedirects: 0,
     method: 'get',
@@ -86,7 +86,7 @@ async function getOnlineGameLoginInfo() {
       Referer: `${webHostname}/member/games?game=casino`,
       'Accept-Encoding': 'gzip, deflate',
       'Accept-Language': 'en-US,en;q=0.9',
-      Cookie: getCookieString(),
+      Cookie: getCookieString(username),
     },
   });
 
@@ -112,7 +112,7 @@ async function getOnlineGameLoginInfo() {
   };
 }
 
-async function loginOnlineGame({ userId, tokenId }) {
+async function loginOnlineGame(username, { userId, tokenId }) {
   const loginData = qs.stringify({
     userId,
     tokenId,
@@ -159,12 +159,12 @@ async function loginOnlineGame({ userId, tokenId }) {
     return false;
   }
 
-  addCookieFromResponse(resLogin);
+  addCookieFromResponse(username, resLogin);
 
   return resLogin.headers.location;
 }
 
-async function loginZeusWithLoginLink(zeusLoginLink) {
+async function loginZeusWithLoginLink(username, zeusLoginLink) {
   const zeusLoginURL = new URL(zeusLoginLink);
 
   const zeusLoginParams = zeusLoginURL.searchParams.toString();
@@ -176,23 +176,23 @@ async function loginZeusWithLoginLink(zeusLoginLink) {
 
   const resLogin = await axios.get(newZeusLoginURL.toString());
 
-  addCookieFromResponse(resLogin);
+  addCookieFromResponse(username, resLogin);
 }
 
-async function loginOnlineGameAndZeus() {
-  const loginInfo = await getOnlineGameLoginInfo();
+async function loginOnlineGameAndZeus(username) {
+  const loginInfo = await getOnlineGameLoginInfo(username);
 
   if (!loginInfo) {
     return loginInfo;
   }
 
-  const zeusLoginLink = await loginOnlineGame(loginInfo);
+  const zeusLoginLink = await loginOnlineGame(username, loginInfo);
 
   if (!zeusLoginLink) {
     return zeusLoginLink;
   }
 
-  await loginZeusWithLoginLink(zeusLoginLink);
+  await loginZeusWithLoginLink(username, zeusLoginLink);
 
   return true;
 }
@@ -211,7 +211,7 @@ async function reCookie(username, password) {
       return;
     }
 
-    const isLoginZeusSuccess = await loginOnlineGameAndZeus();
+    const isLoginZeusSuccess = await loginOnlineGameAndZeus(username);
 
     if (!isLoginZeusSuccess) {
       isInProgress = false;
@@ -219,7 +219,7 @@ async function reCookie(username, password) {
     }
 
     isInProgress = false;
-    return getCookieString(false);
+    return getCookieString(username, false);
   } catch (error) {
     isInProgress = false;
     throw error;

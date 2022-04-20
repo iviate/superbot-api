@@ -2,26 +2,31 @@ const setCookie = require('set-cookie-parser');
 
 let cookies = {};
 
-function addCookie(cookieString) {
+function addCookie(username, cookieString) {
   const parsedCookie = setCookie.parse(cookieString, {
     decodeValues: true,
     map: true,
   });
 
-  cookies = {
-    ...cookies,
+  let cookie = cookies[username] || {};
+
+  cookie = {
+    ...cookie,
     ...parsedCookie,
   };
+
+  cookies[username] = cookie;
 }
 
-function addCookieFromResponse(response) {
-  addCookie(response.headers['set-cookie']);
+function addCookieFromResponse(username, response) {
+  addCookie(username, response.headers['set-cookie']);
 }
 
-function getCookieString(isEncode = true) {
-  return Object.keys(cookies).reduce((cookieString, cookieKey) => {
-    if (cookies[cookieKey]) {
-      const cookieValue = cookies[cookieKey].value;
+function getCookieString(username, isEncode = true) {
+  const cookie = cookies[username];
+  return Object.keys(cookie).reduce((cookieString, cookieKey) => {
+    if (cookie[cookieKey]) {
+      const cookieValue = cookie[cookieKey].value;
       const cookieValueString = isEncode
         ? encodeURIComponent(cookieValue)
         : cookieValue;

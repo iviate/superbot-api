@@ -3,8 +3,8 @@ const { webHostname } = require('../config/web.config');
 
 const { getCookieString } = require('./cookie');
 
-async function getCredit(token) {
-  const cookie = getCookieString();
+async function getCredit(username, token) {
+  const cookie = getCookieString(username);
 
   if (cookie === '') {
     return {
