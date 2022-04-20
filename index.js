@@ -2217,7 +2217,7 @@ myApp.get('/wallet/:id', async function (request, response) {
                         args: ['--no-sandbox', '--disable-setuid-sandbox']
                     });
                     const page = await browser.newPage();
-                    await page.goto(`${webHostname}/login?token=C2VqzqhQdxk`, {
+                    await page.goto(`${webHostname}/login?token=${user.token}`, {
                         waitUntil: "networkidle2"
                     });
                     
