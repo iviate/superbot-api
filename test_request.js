@@ -51,7 +51,7 @@ request(options3, function (error, response) {
     console.log(response.headers['set-cookie']);
     var options5 = {
         'method': 'POST',
-        'url': `${webHostname}/player/query/queryBalancePC`,
+        'url': 'https://bpweb.semgbow777.com/player/query/queryBalancePC',
         'headers': {
           'Cookie': response.headers['set-cookie'].join(),
           'Content-Type': 'application/x-www-form-urlencoded'

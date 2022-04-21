@@ -9,7 +9,6 @@ const utils = require("./utils.js")
 const moment = require('moment-timezone');
 var qs = require('qs');
 const { reCookie } = require('./utilities');
-const { webHostname } = require('./config/web.config');
 
 let is_mock = false
 let interval;
@@ -450,7 +449,7 @@ async function bet(data) {
             });
             var config = {
                 method: 'post',
-                url: `${webHostname}/player/update/addLongHuTransaction`,
+                url: 'https://bpweb.semgbow777.com/player/update/addLongHuTransaction',
                 headers: {
                     'Cookie': userSeToken,
                     'Content-Type': 'application/x-www-form-urlencoded'
