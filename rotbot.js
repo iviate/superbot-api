@@ -172,7 +172,7 @@ async function inititalInfo() {
             cookie = null
             isReCookie = true
             reing = false
-            sleep(5000)
+            await sleep(5000)
 
         }
 
