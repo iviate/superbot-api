@@ -167,6 +167,7 @@ async function inititalInfo() {
                 })
             reing = false
             isReCookie = false
+            console.log("rotbot:inititalInfo:completed")
         } catch (e) {
             console.log("rotbot:error:",e.message)
             cookie = null

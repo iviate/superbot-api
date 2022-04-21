@@ -122,6 +122,7 @@ function registerForEventListening() {
 async function inititalInfo() {
     let reing = false
     while (cookie == null) {
+        console.log("workerCode:inititalInfo")
         if (reing) {
             continue
         }
@@ -142,8 +143,9 @@ async function inititalInfo() {
             // console.log(res.data)
             isReCookie = false
             reing = false
+            console.log("workerCode:inititalInfo:completed")
         } catch (e) {
-            // console.log(e)
+            console.log("workerCode:error:",e.message)
             cookie = null
             isReCookie = true
             reing = false
@@ -211,6 +213,7 @@ async function predictPlay() {
                 reing = true
                 isReCookie = true
                 // cookie = await utils.reCookie(username, password, 4)
+                console.log("workerCode:predictPlay:recookie:error:",e.message)
                 cookie = await reCookie(username, password)
                 cookieTime = moment()
                 await axios.get(`${webHostname}/player/singleBacTable.jsp?dm=1&t=${tableId}&title=1&sgt=0&hall=1`,
@@ -222,6 +225,7 @@ async function predictPlay() {
                 reing = false
                 isReCookie = false
             } catch (e) {
+                console.log("workerCode:predictPlay:error:",e.message)
                 cookie = null
                 isReCookie = true
                 reing = false
