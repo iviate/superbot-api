@@ -10,6 +10,7 @@ const moment = require('moment-timezone');
 const { reCookie } = require('./utilities');
 
 var qs = require('qs');
+const { webHostname } = require('./config/web.config');
 var botCodeMap = {
     11: 'RB',
     12: 'ED',
@@ -699,7 +700,7 @@ async function bet(data) {
             });
             var config = {
                 method: 'post',
-                url: 'https://bpweb.semgbow777.com/player/update/addRouTransaction',
+                url: `${webHostname}/player/update/addRouTransaction`,
                 headers: {
                     'Cookie': userSeToken,
                     'Content-Type': 'application/x-www-form-urlencoded'

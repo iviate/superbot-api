@@ -9,6 +9,7 @@ const utils = require("./utils.js")
 const { reCookie } = require('./utilities');
 const moment = require('moment-timezone');
 var qs = require('qs');
+const { webHostname } = require('./config/web.config');
 
 var betting = false
 
@@ -457,7 +458,7 @@ async function bet(data) {
             });
             var config = {
                 method: 'post',
-                url: 'https://bpweb.semgbow777.com/player/update/addMyTransaction',
+                url: `${webHostname}/player/update/addMyTransaction`,
                 headers: {
                     'Cookie': userSeToken,
                     'Content-Type': 'application/x-www-form-urlencoded'

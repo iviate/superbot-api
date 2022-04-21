@@ -9,6 +9,7 @@ const moment = require('moment-timezone');
 const rotConfig = require('./config/rot.config.js');
 const e = require('express');
 const { reCookie, sleep } = require('./utilities');
+const { webHostname } = require('./config/web.config.js');
 
 
 let interval;
@@ -158,7 +159,7 @@ async function inititalInfo() {
             cookie = await reCookie(username, password)
             console.log(cookie)
             cookieTime = moment()
-            await axios.get(`https://bpweb.semgbow777.com/player/singleRouTable.jsp?dm=1&t=${tableId}&title=1&sgt=6&hall=1`,
+            await axios.get(`${webHostname}/player/singleRouTable.jsp?dm=1&t=${tableId}&title=1&sgt=6&hall=1`,
                 {
                     headers: {
                         Cookie: cookie
@@ -238,7 +239,7 @@ async function predictPlay() {
                 // cookie = await utils.reCookie(username, password, 4)
                 cookie = await reCookie(username, password)
                 cookieTime = moment()
-                await axios.get(`https://bpweb.semgbow777.com/player/singleRouTable.jsp?dm=1&t=${tableId}&title=1&sgt=6&hall=1`,
+                await axios.get(`${webHostname}/player/singleRouTable.jsp?dm=1&t=${tableId}&title=1&sgt=6&hall=1`,
                     {
                         headers: {
                             Cookie: cookie
@@ -258,7 +259,7 @@ async function predictPlay() {
     }
     let res = null
     try {
-        let balanceAPI = "https://bpweb.semgbow777.com/player/query/queryDealerEventV2"
+        let balanceAPI = `${webHostname}/player/query/queryDealerEventV2`
         const ps = new URLSearchParams()
         ps.append('domainType', 1)
         ps.append('queryTableID', tableId)
@@ -286,7 +287,7 @@ async function predictPlay() {
         // cookie = await utils.reCookie(username, password, 4)
         cookie = await reCookie(username, password)
         cookieTime = moment()
-        await axios.get(`https://bpweb.semgbow777.com/player/singleTable4.jsp?dm=1&t=${tableId}&title=1&sgt=6&hall=1`,
+        await axios.get(`${webHostname}/player/singleTable4.jsp?dm=1&t=${tableId}&title=1&sgt=6&hall=1`,
             {
                 headers: {
                     Cookie: cookie
