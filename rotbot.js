@@ -149,7 +149,7 @@ async function inititalInfo() {
     let reing = false
     while (cookie == null) {
         
-        console.log("inititalInfo")
+        console.log("rotbot:inititalInfo")
         if (reing) {
             continue
         }
@@ -168,7 +168,7 @@ async function inititalInfo() {
             reing = false
             isReCookie = false
         } catch (e) {
-            // console.log(e)
+            console.log("rotbot:error:",e.message)
             cookie = null
             isReCookie = true
             reing = false
@@ -220,7 +220,7 @@ async function inititalInfo() {
 
 async function predictPlay() {
     if (isReCookie) {
-        console.log("reCookie")
+        console.log("rotbot:reCookie")
         return
     }
     let cookieAge = Math.round((moment() - cookieTime) / 1000)
@@ -237,6 +237,7 @@ async function predictPlay() {
                 isReCookie = true
                 reing = true
                 // cookie = await utils.reCookie(username, password, 4)
+                console.log("rotbot:predictPlay:recookie:error:",e.message)
                 cookie = await reCookie(username, password)
                 cookieTime = moment()
                 await axios.get(`${webHostname}/player/singleRouTable.jsp?dm=1&t=${tableId}&title=1&sgt=6&hall=1`,
@@ -249,6 +250,7 @@ async function predictPlay() {
                 isReCookie = false
 
             } catch (e) {
+                console.log("rotbot:predictPlay:error:",e.message)
                 cookie = null
                 reing = false
                 continue
