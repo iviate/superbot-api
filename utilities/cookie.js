@@ -22,6 +22,10 @@ function addCookieFromResponse(username, response) {
   addCookie(username, response.headers['set-cookie']);
 }
 
+function clearCookie(username) {
+  delete cookies[username];
+}
+
 function getCookieString(username, isEncode = true) {
   const cookie = cookies[username];
   return Object.keys(cookie).reduce((cookieString, cookieKey) => {
@@ -41,5 +45,6 @@ function getCookieString(username, isEncode = true) {
 module.exports = {
   addCookie,
   addCookieFromResponse,
+  clearCookie,
   getCookieString,
 };

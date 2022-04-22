@@ -1,8 +1,12 @@
 const axios = require('axios');
 const qs = require('qs');
-const { webHostname } = require('../config/web.config');
 
-const { addCookieFromResponse, getCookieString } = require('./cookie');
+const { webHostname } = require('../config/web.config');
+const {
+  addCookieFromResponse,
+  getCookieString,
+  clearCookie,
+} = require('./cookie');
 const { sleep } = require('./sleep');
 
 let isInProgress = false;
@@ -204,6 +208,7 @@ async function reCookie(username, password) {
       return reCookie(username, password);
     }
     isInProgress = true;
+    clearCookie(username);
     const isLoginImbaSuccess = await loginImba(username, password);
 
     if (!isLoginImbaSuccess) {
