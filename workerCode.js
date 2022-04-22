@@ -235,6 +235,7 @@ async function predictPlay() {
         cookie = null;
         isReCookie = true;
         reing = false;
+        await sleep(5000);
       }
     }
 
@@ -300,6 +301,7 @@ async function predictPlay() {
         cookie = null;
         isReCookie = true;
         reing = false;
+        await sleep(5000);
       }
     }
 
