@@ -274,7 +274,7 @@ async function predictPlay() {
   console.log(`${filename}:${tableId}:predictPlay:query`);
   try {
     let balanceAPI =
-      'https://bpweb.semgbow777.com/player/query/queryDealerEventV2';
+      'https://bpcdf.semgbow777.com/player/query/queryDealerEventV2';
     const ps = new URLSearchParams();
     ps.append('domainType', 1);
     ps.append('queryTableID', tableId);
