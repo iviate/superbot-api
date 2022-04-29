@@ -133,15 +133,17 @@ async function inititalInfo() {
       // console.log(cookie)
       cookieTime = moment();
 
-      // console.log(`https://bpweb.semgbow777.com/player/singleBacTable.jsp?dm=1&t=${tableId}&title=1&sgt=0&hall=1`)
-      await axios.get(
-        `https://bpweb.semgbow777.com/player/singleBacTable.jsp?dm=1&t=${tableId}&title=1&sgt=0&hall=1`,
-        {
-          headers: {
-            Cookie: cookie,
-          },
-        }
-      );
+      await axios({
+        method: 'post',
+        url: 'https://bpcdf.semgbow777.com/player/query/chooseSingleTableChannel',
+        headers: {
+          Cookie: cookie,
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        data: qs.stringify({
+          queryTableID: tableId,
+        }),
+      });
       // console.log(res.data)
       isReCookie = false;
       reing = false;
@@ -220,14 +222,17 @@ async function predictPlay() {
         console.log(`${filename}:${tableId}:predictPlay:recookie:new`);
         cookie = await reCookie(username, password);
         cookieTime = moment();
-        await axios.get(
-          `https://bpweb.semgbow777.com/player/singleBacTable.jsp?dm=1&t=${tableId}&title=1&sgt=0&hall=1`,
-          {
-            headers: {
-              Cookie: cookie,
-            },
-          }
-        );
+        await axios({
+          method: 'post',
+          url: 'https://bpcdf.semgbow777.com/player/query/chooseSingleTableChannel',
+          headers: {
+            Cookie: cookie,
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+          data: qs.stringify({
+            queryTableID: tableId,
+          }),
+        });
         reing = false;
         isReCookie = false;
       } catch (e) {
@@ -246,7 +251,7 @@ async function predictPlay() {
   console.log(`${filename}:${tableId}:predictPlay:query`);
   try {
     let balanceAPI =
-      'https://bpweb.semgbow777.com/player/query/queryDealerEventV2';
+      'https://bpcdf.semgbow777.com/player/query/queryDealerEventV2';
     const ps = new URLSearchParams();
     ps.append('domainType', 1);
     ps.append('queryTableID', tableId);
@@ -283,14 +288,17 @@ async function predictPlay() {
         // cookie = await utils.reCookie(username, password, 4)
         cookie = await reCookie(username, password);
         cookieTime = moment();
-        await axios.get(
-          `https://bpweb.semgbow777.com/player/singleBacTable.jsp?dm=1&t=${tableId}&title=1&sgt=0&hall=1`,
-          {
-            headers: {
-              Cookie: cookie,
-            },
-          }
-        );
+        await axios({
+          method: 'post',
+          url: 'https://bpcdf.semgbow777.com/player/query/chooseSingleTableChannel',
+          headers: {
+            Cookie: cookie,
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+          data: qs.stringify({
+            queryTableID: tableId,
+          }),
+        });
         reing = false;
         isReCookie = false;
       } catch (e) {
