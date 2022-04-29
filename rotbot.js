@@ -11,6 +11,7 @@ const e = require('express');
 const { reCookie, sleep } = require('./utilities');
 const path = require('path');
 const filename = path.basename(__filename);
+const qs = require('qs');
 
 let interval;
 let isReCookie = false;
