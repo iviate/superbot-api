@@ -158,14 +158,17 @@ async function inititalInfo() {
       cookie = await reCookie(username, password);
       console.log(cookie);
       cookieTime = moment();
-      await axios.get(
-        `https://bpweb.semgbow777.com/player/singleRouTable.jsp?dm=1&t=${tableId}&title=1&sgt=6&hall=1`,
-        {
-          headers: {
-            Cookie: cookie,
-          },
-        }
-      );
+      await axios({
+        method: 'post',
+        url: 'https://bpcdf.semgbow777.com/player/query/chooseSingleTableChannel',
+        headers: {
+          Cookie: cookie,
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        data: qs.stringify({
+          queryTableID: tableId,
+        }),
+      });
       reing = false;
       isReCookie = false;
       console.log('rotbot:inititalInfo:completed');
@@ -244,14 +247,17 @@ async function predictPlay() {
         console.log(`${filename}:${tableId}:predictPlay:recookie:new`);
         cookie = await reCookie(username, password);
         cookieTime = moment();
-        await axios.get(
-          `https://bpweb.semgbow777.com/player/singleRouTable.jsp?dm=1&t=${tableId}&title=1&sgt=6&hall=1`,
-          {
-            headers: {
-              Cookie: cookie,
-            },
-          }
-        );
+        await axios({
+          method: 'post',
+          url: 'https://bpcdf.semgbow777.com/player/query/chooseSingleTableChannel',
+          headers: {
+            Cookie: cookie,
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+          data: qs.stringify({
+            queryTableID: tableId,
+          }),
+        });
         reing = false;
         isReCookie = false;
       } catch (e) {
@@ -306,14 +312,17 @@ async function predictPlay() {
         // cookie = await utils.reCookie(username, password, 4)
         cookie = await reCookie(username, password);
         cookieTime = moment();
-        await axios.get(
-          `https://bpweb.semgbow777.com/player/singleRouTable.jsp?dm=1&t=${tableId}&title=1&sgt=0&hall=1`,
-          {
-            headers: {
-              Cookie: cookie,
-            },
-          }
-        );
+        await axios({
+          method: 'post',
+          url: 'https://bpcdf.semgbow777.com/player/query/chooseSingleTableChannel',
+          headers: {
+            Cookie: cookie,
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+          data: qs.stringify({
+            queryTableID: tableId,
+          }),
+        });
         reing = false;
         isReCookie = false;
       } catch (e) {
