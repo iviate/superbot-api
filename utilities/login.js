@@ -69,7 +69,7 @@ async function loginImba(username, password) {
   return true;
 }
 
-async function getOnlineGameLoginInfo(username) {
+async function getUsplaynetLoginInfo(username) {
   const vendorResponse = await axios({
     maxRedirects: 0,
     method: 'get',
@@ -116,7 +116,7 @@ async function getOnlineGameLoginInfo(username) {
   };
 }
 
-async function loginOnlineGame(username, { userId, tokenId }) {
+async function loginUsplaynet(username, { userId, tokenId }) {
   const loginData = qs.stringify({
     userId,
     tokenId,
@@ -129,7 +129,7 @@ async function loginOnlineGame(username, { userId, tokenId }) {
 
   const config = {
     method: 'post',
-    url: 'https://www.onlinegames22.com/player/login/apiLogin',
+    url: 'https://gci.usplaynet.com/player/login/apiLogin',
     maxRedirects: 0,
     headers: {
       Connection: 'keep-alive',
@@ -158,23 +158,27 @@ async function loginOnlineGame(username, { userId, tokenId }) {
     resLogin.status !== 302 ||
     resLogin.headers.location.indexOf('user') === -1
   ) {
-    console.log('login online game not complete');
+    console.log('login usplaynet not complete');
 
     return false;
   }
 
-  addCookieFromResponse(username, resLogin);
+  // addCookieFromResponse(username, resLogin);
 
   return resLogin.headers.location;
 }
 
-async function loginZeusWithLoginLink(username, zeusLoginLink) {
+async function loginSemgbowWithLoginLink(username, zeusLoginLink) {
+  const firstLogin = await axios.get(zeusLoginLink);
+
+  addCookieFromResponse(username, firstLogin);
+
   const zeusLoginURL = new URL(zeusLoginLink);
 
   const zeusLoginParams = zeusLoginURL.searchParams.toString();
 
   const newZeusLoginURL = new URL(
-    `/api/player/MexAWCA/login?${zeusLoginParams}`,
+    `/api/player/MexAWS031/login?${zeusLoginParams}`,
     zeusLoginLink
   );
 
@@ -183,20 +187,20 @@ async function loginZeusWithLoginLink(username, zeusLoginLink) {
   addCookieFromResponse(username, resLogin);
 }
 
-async function loginOnlineGameAndZeus(username) {
-  const loginInfo = await getOnlineGameLoginInfo(username);
+async function loginUsplaynetAndSemgbow(username) {
+  const loginInfo = await getUsplaynetLoginInfo(username);
 
   if (!loginInfo) {
     return loginInfo;
   }
 
-  const zeusLoginLink = await loginOnlineGame(username, loginInfo);
+  const zeusLoginLink = await loginUsplaynet(username, loginInfo);
 
   if (!zeusLoginLink) {
     return zeusLoginLink;
   }
 
-  await loginZeusWithLoginLink(username, zeusLoginLink);
+  await loginSemgbowWithLoginLink(username, zeusLoginLink);
 
   return true;
 }
@@ -216,7 +220,7 @@ async function reCookie(username, password) {
       return;
     }
 
-    const isLoginZeusSuccess = await loginOnlineGameAndZeus(username);
+    const isLoginZeusSuccess = await loginUsplaynetAndSemgbow(username);
 
     if (!isLoginZeusSuccess) {
       isInProgress = false;
