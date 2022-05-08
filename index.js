@@ -5,8 +5,8 @@ require('log-timestamp');
 // module included to create worker threads
 const { Worker } = require('worker_threads');
 const botConfig = require('./config/bot.config.js');
-const axios = require('axios');
-require('./addProxy');
+const axios = require('./httpClient');
+
 const bodyParser = require('body-parser');
 const utils = require('./utils.js');
 const bcrypt = require('bcrypt');

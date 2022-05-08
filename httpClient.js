@@ -1,6 +1,8 @@
 const axios = require('axios');
 
-axios.interceptors.request.use((config) => {
+const httpClient = axios.create();
+
+httpClient.interceptors.request.use((config) => {
   if (process.env.IS_ENABLE_PROXY) {
     return {
       ...config,
@@ -18,4 +20,4 @@ axios.interceptors.request.use((config) => {
   return config;
 });
 
-module.exports = axios;
+module.exports = httpClient;

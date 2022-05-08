@@ -1,5 +1,5 @@
 const puppeteer = require('puppeteer');
-const axios = require('axios');
+const axios = require('./httpClient');
 var qs = require('qs');
 const timeout = 50000;
 const env = require('./config/web.config.js');

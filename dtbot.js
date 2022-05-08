@@ -2,7 +2,7 @@
 // workerData for receiving data clone
 require('log-timestamp');
 const { parentPort, workerData } = require('worker_threads');
-const axios = require('axios');
+const axios = require('./httpClient');
 const puppeteer = require('puppeteer');
 const utils = require('./utils.js');
 const moment = require('moment-timezone');
