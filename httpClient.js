@@ -3,7 +3,7 @@ const axios = require('axios');
 const httpClient = axios.create();
 
 httpClient.interceptors.request.use((config) => {
-  if (process.env.IS_ENABLE_PROXY) {
+  if (process.env.IS_ENABLE_PROXY === 'true') {
     return {
       ...config,
       proxy: {
