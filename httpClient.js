@@ -1,5 +1,7 @@
 const axios = require('axios');
 
+const { sleep } = require('./utilities');
+
 const httpClient = axios.create();
 
 const MAX_RETRY = 3;
