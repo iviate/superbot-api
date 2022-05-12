@@ -320,13 +320,13 @@ function getBetVal() {
 
 async function getBetLimitCode(betSide, value) {
   if (value < 2000) {
-    return '260901';
+    return '110901';
   } else if (value < 10000) {
-    return '260903';
+    return '110912';
   } else if (value < 50000) {
-    return '260905';
+    return '110907';
   } else if (value <= 100000) {
-    return '260906';
+    return '110909';
   }
 }
 
