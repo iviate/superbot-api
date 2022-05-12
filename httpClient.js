@@ -4,7 +4,7 @@ const { sleep } = require('./utilities/sleep');
 
 const httpClient = axios.create();
 
-const MAX_RETRY = 3;
+const MAX_RETRY = 5;
 
 httpClient.interceptors.request.use((config) => {
   if (process.env.IS_ENABLE_PROXY === 'true') {
