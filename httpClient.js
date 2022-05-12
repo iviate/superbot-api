@@ -1,6 +1,6 @@
 const axios = require('axios');
 
-const { sleep } = require('./utilities');
+const { sleep } = require('./utilities/sleep');
 
 const httpClient = axios.create();
 
