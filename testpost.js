@@ -1,4 +1,4 @@
-var axios = require('axios');
+var axios = require('./httpClient');
 var qs = require('qs');
 
 let tableId = 3;

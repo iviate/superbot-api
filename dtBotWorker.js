@@ -1,6 +1,6 @@
 require('log-timestamp');
 const { parentPort, workerData } = require('worker_threads');
-const axios = require('axios');
+const axios = require('./httpClient');
 const { bot } = require('./app/models');
 const { POINT_CONVERSION_COMPRESSED } = require('constants');
 const e = require('express');

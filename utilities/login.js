@@ -1,4 +1,4 @@
-const axios = require('axios');
+const axios = require('../httpClient');
 const qs = require('qs');
 
 const { webHostname } = require('../config/web.config');
