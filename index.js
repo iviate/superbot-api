@@ -9,6 +9,7 @@ const axios = require('./httpClient');
 
 const bodyParser = require('body-parser');
 const utils = require('./utils.js');
+const { loginImbaWithGetToken } = require('./utilities');
 const bcrypt = require('bcrypt');
 const puppeteer = require('puppeteer');
 var cors = require('cors');
@@ -430,21 +431,11 @@ myApp.post('/login', async function (request, response) {
               args: ['--no-sandbox', '--disable-setuid-sandbox'],
             });
             try {
-              const page = await browser.newPage();
-              // page.setDefaultTimeout(timeout)
-              await page.goto(`${webHostname}/users/sign_in`, {
-                waitUntil: 'networkidle2',
-              });
+              const imbaToken = await loginImbaWithGetToken(USERNAME, PASSWORD);
 
-              await page.waitForSelector('input[name="user[username]"]');
-              await page.type('input[name="user[username]"]', USERNAME);
-              await page.type('input[name="user[password]"]', PASSWORD);
-
-              await Promise.all([
-                page.click('button[type="submit"]'),
-                page.waitForNavigation({ waitUntil: 'networkidle0' }),
-              ]);
-              await page.waitForSelector('.img-shield-sys');
+              if (!imbaToken) {
+                throw Error('LOGIN_FAILED');
+              }
 
               bcrypt.hash(PASSWORD, 12, function (err, hash) {
                 db.user
@@ -489,33 +480,12 @@ myApp.post('/login', async function (request, response) {
         // console.log(USERNAME, PASSWORD)
 
         console.log(`${webHostname} login ${USERNAME}`);
-        const browser = await puppeteer.launch({
-          headless: true,
-          devtools: false,
-          args: ['--no-sandbox', '--disable-setuid-sandbox'],
-        });
         try {
-          const page = await browser.newPage();
-          // page.setDefaultTimeout(timeout)
-          await page.goto(`${webHostname}/users/sign_in`, {
-            waitUntil: 'networkidle2',
-          });
+          const imbaToken = await loginImbaWithGetToken(USERNAME, PASSWORD);
 
-          await page.waitForSelector('input[name="user[username]"]');
-          await page.type('input[name="user[username]"]', USERNAME);
-          await page.type('input[name="user[password]"]', PASSWORD);
-
-          await Promise.all([
-            page.click('button[type="submit"]'),
-            page.waitForNavigation({ waitUntil: 'networkidle0' }),
-          ]);
-          await page.waitForSelector('.img-shield-sys');
-
-          const cookiesImba = await page.cookies();
-          console.log(cookiesImba);
-          const value = await page.$eval('#user_token', (input) => {
-            return input.getAttribute('value');
-          });
+          if (!imbaToken) {
+            throw Error('LOGIN_FAILED');
+          }
 
           const ufa_account = USERNAME;
 
@@ -527,7 +497,7 @@ myApp.post('/login', async function (request, response) {
                 type_password: PASSWORD,
                 ufa_account: ufa_account,
                 web: WEB,
-                token: value,
+                token: imbaToken,
               })
               .then(async (result) => {
                 db.user
@@ -551,7 +521,6 @@ myApp.post('/login', async function (request, response) {
           await browser.close();
         } catch (e) {
           console.log(e);
-          await browser.close();
           response.json({
             success: false,
             message: 'ข้อมูลไม่ถูกต้องกรุณาลองใหม่อีกครั้ง',
