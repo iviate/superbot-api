@@ -1,7 +1,8 @@
-const axios = require('../httpClient');
+const cheerio = require('cheerio');
 const qs = require('qs');
 
 const { webHostname } = require('../config/web.config');
+const axios = require('../httpClient');
 const {
   addCookieFromResponse,
   getCookieString,
@@ -205,6 +206,33 @@ async function loginUsplaynetAndSemgbow(username) {
   return true;
 }
 
+async function getImbaToken(username) {
+  try {
+    const cookie = getCookieString(username, true);
+
+    const { data } = await axios.get(`${webHostname}/member`, {
+      headers: {
+        cookie,
+      },
+    });
+
+    const $ = cheerio.load(data);
+    return $('#user_token').last().val();
+  } catch (error) {
+    return;
+  }
+}
+
+async function loginImbaWithGetToken(username, password) {
+  const isLoginImbaSuccess = await loginImba(username, password);
+
+  if (!isLoginImbaSuccess) {
+    return;
+  }
+
+  return getImbaToken(username);
+}
+
 async function reCookie(username, password) {
   try {
     if (isInProgress) {
@@ -237,4 +265,5 @@ async function reCookie(username, password) {
 
 module.exports = {
   reCookie,
+  loginImbaWithGetToken,
 };
