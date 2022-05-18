@@ -336,6 +336,7 @@ async function getBetLimitCode(betSide, value) {
 }
 
 async function bet(data) {
+  console.log(`start baccarat success ${botObj.userId}`, data);
   table = data.table;
   // console.log(status, betFailed, botObj.bet_side, botObj.is_infinite)
   if (betFailed) {
@@ -478,7 +479,9 @@ async function bet(data) {
       let res = null;
       try {
         res = await axios(config);
+        console.log(`betting baccarat success ${botObj.userId}`, e);
       } catch (e) {
+        console.log(`error betting baccarat ${botObj.userId}`, e);
         console.log('');
       }
 
