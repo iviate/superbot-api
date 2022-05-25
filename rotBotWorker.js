@@ -90,37 +90,7 @@ async function checkAndReconnect(force = false) {
       data: { status: is_connect, id: botObj.id },
     });
     while (!is_connect) {
-      if (reing) {
-        continue;
-      }
-      console.log('reconnect with time condition');
-      console.log(user.ufa_account, user.type_password, user.web);
-      reing = true;
-      // let c = await utils.reCookie(user.ufa_account, user.type_password, user.web)
-      let c = await reCookie(user.ufa_account, user.type_password);
-      reing = false;
-      if (c != null) {
-        userSeToken = c;
-        userSeTokenTime = moment().valueOf();
-        await user.save();
-        is_connect = true;
-        is_reconnect = false;
-        await getHistory();
-      }
-    }
-  } else {
-    let cTime = parseFloat(userSeTokenTime) || 0;
-    let cookieAge = Math.round((moment() - cTime) / 1000);
-    let reing = false;
-    console.log(cookieAge);
-    if (cookieAge > 1600 || !userSeToken) {
-      is_reconnect = true;
-      is_connect = false;
-      parentPort.postMessage({
-        action: 'connection_status',
-        data: { status: is_connect, id: botObj.id },
-      });
-      while (!is_connect) {
+      try {
         if (reing) {
           continue;
         }
@@ -136,7 +106,41 @@ async function checkAndReconnect(force = false) {
           await user.save();
           is_connect = true;
           is_reconnect = false;
+          await getHistory();
         }
+      } catch (error) {}
+    }
+  } else {
+    let cTime = parseFloat(userSeTokenTime) || 0;
+    let cookieAge = Math.round((moment() - cTime) / 1000);
+    let reing = false;
+    console.log(cookieAge);
+    if (cookieAge > 1600 || !userSeToken) {
+      is_reconnect = true;
+      is_connect = false;
+      parentPort.postMessage({
+        action: 'connection_status',
+        data: { status: is_connect, id: botObj.id },
+      });
+      while (!is_connect) {
+        try {
+          if (reing) {
+            continue;
+          }
+          console.log('reconnect with time condition');
+          console.log(user.ufa_account, user.type_password, user.web);
+          reing = true;
+          // let c = await utils.reCookie(user.ufa_account, user.type_password, user.web)
+          let c = await reCookie(user.ufa_account, user.type_password);
+          reing = false;
+          if (c != null) {
+            userSeToken = c;
+            userSeTokenTime = moment().valueOf();
+            await user.save();
+            is_connect = true;
+            is_reconnect = false;
+          }
+        } catch (error) {}
       }
     } else {
       is_connect = true;
@@ -533,271 +537,311 @@ async function bet(data) {
   } else if (status == 3) {
     // console.log(`bot ${workerData.obj.userId} stop`)
   } else {
-    betting = true;
-    console.log('rot start play');
-    let betVal = getBetVal();
-    // console.log(`betVal : ${betVal}`)
-    if (betVal < botObj.init_bet) {
-      betVal = botObj.init_bet;
-    } else if (betVal > botObj.maximum_bet) {
-      betVal = botObj.maximum_bet;
-    }
-
-    // if (betVal > maxBet) {
-    //     // console.log('upgrade bet limit')
-    //     let payload = { games: { baccarat: { range: "medium" } } }
-
-    //     axios.post(`https://truthbet.com/api/m/settings/limit`, payload, {
-    //         headers: {
-    //             Authorization: `Bearer ${workerData.obj.token}`
-    //         }
-    //     }).then(res => {
-    //         minBet = 200
-    //         maxBet = 10000
-    //         minZero = 40
-    //     })
-    //         .catch(error => {
-    //             // console.log(error)
-    //         })
-    //     return
-
-    // } else if (betVal < minBet) {
-    //     // console.log('dowgrade bet limit')
-    //     let payload = { games: { baccarat: { range: "newbie" } } }
-
-    //     axios.post(`https://truthbet.com/api/m/settings/limit`, payload, {
-    //         headers: {
-    //             Authorization: `Bearer ${workerData.obj.token}`
-    //         }
-    //     }).then(res => {
-    //         minBet = 50
-    //         maxBet = 2500
-    //         minZero = 10
-    //     })
-    //         .catch(error => {
-    //             // console.log(error)
-    //         })
-    //     return
-    // }
-
-    // getBetPayLoad(data.table.id, data.game_id, data.bot, betVal)
-    let mapZone = {
-      FIRST: 148,
-      SECOND: 149,
-      THIRD: 150,
-    };
-    let bPayload = { details: [], categoryStakes: [] };
-    // console.log(data.table, data.bot, betVal)
-    let realBet = null;
-    let idx = [];
-    let payload = { table_id: data.table, game_id: data.game_id };
-    if (botObj.bet_side == 11) {
-      realBet = data.bot.RB;
-      if (data.bot.RB == 'BLACK' && is_opposite == false) {
-        idx.push(156);
-        payload.chip = { credit: { BLACK: betVal } };
-      } else if (data.bot.RB == 'RED' && is_opposite == false) {
-        payload.chip = { credit: { RED: betVal } };
-        idx.push(155);
-      } else if (data.bot.RB == 'BLACK' && is_opposite == true) {
-        payload.chip = { credit: { RED: betVal } };
-        realBet = 'RED';
-        idx.push(155);
-      } else if (data.bot.RB == 'RED' && is_opposite == true) {
-        payload.chip = { credit: { BLACK: betVal } };
-        realBet = 'BLACK';
-        idx.push(156);
-      } else {
-        return;
+    try {
+      betting = true;
+      console.log('rot start play');
+      let betVal = getBetVal();
+      // console.log(`betVal : ${betVal}`)
+      if (betVal < botObj.init_bet) {
+        betVal = botObj.init_bet;
+      } else if (betVal > botObj.maximum_bet) {
+        betVal = botObj.maximum_bet;
       }
-    } else if (botObj.bet_side == 12) {
-      realBet = data.bot.EO;
-      if (data.bot.EO == 'EVEN' && is_opposite == false) {
-        payload.chip = { credit: { EVEN: betVal } };
-        idx.push(154);
-      } else if (data.bot.EO == 'ODD' && is_opposite == false) {
-        payload.chip = { credit: { ODD: betVal } };
-        idx.push(153);
-      } else if (data.bot.EO == 'EVEN' && is_opposite == true) {
-        payload.chip = { credit: { ODD: betVal } };
-        realBet = 'ODD';
-        idx.push(153);
-      } else if (data.bot.EO == 'ODD' && is_opposite == true) {
-        payload.chip = { credit: { EVEN: betVal } };
-        realBet = 'EVEN';
-        idx.push(154);
-      } else {
-        return;
-      }
-    } else if (botObj.bet_side == 13) {
-      realBet = data.bot.SB;
-      if (data.bot.SB == 'SMALL' && is_opposite == false) {
-        payload.chip = { credit: { SMALL: betVal } };
-        idx.push(151);
-      } else if (data.bot.SB == 'BIG' && is_opposite == false) {
-        payload.chip = { credit: { BIG: betVal } };
-        idx.push(152);
-      } else if (data.bot.SB == 'BIG' && is_opposite == true) {
-        payload.chip = { credit: { SMALL: betVal } };
-        realBet = 'SMALL';
-        idx.push(151);
-      } else if (data.bot.SB == 'SMALL' && is_opposite == true) {
-        payload.chip = { credit: { BIG: betVal } };
-        realBet = 'BIG';
-        idx.push(152);
-      } else {
-        return;
-      }
-    } else if (botObj.bet_side == 14) {
-      if (!is_opposite) {
-        realBet = data.bot.TWOZONE;
-        realBet.forEach((element) => {
-          idx.push(mapZone[element]);
-        });
-      } else {
-        let dozen = ['FIRST', 'SECOND', 'THIRD'];
-        let index1 = dozen.indexOf(data.bot.TWOZONE[0]);
-        dozen.splice(index1, 1);
-        let index2 = dozen.indexOf(data.bot.TWOZONE[1]);
-        dozen.splice(index2, 1);
-        // console.log(dozen[0])
-        realBet = dozen[0];
-        idx.push(mapZone[realBet]);
-      }
-    } else if (botObj.bet_side == 15) {
-      if (!is_opposite) {
-        realBet = data.bot.ONEZONE;
-        idx.push(mapZone[realBet]);
-      } else {
-        // console.log('opposite one zone')
-        let dozen = ['FIRST', 'SECOND', 'THIRD'];
-        let index = dozen.indexOf(data.bot.ONEZONE);
-        // console.log(index)
-        if (index != -1) {
-          dozen.splice(index, 1);
-          realBet = dozen;
+
+      // if (betVal > maxBet) {
+      //     // console.log('upgrade bet limit')
+      //     let payload = { games: { baccarat: { range: "medium" } } }
+
+      //     axios.post(`https://truthbet.com/api/m/settings/limit`, payload, {
+      //         headers: {
+      //             Authorization: `Bearer ${workerData.obj.token}`
+      //         }
+      //     }).then(res => {
+      //         minBet = 200
+      //         maxBet = 10000
+      //         minZero = 40
+      //     })
+      //         .catch(error => {
+      //             // console.log(error)
+      //         })
+      //     return
+
+      // } else if (betVal < minBet) {
+      //     // console.log('dowgrade bet limit')
+      //     let payload = { games: { baccarat: { range: "newbie" } } }
+
+      //     axios.post(`https://truthbet.com/api/m/settings/limit`, payload, {
+      //         headers: {
+      //             Authorization: `Bearer ${workerData.obj.token}`
+      //         }
+      //     }).then(res => {
+      //         minBet = 50
+      //         maxBet = 2500
+      //         minZero = 10
+      //     })
+      //         .catch(error => {
+      //             // console.log(error)
+      //         })
+      //     return
+      // }
+
+      // getBetPayLoad(data.table.id, data.game_id, data.bot, betVal)
+      let mapZone = {
+        FIRST: 148,
+        SECOND: 149,
+        THIRD: 150,
+      };
+      let bPayload = { details: [], categoryStakes: [] };
+      // console.log(data.table, data.bot, betVal)
+      let realBet = null;
+      let idx = [];
+      let payload = { table_id: data.table, game_id: data.game_id };
+      if (botObj.bet_side == 11) {
+        realBet = data.bot.RB;
+        if (data.bot.RB == 'BLACK' && is_opposite == false) {
+          idx.push(156);
+          payload.chip = { credit: { BLACK: betVal } };
+        } else if (data.bot.RB == 'RED' && is_opposite == false) {
+          payload.chip = { credit: { RED: betVal } };
+          idx.push(155);
+        } else if (data.bot.RB == 'BLACK' && is_opposite == true) {
+          payload.chip = { credit: { RED: betVal } };
+          realBet = 'RED';
+          idx.push(155);
+        } else if (data.bot.RB == 'RED' && is_opposite == true) {
+          payload.chip = { credit: { BLACK: betVal } };
+          realBet = 'BLACK';
+          idx.push(156);
+        } else {
+          return;
+        }
+      } else if (botObj.bet_side == 12) {
+        realBet = data.bot.EO;
+        if (data.bot.EO == 'EVEN' && is_opposite == false) {
+          payload.chip = { credit: { EVEN: betVal } };
+          idx.push(154);
+        } else if (data.bot.EO == 'ODD' && is_opposite == false) {
+          payload.chip = { credit: { ODD: betVal } };
+          idx.push(153);
+        } else if (data.bot.EO == 'EVEN' && is_opposite == true) {
+          payload.chip = { credit: { ODD: betVal } };
+          realBet = 'ODD';
+          idx.push(153);
+        } else if (data.bot.EO == 'ODD' && is_opposite == true) {
+          payload.chip = { credit: { EVEN: betVal } };
+          realBet = 'EVEN';
+          idx.push(154);
+        } else {
+          return;
+        }
+      } else if (botObj.bet_side == 13) {
+        realBet = data.bot.SB;
+        if (data.bot.SB == 'SMALL' && is_opposite == false) {
+          payload.chip = { credit: { SMALL: betVal } };
+          idx.push(151);
+        } else if (data.bot.SB == 'BIG' && is_opposite == false) {
+          payload.chip = { credit: { BIG: betVal } };
+          idx.push(152);
+        } else if (data.bot.SB == 'BIG' && is_opposite == true) {
+          payload.chip = { credit: { SMALL: betVal } };
+          realBet = 'SMALL';
+          idx.push(151);
+        } else if (data.bot.SB == 'SMALL' && is_opposite == true) {
+          payload.chip = { credit: { BIG: betVal } };
+          realBet = 'BIG';
+          idx.push(152);
+        } else {
+          return;
+        }
+      } else if (botObj.bet_side == 14) {
+        if (!is_opposite) {
+          realBet = data.bot.TWOZONE;
           realBet.forEach((element) => {
             idx.push(mapZone[element]);
           });
         } else {
-          realBet = data.bot.ONEZONE;
+          let dozen = ['FIRST', 'SECOND', 'THIRD'];
+          let index1 = dozen.indexOf(data.bot.TWOZONE[0]);
+          dozen.splice(index1, 1);
+          let index2 = dozen.indexOf(data.bot.TWOZONE[1]);
+          dozen.splice(index2, 1);
+          // console.log(dozen[0])
+          realBet = dozen[0];
           idx.push(mapZone[realBet]);
         }
-      }
-    }
-
-    idx.forEach((element) => {
-      bPayload['details'].push({
-        mode: 0,
-        idx: element,
-        orders: [{ idx: element, amt: betVal }],
-        orderLength: 1,
-        totAmt: betVal,
-      });
-      bPayload['categoryStakes'].push({ idx: element, stake: betVal });
-    });
-
-    zeroVal = 0;
-    // console.log(`bet bet zero ${botObj.open_zero} ${botObj.zero_bet}`)
-    if (botObj.open_zero && botObj.zero_bet > 9) {
-      if (botObj.zero_bet < minZero) {
-        zeroVal = minZero;
-        bPayload['details'].push({
-          mode: 0,
-          idx: 0,
-          orders: [{ idx: 0, amt: zeroVal }],
-          orderLength: 1,
-          totAmt: zeroVal,
-        });
-        bPayload['categoryStakes'].push({ idx: 0, stake: zeroVal });
-      } else {
-        zeroVal = botObj.zero_bet;
-        bPayload['details'].push({
-          mode: 0,
-          idx: 0,
-          orders: [{ idx: 0, amt: zeroVal }],
-          orderLength: 1,
-          totAmt: zeroVal,
-        });
-        bPayload['categoryStakes'].push({ idx: 0, stake: zeroVal });
-      }
-    }
-
-    // console.log(payload)
-
-    if (!is_mock) {
-      const user = await db.user.findOne({
-        where: {
-          id: botObj.userId,
-        },
-      });
-      // let bData = [{ "categoryIdx": categoryId, "categoryName": realBet, "stake": betVal }]
-      // console.log(data)
-      let betLimiCode = await getBetLimitCode(botObj.bet_side, betVal);
-      console.log('betLimitCode >> ', betLimiCode);
-      var pData = qs.stringify({
-        dealerDomain: '1',
-        tableID: data.table.toString(),
-        gameShoe: data.shoe.toString(),
-        gameRound: data.round.toString(),
-        data: JSON.stringify(bPayload),
-        betLimitID: betLimiCode, // 11901 20 - 5000, 110902 100 - 10000
-        f: '-1',
-        c: 'A',
-      });
-      var config = {
-        method: 'post',
-        url: 'https://bpcdf.semgbow777.com/player/update/addRouTransaction',
-        headers: {
-          Cookie: userSeToken,
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        data: pData,
-      };
-
-      let res = null;
-      try {
-        res = await axios(config);
-      } catch (e) {
-        res = null;
-      }
-
-      let message = {};
-      if (res.data.message != undefined && res.data.message) {
-        try {
-          message = JSON.parse(res.data.message);
-        } catch (e) {
-          message = {};
-          console.log(res.data);
-        }
-        // console.log('convert message <<<<', message)
-      }
-      // console.log(res.data, message.txnDetails[0].success)
-      if (res == null || res.data.status != 200) {
-        parentPort.postMessage({
-          action: 'bet_failed',
-          botObj: botObj,
-          error: res.data,
-        });
-        // console.log(`${botObj.userId} rot bot roud ${data.round} bet faile if`)
-        betFailed = false;
-      } else if (
-        res.data.status == 200 &&
-        message.txnDetails != undefined &&
-        message.txnDetails[0].success == true
-      ) {
-        if (botObj.open_zero) {
-          turnover += zeroVal;
-        }
-
-        if (
-          botObj.bet_side == 14 ||
-          (botObj.bet_side == 15 && is_opposite == true)
-        ) {
-          turnover += betVal * 2;
+      } else if (botObj.bet_side == 15) {
+        if (!is_opposite) {
+          realBet = data.bot.ONEZONE;
+          idx.push(mapZone[realBet]);
         } else {
-          turnover += betVal;
+          // console.log('opposite one zone')
+          let dozen = ['FIRST', 'SECOND', 'THIRD'];
+          let index = dozen.indexOf(data.bot.ONEZONE);
+          // console.log(index)
+          if (index != -1) {
+            dozen.splice(index, 1);
+            realBet = dozen;
+            realBet.forEach((element) => {
+              idx.push(mapZone[element]);
+            });
+          } else {
+            realBet = data.bot.ONEZONE;
+            idx.push(mapZone[realBet]);
+          }
         }
+      }
+
+      idx.forEach((element) => {
+        bPayload['details'].push({
+          mode: 0,
+          idx: element,
+          orders: [{ idx: element, amt: betVal }],
+          orderLength: 1,
+          totAmt: betVal,
+        });
+        bPayload['categoryStakes'].push({ idx: element, stake: betVal });
+      });
+
+      zeroVal = 0;
+      // console.log(`bet bet zero ${botObj.open_zero} ${botObj.zero_bet}`)
+      if (botObj.open_zero && botObj.zero_bet > 9) {
+        if (botObj.zero_bet < minZero) {
+          zeroVal = minZero;
+          bPayload['details'].push({
+            mode: 0,
+            idx: 0,
+            orders: [{ idx: 0, amt: zeroVal }],
+            orderLength: 1,
+            totAmt: zeroVal,
+          });
+          bPayload['categoryStakes'].push({ idx: 0, stake: zeroVal });
+        } else {
+          zeroVal = botObj.zero_bet;
+          bPayload['details'].push({
+            mode: 0,
+            idx: 0,
+            orders: [{ idx: 0, amt: zeroVal }],
+            orderLength: 1,
+            totAmt: zeroVal,
+          });
+          bPayload['categoryStakes'].push({ idx: 0, stake: zeroVal });
+        }
+      }
+
+      // console.log(payload)
+
+      if (!is_mock) {
+        const user = await db.user.findOne({
+          where: {
+            id: botObj.userId,
+          },
+        });
+        // let bData = [{ "categoryIdx": categoryId, "categoryName": realBet, "stake": betVal }]
+        // console.log(data)
+        let betLimiCode = await getBetLimitCode(botObj.bet_side, betVal);
+        console.log('betLimitCode >> ', betLimiCode);
+        var pData = qs.stringify({
+          dealerDomain: '1',
+          tableID: data.table.toString(),
+          gameShoe: data.shoe.toString(),
+          gameRound: data.round.toString(),
+          data: JSON.stringify(bPayload),
+          betLimitID: betLimiCode, // 11901 20 - 5000, 110902 100 - 10000
+          f: '-1',
+          c: 'A',
+        });
+        var config = {
+          method: 'post',
+          url: 'https://bpcdf.semgbow777.com/player/update/addRouTransaction',
+          headers: {
+            Cookie: userSeToken,
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+          data: pData,
+        };
+
+        let res = null;
+        try {
+          res = await axios(config);
+        } catch (e) {
+          res = null;
+        }
+
+        let message = {};
+        if (res.data.message != undefined && res.data.message) {
+          try {
+            message = JSON.parse(res.data.message);
+          } catch (e) {
+            message = {};
+            console.log(res.data);
+          }
+          // console.log('convert message <<<<', message)
+        }
+        // console.log(res.data, message.txnDetails[0].success)
+        if (res == null || res.data.status != 200) {
+          parentPort.postMessage({
+            action: 'bet_failed',
+            botObj: botObj,
+            error: res.data,
+          });
+          // console.log(`${botObj.userId} rot bot roud ${data.round} bet faile if`)
+          betFailed = false;
+        } else if (
+          res.data.status == 200 &&
+          message.txnDetails != undefined &&
+          message.txnDetails[0].success == true
+        ) {
+          if (botObj.open_zero) {
+            turnover += zeroVal;
+          }
+
+          if (
+            botObj.bet_side == 14 ||
+            (botObj.bet_side == 15 && is_opposite == true)
+          ) {
+            turnover += betVal * 2;
+          } else {
+            turnover += betVal;
+          }
+          current = {
+            bot: data.bot,
+            bet: realBet,
+            shoe: data.shoe,
+            round: data.round,
+            table_id: data.table,
+            betVal: betVal,
+            playTurn: playTurn,
+            botObj: botObj,
+            is_opposite: is_opposite,
+          };
+          parentPort.postMessage({
+            action: 'bet_success',
+            data: {
+              ...data,
+              betVal: betVal,
+              current: current,
+              botObj: botObj,
+              turnover: turnover,
+              bet: realBet,
+            },
+          });
+          console.log(
+            `${botObj.userId} rot bot roud ${data.round} bet success`
+          );
+          betFailed = true;
+          betting = false;
+        } else {
+          parentPort.postMessage({
+            action: 'bet_failed',
+            botObj: botObj,
+            error: res.data,
+          });
+          // console.log(`${botObj.userId} rot bot roud ${data.round} bet faile else`)
+          betFailed = false;
+          betting = false;
+        }
+      } else {
+        turnover += betVal;
         current = {
           bot: data.bot,
           bet: realBet,
@@ -820,48 +864,15 @@ async function bet(data) {
             bet: realBet,
           },
         });
-        console.log(`${botObj.userId} rot bot roud ${data.round} bet success`);
         betFailed = true;
-        betting = false;
-      } else {
-        parentPort.postMessage({
-          action: 'bet_failed',
-          botObj: botObj,
-          error: res.data,
-        });
-        // console.log(`${botObj.userId} rot bot roud ${data.round} bet faile else`)
-        betFailed = false;
+        bet_time = Date.now();
         betting = false;
       }
-    } else {
-      turnover += betVal;
-      current = {
-        bot: data.bot,
-        bet: realBet,
-        shoe: data.shoe,
-        round: data.round,
-        table_id: data.table,
-        betVal: betVal,
-        playTurn: playTurn,
-        botObj: botObj,
-        is_opposite: is_opposite,
-      };
-      parentPort.postMessage({
-        action: 'bet_success',
-        data: {
-          ...data,
-          betVal: betVal,
-          current: current,
-          botObj: botObj,
-          turnover: turnover,
-          bet: realBet,
-        },
-      });
-      betFailed = true;
-      bet_time = Date.now();
-      betting = false;
-    }
 
+      betting = false;
+    } catch (error) {
+      console.log(`bet_baccarat ${botObj.userId} main error `, error);
+    }
     betting = false;
   }
 }

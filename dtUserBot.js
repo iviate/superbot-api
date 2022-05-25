@@ -75,35 +75,11 @@ async function checkAndReconnect() {
     is_connect = false;
     let reing = false;
     while (!is_connect) {
-      if (reing) {
-        continue;
-      }
-      console.log('reconnect with time condition');
-      console.log(user.ufa_account, user.type_password, user.web);
-      reing = true;
-      // let c = await utils.reCookie(user.ufa_account, user.type_password, user.web)
-      let c = await reCookie(user.ufa_account, user.type_password);
-      reing = false;
-      if (c != null) {
-        userSeToken = c;
-        userSeTokenTime = moment().valueOf();
-        await user.save();
-        is_connect = true;
-        is_reconnect = false;
-        await getHistory();
-      }
-    }
-  } else {
-    let balance = await utils.getUserWallet(userSeToken);
-    if (balance == null) {
-      is_reconnect = true;
-      is_connect = false;
-      let reing = false;
-      while (!is_connect) {
+      try {
         if (reing) {
           continue;
         }
-        console.log('reconnect with logout condition');
+        console.log('reconnect with time condition');
         console.log(user.ufa_account, user.type_password, user.web);
         reing = true;
         // let c = await utils.reCookie(user.ufa_account, user.type_password, user.web)
@@ -117,6 +93,34 @@ async function checkAndReconnect() {
           is_reconnect = false;
           await getHistory();
         }
+      } catch (error) {}
+    }
+  } else {
+    let balance = await utils.getUserWallet(userSeToken);
+    if (balance == null) {
+      is_reconnect = true;
+      is_connect = false;
+      let reing = false;
+      while (!is_connect) {
+        try {
+          if (reing) {
+            continue;
+          }
+          console.log('reconnect with logout condition');
+          console.log(user.ufa_account, user.type_password, user.web);
+          reing = true;
+          // let c = await utils.reCookie(user.ufa_account, user.type_password, user.web)
+          let c = await reCookie(user.ufa_account, user.type_password);
+          reing = false;
+          if (c != null) {
+            userSeToken = c;
+            userSeTokenTime = moment().valueOf();
+            await user.save();
+            is_connect = true;
+            is_reconnect = false;
+            await getHistory();
+          }
+        } catch (error) {}
       }
     } else {
       is_connect = true;
@@ -364,140 +368,241 @@ async function bet(data) {
   } else if (botObj.bet_side == 2 && data.bot == 'TIGER') {
   } else if (botObj.bet_side == 3 && data.bot == 'DRAGON') {
   } else {
-    betting = true;
-    console.log(data);
-    let betVal = getBetVal();
-    // console.log(`betVal : ${betVal}`)
-    if (betVal < botObj.init_bet) {
-      betVal = botObj.init_bet;
-    } else if (betVal > botObj.maximum_bet) {
-      betVal = botObj.maximum_bet;
-    }
-
-    // if(!is_mock){
-    //     if (betVal > maxBet) {
-    //         // console.log('upgrade bet limit')
-    //         let payload = { games: { baccarat: { range: "medium" } } }
-
-    //         axios.post(`https://truthbet.com/api/m/settings/limit`, payload, {
-    //             headers: {
-    //                 Authorization: `Bearer ${workerData.obj.token}`
-    //             }
-    //         }).then(res => {
-    //             minBet = 200
-    //             maxBet = 10000
-    //         })
-    //             .catch(error => {
-    //                 // console.log(error)
-    //             })
-    //         return
-
-    //     } else if (betVal < minBet) {
-    //         // console.log('dowgrade bet limit')
-    //         let payload = { games: { baccarat: { range: "newbie" } } }
-
-    //         axios.post(`https://truthbet.com/api/m/settings/limit`, payload, {
-    //             headers: {
-    //                 Authorization: `Bearer ${workerData.obj.token}`
-    //             }
-    //         }).then(res => {
-    //             minBet = 50
-    //             maxBet = 2500
-    //         })
-    //             .catch(error => {
-    //                 // console.log(error)
-    //             })
-    //         return
-    //     }
-    // }
-
-    let realBet = null;
-    let categoryId = 0;
-    // console.log(data.bot)
-    if (data.bot == 'DRAGON' && is_opposite == false) {
-      realBet = 'Dragon';
-      categoryId = 1;
-    } else if (data.bot == 'TIGER' && is_opposite == false) {
-      realBet = 'Tiger';
-    } else if (data.bot == 'DRAGON' && is_opposite == true) {
-      realBet = 'Tiger';
-    } else if (data.bot == 'TIGER' && is_opposite == true) {
-      realBet = 'Dragon';
-      categoryId = 1;
-    } else {
-      return;
-    }
-
-    // console.log(data.bot, realBet, is_opposite)
-
-    if (!is_mock) {
-      const user = await db.user.findOne({
-        where: {
-          id: botObj.userId,
-        },
-      });
-      let bData = [
-        { categoryIdx: categoryId, categoryName: realBet, stake: betVal },
-      ];
-      console.log(bData);
-
-      let betLimiCode = await getBetLimitCode(botObj.bet_side, betVal);
-      var pData = qs.stringify({
-        domainType: '1',
-        tableID: data.table.toString(),
-        gameShoe: data.shoe.toString(),
-        gameRound: data.round.toString(),
-        data: JSON.stringify(bData),
-        betLimitID: betLimiCode, // 11901 20 - 5000, 110902 100 - 10000
-        f: '-1',
-        c: 'A',
-      });
-      var config = {
-        method: 'post',
-        url: 'https://bpcdf.semgbow777.com/player/update/addLongHuTransaction',
-        headers: {
-          Cookie: userSeToken,
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        data: pData,
-      };
-
-      let res = null;
-      try {
-        res = await axios(config);
-      } catch (e) {}
-
-      let message = {};
-      if (res.data.message != undefined && res.data.message) {
-        try {
-          message = JSON.parse(res.data.message);
-        } catch (e) {
-          message = {};
-          console.log(res.data);
-        }
-        // console.log('convert message <<<<', message)
+    try {
+      betting = true;
+      console.log(data);
+      let betVal = getBetVal();
+      // console.log(`betVal : ${betVal}`)
+      if (betVal < botObj.init_bet) {
+        betVal = botObj.init_bet;
+      } else if (betVal > botObj.maximum_bet) {
+        betVal = botObj.maximum_bet;
       }
 
-      if (res == null || res.data.status != 200) {
-        parentPort.postMessage({
-          action: 'bet_failed',
-          botObj: botObj,
-          error: res.data,
+      // if(!is_mock){
+      //     if (betVal > maxBet) {
+      //         // console.log('upgrade bet limit')
+      //         let payload = { games: { baccarat: { range: "medium" } } }
+
+      //         axios.post(`https://truthbet.com/api/m/settings/limit`, payload, {
+      //             headers: {
+      //                 Authorization: `Bearer ${workerData.obj.token}`
+      //             }
+      //         }).then(res => {
+      //             minBet = 200
+      //             maxBet = 10000
+      //         })
+      //             .catch(error => {
+      //                 // console.log(error)
+      //             })
+      //         return
+
+      //     } else if (betVal < minBet) {
+      //         // console.log('dowgrade bet limit')
+      //         let payload = { games: { baccarat: { range: "newbie" } } }
+
+      //         axios.post(`https://truthbet.com/api/m/settings/limit`, payload, {
+      //             headers: {
+      //                 Authorization: `Bearer ${workerData.obj.token}`
+      //             }
+      //         }).then(res => {
+      //             minBet = 50
+      //             maxBet = 2500
+      //         })
+      //             .catch(error => {
+      //                 // console.log(error)
+      //             })
+      //         return
+      //     }
+      // }
+
+      let realBet = null;
+      let categoryId = 0;
+      // console.log(data.bot)
+      if (data.bot == 'DRAGON' && is_opposite == false) {
+        realBet = 'Dragon';
+        categoryId = 1;
+      } else if (data.bot == 'TIGER' && is_opposite == false) {
+        realBet = 'Tiger';
+      } else if (data.bot == 'DRAGON' && is_opposite == true) {
+        realBet = 'Tiger';
+      } else if (data.bot == 'TIGER' && is_opposite == true) {
+        realBet = 'Dragon';
+        categoryId = 1;
+      } else {
+        return;
+      }
+
+      // console.log(data.bot, realBet, is_opposite)
+
+      if (!is_mock) {
+        const user = await db.user.findOne({
+          where: {
+            id: botObj.userId,
+          },
         });
-        betFailed = false;
-        betting = false;
-      } else if (
-        res.data.status == 200 &&
-        message.txns != undefined &&
-        message.txns[0].success == true
-      ) {
+        let bData = [
+          { categoryIdx: categoryId, categoryName: realBet, stake: betVal },
+        ];
+        console.log(bData);
+
+        let betLimiCode = await getBetLimitCode(botObj.bet_side, betVal);
+        var pData = qs.stringify({
+          domainType: '1',
+          tableID: data.table.toString(),
+          gameShoe: data.shoe.toString(),
+          gameRound: data.round.toString(),
+          data: JSON.stringify(bData),
+          betLimitID: betLimiCode, // 11901 20 - 5000, 110902 100 - 10000
+          f: '-1',
+          c: 'A',
+        });
+        var config = {
+          method: 'post',
+          url: 'https://bpcdf.semgbow777.com/player/update/addLongHuTransaction',
+          headers: {
+            Cookie: userSeToken,
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+          data: pData,
+        };
+
+        let res = null;
+        try {
+          res = await axios(config);
+        } catch (e) {}
+
+        let message = {};
+        if (res.data.message != undefined && res.data.message) {
+          try {
+            message = JSON.parse(res.data.message);
+          } catch (e) {
+            message = {};
+            console.log(res.data);
+          }
+          // console.log('convert message <<<<', message)
+        }
+
+        if (res == null || res.data.status != 200) {
+          parentPort.postMessage({
+            action: 'bet_failed',
+            botObj: botObj,
+            error: res.data,
+          });
+          betFailed = false;
+          betting = false;
+        } else if (
+          res.data.status == 200 &&
+          message.txns != undefined &&
+          message.txns[0].success == true
+        ) {
+          turnover += betVal;
+          current = {
+            bot: data.bot,
+            bet: realBet,
+            shoe: data.shoe,
+            round: data.round,
+            table_id: data.table,
+            betVal: betVal,
+            playTurn: playTurn,
+            botObj: botObj,
+            is_opposite: is_opposite,
+          };
+          parentPort.postMessage({
+            action: 'bet_success',
+            data: {
+              ...data,
+              betVal: betVal,
+              current: current,
+              botObj: botObj,
+              turnover: turnover,
+              bet: realBet,
+            },
+          });
+          betFailed = true;
+          betting = false;
+        } else {
+          parentPort.postMessage({
+            action: 'bet_failed',
+            botObj: botObj,
+            error: res.data,
+          });
+          betFailed = false;
+          betting = false;
+        }
+
+        // let betAPI = "https://bpweb.bikimex.net/player/update/addMyTransaction"
+        // let bData = [{"categoryIdx":1,"categoryName":realBet,"stake":betVal}]
+        // console.log(bData, data.table, data.shoe, data.round)
+
+        // const ps = new URLSearchParams()
+        // ps.append('domainType', '1')
+        // ps.append('tableID', data.table)
+        // ps.append('gameShoe', data.shoe)
+        // ps.append('gameRound', data.round)
+        // ps.append('data', bData)
+        // ps.append('betLimitID', 110901)
+        // ps.append('f', -1)
+        // ps.append('c', 'A')
+
+        // const user = await db.user.findOne({
+        //     where: {
+        //         id: botObj.userId
+        //     },
+        // })
+
+        // console.log(user.cookie)
+
+        // const config = {
+        //     headers: {
+        //         'Content-Type': 'application/x-www-form-urlencoded',
+        //         'Cookie': user.cookie
+        //     }
+        // }
+
+        // let res = await axios.post(betAPI, ps, config)
+
+        // console.log(res.data)
+        // if(res.data.status == 200){
+        //     turnover += betVal
+        //     current = { bot: data.bot, bet: realBet, shoe: data.shoe, round: data.round, table_id: data.table, betVal: betVal, playTurn: playTurn, botObj: botObj, is_opposite: is_opposite }
+        //     parentPort.postMessage({ action: 'bet_success', data: { ...data, betVal: betVal, current: current, botObj: botObj, turnover: turnover, bet: realBet } })
+        //     betFailed = true
+        // }else{
+        //     parentPort.postMessage({ action: 'bet_failed', botObj: botObj, error: res.data })
+        //     betFailed = false
+        // }
+        // let res = await axios.post(balanceAPI, ps, config)
+        // axios.post(`https://truthbet.com/api/bet/baccarat`, payload,
+        //     {
+        //         headers: {
+        //             Authorization: `Bearer ${token}`,
+        //             'content-type': 'application/json'
+        //         }
+        //     })
+        //     .then(response => {
+        //         // console.log(response.data);
+        //         turnover += betVal
+        //         current = { bot: data.bot, bet: realBet, shoe: data.shoe, round: data.round, table_id: data.table, betVal: betVal, playTurn: playTurn, botObj: botObj, is_opposite: is_opposite }
+        //         parentPort.postMessage({ action: 'bet_success', data: { ...data, betVal: betVal, current: current, botObj: botObj, turnover: turnover, bet: realBet } })
+        //         betFailed = true
+        //     })
+        //     .catch(error => {
+        //         if (error.response.data.code != 500 && error.response.data.code != "toomany_requests") {
+        //             betFailed = true
+        //         } else {
+        //             betFailed = false
+        //         }
+        //         parentPort.postMessage({ action: 'bet_failed', botObj: botObj, error: error.response.data.error })
+        //     });
+      } else {
         turnover += betVal;
         current = {
           bot: data.bot,
           bet: realBet,
           shoe: data.shoe,
           round: data.round,
-          table_id: data.table,
+          table_id: data.table.id,
           betVal: betVal,
           playTurn: playTurn,
           botObj: botObj,
@@ -515,110 +620,12 @@ async function bet(data) {
           },
         });
         betFailed = true;
-        betting = false;
-      } else {
-        parentPort.postMessage({
-          action: 'bet_failed',
-          botObj: botObj,
-          error: res.data,
-        });
-        betFailed = false;
+        bet_time = Date.now();
         betting = false;
       }
-
-      // let betAPI = "https://bpweb.bikimex.net/player/update/addMyTransaction"
-      // let bData = [{"categoryIdx":1,"categoryName":realBet,"stake":betVal}]
-      // console.log(bData, data.table, data.shoe, data.round)
-
-      // const ps = new URLSearchParams()
-      // ps.append('domainType', '1')
-      // ps.append('tableID', data.table)
-      // ps.append('gameShoe', data.shoe)
-      // ps.append('gameRound', data.round)
-      // ps.append('data', bData)
-      // ps.append('betLimitID', 110901)
-      // ps.append('f', -1)
-      // ps.append('c', 'A')
-
-      // const user = await db.user.findOne({
-      //     where: {
-      //         id: botObj.userId
-      //     },
-      // })
-
-      // console.log(user.cookie)
-
-      // const config = {
-      //     headers: {
-      //         'Content-Type': 'application/x-www-form-urlencoded',
-      //         'Cookie': user.cookie
-      //     }
-      // }
-
-      // let res = await axios.post(betAPI, ps, config)
-
-      // console.log(res.data)
-      // if(res.data.status == 200){
-      //     turnover += betVal
-      //     current = { bot: data.bot, bet: realBet, shoe: data.shoe, round: data.round, table_id: data.table, betVal: betVal, playTurn: playTurn, botObj: botObj, is_opposite: is_opposite }
-      //     parentPort.postMessage({ action: 'bet_success', data: { ...data, betVal: betVal, current: current, botObj: botObj, turnover: turnover, bet: realBet } })
-      //     betFailed = true
-      // }else{
-      //     parentPort.postMessage({ action: 'bet_failed', botObj: botObj, error: res.data })
-      //     betFailed = false
-      // }
-      // let res = await axios.post(balanceAPI, ps, config)
-      // axios.post(`https://truthbet.com/api/bet/baccarat`, payload,
-      //     {
-      //         headers: {
-      //             Authorization: `Bearer ${token}`,
-      //             'content-type': 'application/json'
-      //         }
-      //     })
-      //     .then(response => {
-      //         // console.log(response.data);
-      //         turnover += betVal
-      //         current = { bot: data.bot, bet: realBet, shoe: data.shoe, round: data.round, table_id: data.table, betVal: betVal, playTurn: playTurn, botObj: botObj, is_opposite: is_opposite }
-      //         parentPort.postMessage({ action: 'bet_success', data: { ...data, betVal: betVal, current: current, botObj: botObj, turnover: turnover, bet: realBet } })
-      //         betFailed = true
-      //     })
-      //     .catch(error => {
-      //         if (error.response.data.code != 500 && error.response.data.code != "toomany_requests") {
-      //             betFailed = true
-      //         } else {
-      //             betFailed = false
-      //         }
-      //         parentPort.postMessage({ action: 'bet_failed', botObj: botObj, error: error.response.data.error })
-      //     });
-    } else {
-      turnover += betVal;
-      current = {
-        bot: data.bot,
-        bet: realBet,
-        shoe: data.shoe,
-        round: data.round,
-        table_id: data.table.id,
-        betVal: betVal,
-        playTurn: playTurn,
-        botObj: botObj,
-        is_opposite: is_opposite,
-      };
-      parentPort.postMessage({
-        action: 'bet_success',
-        data: {
-          ...data,
-          betVal: betVal,
-          current: current,
-          botObj: botObj,
-          turnover: turnover,
-          bet: realBet,
-        },
-      });
-      betFailed = true;
-      bet_time = Date.now();
-      betting = false;
+    } catch (error) {
+      console.log(`bet_baccarat ${botObj.userId} main error `, error);
     }
-
     betting = false;
   }
 }
