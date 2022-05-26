@@ -429,6 +429,7 @@ myApp.post('/login', async function (request, response) {
               headless: true,
               devtools: false,
               args: ['--no-sandbox', '--disable-setuid-sandbox'],
+              executablePath: '/usr/bin/chromium-browser',
             });
             try {
               const imbaToken = await loginImbaWithGetToken(USERNAME, PASSWORD);
@@ -2246,6 +2247,7 @@ myApp.get('/wallet/:id', async function (request, response) {
         headless: true,
         devtools: false,
         args: ['--no-sandbox', '--disable-setuid-sandbox'],
+        executablePath: '/usr/bin/chromium-browser',
       });
       const page = await browser.newPage();
       await page.goto(`${webHostname}/login?token=${user.token}`, {
