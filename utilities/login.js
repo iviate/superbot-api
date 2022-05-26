@@ -155,10 +155,11 @@ async function loginUsplaynet(username, { userId, tokenId }) {
 
   const resLogin = await axios(config);
 
-  if (
-    resLogin.status !== 302 ||
-    resLogin.headers.location.indexOf('user') === -1
-  ) {
+  let regexLocation = /\('(.*)'\)/g;
+
+  let locations = regexLocation.exec(resLogin.data);
+
+  if (!locations) {
     console.log('login usplaynet not complete');
 
     return false;
@@ -166,7 +167,7 @@ async function loginUsplaynet(username, { userId, tokenId }) {
 
   // addCookieFromResponse(username, resLogin);
 
-  return resLogin.headers.location;
+  return locations[1];
 }
 
 async function loginSemgbowWithLoginLink(username, zeusLoginLink) {
