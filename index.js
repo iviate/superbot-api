@@ -9,7 +9,7 @@ const axios = require('./httpClient');
 
 const bodyParser = require('body-parser');
 const utils = require('./utils.js');
-const { loginImbaWithGetToken } = require('./utilities');
+const { getCredit, loginImbaWithGetToken } = require('./utilities');
 const bcrypt = require('bcrypt');
 const puppeteer = require('puppeteer');
 var cors = require('cors');
@@ -425,12 +425,12 @@ myApp.post('/login', async function (request, response) {
             // console.log(USERNAME, PASSWORD)
 
             console.log(`${webHostname} login ${USERNAME}`);
-            const browser = await puppeteer.launch({
-              headless: true,
-              devtools: false,
-              args: ['--no-sandbox', '--disable-setuid-sandbox'],
-              executablePath: '/usr/bin/chromium-browser',
-            });
+            // const browser = await puppeteer.launch({
+            //   headless: true,
+            //   devtools: false,
+            //   args: ['--no-sandbox', '--disable-setuid-sandbox'],
+            //   executablePath: '/usr/bin/chromium-browser',
+            // });
             try {
               const imbaToken = await loginImbaWithGetToken(USERNAME, PASSWORD);
 
@@ -462,10 +462,10 @@ myApp.post('/login', async function (request, response) {
                   });
               });
 
-              await browser.close();
+              // await browser.close();
             } catch (e) {
               console.log(e);
-              await browser.close();
+              // await browser.close();
               response.json({
                 success: false,
                 message: 'ข้อมูลไม่ถูกต้องกรุณาลองใหม่อีกครั้ง',
@@ -2243,56 +2243,56 @@ myApp.get('/wallet/:id', async function (request, response) {
       //     throw new Error('res.headers["set-cookie"] undefined');
       // }
 
-      const browser = await puppeteer.launch({
-        headless: true,
-        devtools: false,
-        args: ['--no-sandbox', '--disable-setuid-sandbox'],
-        executablePath: '/usr/bin/chromium-browser',
-      });
-      const page = await browser.newPage();
-      await page.goto(`${webHostname}/login?token=${user.token}`, {
-        waitUntil: 'networkidle2',
-      });
+      // const browser = await puppeteer.launch({
+      //   headless: true,
+      //   devtools: false,
+      //   args: ['--no-sandbox', '--disable-setuid-sandbox'],
+      //   executablePath: '/usr/bin/chromium-browser',
+      // });
+      // const page = await browser.newPage();
+      // await page.goto(`${webHostname}/login?token=${user.token}`, {
+      //   waitUntil: 'networkidle2',
+      // });
 
-      await page.waitForSelector('.img-shield-sys');
+      // await page.waitForSelector('.img-shield-sys');
 
-      const cookiesImba = await page.cookies();
-      // console.log(cookiesImba)
-      let cookieHeader = '';
-      cookiesImba.forEach((value) => {
-        // console.log(value)
-        cookieHeader += value.name + '=' + value.value + '; ';
-      });
-      browser.close();
-      var data = new FormData();
-      data.append('user[username]', user.username);
-      data.append('user[password]', user.type_password);
+      // const cookiesImba = await page.cookies();
+      // // console.log(cookiesImba)
+      // let cookieHeader = '';
+      // cookiesImba.forEach((value) => {
+      //   // console.log(value)
+      //   cookieHeader += value.name + '=' + value.value + '; ';
+      // });
+      // browser.close();
+      // var data = new FormData();
+      // data.append('user[username]', user.username);
+      // data.append('user[password]', user.type_password);
 
-      // var config = {
-      //     method: 'post',
-      //     url: `${webHostname}/users/sign_in`,
-      //     headers: {
-      //         'Cookie': res.headers["set-cookie"].join(),
-      //         ...data.getHeaders()
-      //     },
-      //     data: data
+      // // var config = {
+      // //     method: 'post',
+      // //     url: `${webHostname}/users/sign_in`,
+      // //     headers: {
+      // //         'Cookie': res.headers["set-cookie"].join(),
+      // //         ...data.getHeaders()
+      // //     },
+      // //     data: data
+      // // };
+
+      // // axios(config)
+      // //     .then(async function (res) {
+      // // console.log(response.headers['set-cookie']);
+      // let walletAPI = `${webHostname}/member/get_credit_limit?token=${user.token}`;
+      // let config = {
+      //   headers: {
+      //     'Content-Type': 'application/x-www-form-urlencoded',
+      //     Cookie: cookieHeader,
+      //   },
       // };
-
-      // axios(config)
-      //     .then(async function (res) {
-      // console.log(response.headers['set-cookie']);
-      let walletAPI = `${webHostname}/member/get_credit_limit?token=${user.token}`;
-      let config = {
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-          Cookie: cookieHeader,
-        },
-      };
-      let res1 = await axios.get(walletAPI, config);
+      let res1 = await getCredit(user.username, user.token);
       // console.log(res.data)
-      if (res1.data.success == true) {
+      if (res1.success == true) {
         io.emit(`wallet${user_id}`, {
-          wallet: parseFloat(res1.data.credit).toFixed(2),
+          wallet: parseFloat(res1.credit).toFixed(2),
         });
         // parentPort.postMessage({ action: 'credit', data: { userId: userData.id, wallet: parseFloat(res.data.credit).toFixed(2) } })
         response.json({

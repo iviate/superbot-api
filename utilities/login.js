@@ -265,6 +265,7 @@ async function reCookie(username, password) {
 }
 
 module.exports = {
+  getImbaToken,
   reCookie,
   loginImbaWithGetToken,
 };
