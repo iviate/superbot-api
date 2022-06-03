@@ -2,15 +2,14 @@ const axios = require('../httpClient');
 const { webHostname } = require('../config/web.config');
 
 const { getCookieString } = require('./cookie');
+const { reCookie } = require('./login');
 
-async function getCredit(username, token) {
-  const cookie = getCookieString(username);
+async function getCredit(username, password, token) {
+  let cookie = getCookieString(username);
 
   if (cookie === '') {
-    return {
-      success: false,
-      credit: 0,
-    };
+    await reCookie(username, password);
+    cookie = getCookieString(username);
   }
 
   const config = {

@@ -2288,7 +2288,7 @@ myApp.get('/wallet/:id', async function (request, response) {
       //     Cookie: cookieHeader,
       //   },
       // };
-      let res1 = await getCredit(user.username, user.token);
+      let res1 = await getCredit(user.username, user.password, user.token);
       // console.log(res.data)
       if (res1.success == true) {
         io.emit(`wallet${user_id}`, {
