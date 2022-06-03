@@ -27,7 +27,7 @@ function clearCookie(username) {
 }
 
 function getCookieString(username, isEncode = true) {
-  const cookie = cookies[username];
+  const cookie = cookies[username] || {};
   return Object.keys(cookie).reduce((cookieString, cookieKey) => {
     if (cookie[cookieKey]) {
       const cookieValue = cookie[cookieKey].value;
