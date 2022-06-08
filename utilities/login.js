@@ -180,7 +180,7 @@ async function loginSemgbowWithLoginLink(username, zeusLoginLink) {
   const zeusLoginParams = zeusLoginURL.searchParams.toString();
 
   const newZeusLoginURL = new URL(
-    `/api/player/MexAWS031/login?${zeusLoginParams}`,
+    `/api/player/MexAWS032/login?${zeusLoginParams}`,
     zeusLoginLink
   );
 
