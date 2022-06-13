@@ -193,9 +193,9 @@ async function inititalInfo() {
 }
 
 async function predictPlay() {
-  console.log(`${filename}:${tableId}:predictPlay:start`);
+  // console.log(`${filename}:${tableId}:predictPlay:start`);
   if (isReCookie) {
-    console.log(`${filename}:${tableId}:reCookie`);
+    // console.log(`${filename}:${tableId}:reCookie`);
     return;
   }
   let cookieAge = Math.round((moment() - cookieTime) / 1000);
@@ -205,7 +205,7 @@ async function predictPlay() {
     !isPlay &&
     cookieAge > 1620
   ) {
-    console.log(`${filename}:${tableId}:predictPlay:GP_NEW_GAME_START`);
+    // console.log(`${filename}:${tableId}:predictPlay:GP_NEW_GAME_START`);
     cookie = null;
     let reing = false;
     while (cookie == null) {
@@ -216,7 +216,7 @@ async function predictPlay() {
         isReCookie = true;
         reing = true;
         // cookie = await utils.reCookie(username, password, 4)
-        console.log(`${filename}:${tableId}:predictPlay:recookie:new`);
+        // console.log(`${filename}:${tableId}:predictPlay:recookie:new`);
         cookie = await reCookie(username, password);
         cookieTime = moment();
         await axios({
@@ -233,7 +233,7 @@ async function predictPlay() {
         reing = false;
         isReCookie = false;
       } catch (e) {
-        console.log(`${filename}:${tableId}:predictPlay:error:`, e.message);
+        // console.log(`${filename}:${tableId}:predictPlay:error:`, e.message);
         cookie = null;
         sReCookie = true;
         reing = false;
@@ -244,7 +244,7 @@ async function predictPlay() {
     return;
   }
   let res = null;
-  console.log(`${filename}:${tableId}:predictPlay:query`);
+  // console.log(`${filename}:${tableId}:predictPlay:query`);
   try {
     let balanceAPI =
       'https://bpcdf.semgbow777.com/player/query/queryDealerEventV2';
@@ -262,19 +262,19 @@ async function predictPlay() {
 
     res = await axios.post(balanceAPI, ps, config);
   } catch (e) {
-    console.log(`${filename}:${tableId}:query:error`, e.message);
+    // console.log(`${filename}:${tableId}:query:error`, e.message);
     return;
   }
 
   if (typeof res.data === 'object' && res !== null) {
-    console.log(`${filename}:${tableId}:livepay:`, res.data);
+    // console.log(`${filename}:${tableId}:livepay:`, res.data);
     livePlaying(res.data);
   } else {
-    console.log(`${filename}:${tableId}:cookie:error`);
+    // console.log(`${filename}:${tableId}:cookie:error`);
     cookie = null;
     let reing = false;
     while (cookie == null) {
-      console.log(`${filename}:${tableId}:predictPlay:recookie:falldown`);
+      // console.log(`${filename}:${tableId}:predictPlay:recookie:falldown`);
       if (reing) {
         continue;
       }
