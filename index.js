@@ -519,7 +519,7 @@ myApp.post('/login', async function (request, response) {
                   });
               });
           });
-          await browser.close();
+          // await browser.close();
         } catch (e) {
           console.log(e);
           response.json({
