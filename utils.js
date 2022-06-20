@@ -112,7 +112,7 @@ async function reCookieUfa(username, password) {
         cookieHeader += value.name + '=' + value.value + '; ';
       });
 
-      console.log(cookieHeader);
+      // console.log(cookieHeader);
       await browser.close();
       return cookieHeader;
 
@@ -144,7 +144,7 @@ async function reCookieUfa(username, password) {
       // const plainValue = await jsHandle.jsonValue();
       // console.log(plainValue)
     } catch (e) {
-      console.log(e);
+      // console.log(e);
       await browser.close();
       return null;
     }
@@ -190,11 +190,11 @@ exports.getUserToken = async function getUserToken(username, password) {
       const value = await page.$eval('#user_token', (input) => {
         return input.getAttribute('value');
       });
-      console.log(value);
+      // console.log(value);
       await browser.close();
       return value;
     } catch (e) {
-      console.log(e);
+      // console.log(e);
       await browser.close();
       return null;
     }
@@ -204,7 +204,7 @@ exports.getUserToken = async function getUserToken(username, password) {
 };
 
 async function reCookieImbaNew(username, password) {
-  console.log('recookie imba');
+  // console.log('recookie imba');
   let cookie = await (async (username, password) => {
     var options = {
       method: 'POST',
@@ -233,7 +233,7 @@ async function reCookieImbaNew(username, password) {
 
       axios(config)
         .then(function (response) {
-          console.log(response.headers['set-cookie']);
+          // console.log(response.headers['set-cookie']);
           var config = {
             method: 'get',
             url: `${webHostname}/member/gamelink?vendor=sexy&game_id=undefined&game_code=undefined&mobile=false`,
@@ -266,17 +266,17 @@ async function reCookieImbaNew(username, password) {
                 cookieHeader2 += value.name + '=' + value.value + '; ';
               });
 
-              console.log(cookieHeader2);
+              // console.log(cookieHeader2);
               await browser.close();
               return cookieHeader2;
             })
             .catch(function (error) {
-              console.log(error);
+              // console.log(error);
               return null;
             });
         })
         .catch(function (error) {
-          console.log(error);
+          // console.log(error);
           return null;
         });
     });
@@ -287,7 +287,7 @@ async function reCookieImbaNew(username, password) {
 
 async function reCookieImba(username, password) {
   let cookie = await (async (username, password) => {
-    console.log('start reCookieImba <<< ', username, password);
+    // console.log('start reCookieImba <<< ', username, password);
     const browser = await puppeteer.launch({
       headless: false,
       devtools: false,
@@ -350,11 +350,11 @@ async function reCookieImba(username, password) {
         cookieHeader2 += value.name + '=' + value.value + '; ';
       });
 
-      console.log(cookieHeader2);
+      // console.log(cookieHeader2);
       await browser.close();
       return cookieHeader2;
     } catch (e) {
-      console.log(e);
+      // console.log(e);
       await browser.close();
       return null;
     }
@@ -451,11 +451,11 @@ exports.transferWallet = async function (username, password) {
     );
     page2.setDefaultTimeout(timeout);
     await page2.goto(url, { waitUntil: 'networkidle0' });
-    console.log(url);
+    // console.log(url);
 
     // await page2.waitForSelector('#DepositAmt')
     const cookies = await page2.cookies();
-    console.log(url);
+    // console.log(url);
     // console.log(cookies)
 
     let cookieHeader = '';
@@ -491,7 +491,7 @@ exports.transferWallet = async function (username, password) {
     };
 
     let res = await axios(config);
-    console.log(res.data);
+    // console.log(res.data);
 
     depositUrl = `https://igtx999.isme99.com/api.aspx?accid=${
       paramObj.accid
@@ -510,7 +510,7 @@ exports.transferWallet = async function (username, password) {
     };
 
     let res2 = await axios(config);
-    console.log(res2.data);
+    // console.log(res2.data);
 
     await browser.close();
     return null;
@@ -536,7 +536,7 @@ exports.getUserImbaWallet = async function getUserImbaWallet(
   token,
   imbaCookie
 ) {
-  console.log('getUserImbaWallet <<< ', imbaCookie);
+  // console.log('getUserImbaWallet <<< ', imbaCookie);
   let walletAPI = `${webHostname}`;
   let config = {
     headers: {
@@ -547,7 +547,7 @@ exports.getUserImbaWallet = async function getUserImbaWallet(
   let res = await axios.get(walletAPI, config);
   // console.log(res.headers)
   if (res.data.credit != undefined && res.data.success) {
-    console.log('return first');
+    // console.log('return first');
     return { credit: res.data.credit, cookie: null };
   } else {
     const browser = await puppeteer.launch({
@@ -592,7 +592,7 @@ exports.getUserImbaWallet = async function getUserImbaWallet(
         },
       };
       let res = await axios.get(walletAPI, config);
-      console.log(res.data);
+      // console.log(res.data);
       if (res.data.success == true) {
         return { credit: res.data.credit, cookie: cookieHeader };
       } else {
@@ -600,7 +600,7 @@ exports.getUserImbaWallet = async function getUserImbaWallet(
       }
     } catch (e) {
       // console.log(e)
-      console.log(e);
+      // console.log(e);
       await browser.close();
       return { credit: null, cookie: null };
     }
@@ -623,7 +623,7 @@ exports.getUserWallet = async function getUserWallet(cookie) {
 
     let res = await axios.post(balanceAPI, ps, config);
 
-    console.log('get user wallet >>>>>> ', res.data);
+    // console.log('get user wallet >>>>>> ', res.data);
 
     if (res.data.balance != undefined) {
       return res.data.balance;

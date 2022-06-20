@@ -65,7 +65,7 @@ async function getHistory() {
 }
 
 async function checkAndReconnect(force = false) {
-  console.log(is_connect, is_mock);
+  // console.log(is_connect, is_mock);
   if (is_reconnect) {
     return;
   }
@@ -94,8 +94,8 @@ async function checkAndReconnect(force = false) {
         if (reing) {
           continue;
         }
-        console.log('reconnect with time condition');
-        console.log(user.ufa_account, user.type_password, user.web);
+        // console.log('reconnect with time condition');
+        // console.log(user.ufa_account, user.type_password, user.web);
         reing = true;
         // let c = await utils.reCookie(user.ufa_account, user.type_password, user.web)
         let c = await reCookie(user.ufa_account, user.type_password);
@@ -114,7 +114,7 @@ async function checkAndReconnect(force = false) {
     let cTime = parseFloat(userSeTokenTime) || 0;
     let cookieAge = Math.round((moment() - cTime) / 1000);
     let reing = false;
-    console.log(cookieAge);
+    // console.log(cookieAge);
     if (cookieAge > 1600 || !userSeToken) {
       is_reconnect = true;
       is_connect = false;
@@ -127,8 +127,8 @@ async function checkAndReconnect(force = false) {
           if (reing) {
             continue;
           }
-          console.log('reconnect with time condition');
-          console.log(user.ufa_account, user.type_password, user.web);
+          // console.log('reconnect with time condition');
+          // console.log(user.ufa_account, user.type_password, user.web);
           reing = true;
           // let c = await utils.reCookie(user.ufa_account, user.type_password, user.web)
           let c = await reCookie(user.ufa_account, user.type_password);
@@ -260,7 +260,7 @@ function restartOnlyProfit() {
       }
     })
     .catch((error) => {
-      console.log(error);
+      // console.log(error);
       parentPort.postMessage({
         action: 'restart_result',
         data: { success: false, message: error },
@@ -466,17 +466,17 @@ async function getBetLimitCode(betSide, value) {
 
 async function bet(data) {
   table = data.table;
-  console.log(
-    status,
-    isStop,
-    isRecookie,
-    is_reconnect,
-    betting,
-    betFailed,
-    botObj.bet_side,
-    botObj.is_infinite,
-    data.playList
-  );
+  // console.log(
+  //   status,
+  //   isStop,
+  //   isRecookie,
+  //   is_reconnect,
+  //   betting,
+  //   betFailed,
+  //   botObj.bet_side,
+  //   botObj.is_infinite,
+  //   data.playList
+  // );
   if (isRecookie) {
     return;
   }
@@ -539,7 +539,7 @@ async function bet(data) {
   } else {
     try {
       betting = true;
-      console.log('rot start play');
+      // console.log('rot start play');
       let betVal = getBetVal();
       // console.log(`betVal : ${betVal}`)
       if (betVal < botObj.init_bet) {
@@ -739,7 +739,7 @@ async function bet(data) {
         // let bData = [{ "categoryIdx": categoryId, "categoryName": realBet, "stake": betVal }]
         // console.log(data)
         let betLimiCode = await getBetLimitCode(botObj.bet_side, betVal);
-        console.log('betLimitCode >> ', betLimiCode);
+        // console.log('betLimitCode >> ', betLimiCode);
         var pData = qs.stringify({
           dealerDomain: '1',
           tableID: data.table.toString(),
@@ -773,7 +773,7 @@ async function bet(data) {
             message = JSON.parse(res.data.message);
           } catch (e) {
             message = {};
-            console.log(res.data);
+            // console.log(res.data);
           }
           // console.log('convert message <<<<', message)
         }
@@ -825,9 +825,9 @@ async function bet(data) {
               bet: realBet,
             },
           });
-          console.log(
-            `${botObj.userId} rot bot roud ${data.round} bet success`
-          );
+          // console.log(
+          //   `${botObj.userId} rot bot roud ${data.round} bet success`
+          // );
           betFailed = true;
           betting = false;
         } else {
@@ -871,7 +871,7 @@ async function bet(data) {
 
       betting = false;
     } catch (error) {
-      console.log(`bet_baccarat ${botObj.userId} main error `, error);
+      // console.log(`bet_baccarat ${botObj.userId} main error `, error);
     }
     betting = false;
   }
@@ -1179,9 +1179,9 @@ async function processResultBet(
     }
     currentWallet = botObj.init_wallet + botProfit;
 
-    console.log(
-      `rot ${botObj.userId}-${user.ufa_account} wallet ${currentWallet}`
-    );
+    // console.log(
+    //   `rot ${botObj.userId}-${user.ufa_account} wallet ${currentWallet}`
+    // );
 
     let cutProfit =
       botObj.init_wallet +
@@ -1515,7 +1515,7 @@ async function processResultBet(
 }
 
 async function registerForEventListening() {
-  console.log('start rot bot worker');
+  // console.log('start rot bot worker');
   is_mock = workerData.is_mock;
   playData = workerData.playData;
   botObj = workerData.obj;

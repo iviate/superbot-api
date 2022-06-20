@@ -83,9 +83,9 @@ function getCurrent() {
     winner_percent = ((predictStats.correct + predictStats.tie) / sum) * 100;
   }
 
-  console.log(
-    `tableId : ${tableId} sum = ${sum} bot = ${bot} round = ${round} percent = ${winner_percent}`
-  );
+  // console.log(
+  //   `tableId : ${tableId} sum = ${sum} bot = ${bot} round = ${round} percent = ${winner_percent}`
+  // );
 
   if (bot != null && round != 0) {
     parentPort.postMessage({
@@ -116,7 +116,7 @@ function registerForEventListening() {
   tableId = workerData.table;
   username = workerData.username.username;
   password = workerData.username.pwd;
-  console.log(`start table ${tableId} - ${username}`);
+  // console.log(`start table ${tableId} - ${username}`);
   inititalInfo();
   // callback method is defined to receive data from main thread
   let cb = (err, result) => {
@@ -149,7 +149,7 @@ function registerForEventListening() {
 async function inititalInfo() {
   let reing = false;
   while (cookie == null) {
-    console.log('rotbot:inititalInfo');
+    // console.log('rotbot:inititalInfo');
     if (reing) {
       continue;
     }
@@ -157,7 +157,7 @@ async function inititalInfo() {
       reing = true;
       // cookie = await utils.reCookie(username, password, 4)
       cookie = await reCookie(username, password);
-      console.log(cookie);
+      // console.log(cookie);
       cookieTime = moment();
       await axios({
         method: 'post',
@@ -172,9 +172,9 @@ async function inititalInfo() {
       });
       reing = false;
       isReCookie = false;
-      console.log('rotbot:inititalInfo:completed');
+      // console.log('rotbot:inititalInfo:completed');
     } catch (e) {
-      console.log('rotbot:error:', e.message);
+      // console.log('rotbot:error:', e.message);
       cookie = null;
       isReCookie = true;
       reing = false;
@@ -327,10 +327,10 @@ async function predictPlay() {
         reing = false;
         isReCookie = false;
       } catch (e) {
-        console.log(
-          `${filename}:${tableId}:predictPlay:recookie:falldown:error`,
-          e.message
-        );
+        // console.log(
+        //   `${filename}:${tableId}:predictPlay:recookie:falldown:error`,
+        //   e.message
+        // );
         cookie = null;
         isReCookie = true;
         reing = false;
@@ -554,9 +554,9 @@ async function livePlaying(data) {
     }
 
     round = dataJson.gameRound;
-    console.log(
-      `${tableId}-baccarat-start round ${dataJson.gameShoe}-${dataJson.gameRound}`
-    );
+    // console.log(
+    //   `${tableId}-baccarat-start round ${dataJson.gameShoe}-${dataJson.gameRound}`
+    // );
     //console.log(data)
     previousGameStartAt = dataJson.roundStartTime;
 
@@ -630,7 +630,7 @@ async function livePlaying(data) {
       TWOZONE: getTwozoneWinerPercent(),
       ONEZONE: getOnezoneWinerPercent(),
     };
-    console.log(`remainBet ${remainBet}`);
+    // console.log(`remainBet ${remainBet}`);
 
     if (dataJson.gameRound < 3) {
       bot = null;
@@ -651,7 +651,7 @@ async function livePlaying(data) {
     } else {
       if (remainBet > 17) {
         if (dataJson.gameRound % 15 == 0 || dataJson.gameRound == 1) {
-          console.log('>>>>>>>>>>> skip round <<<<<<<<<<<<<');
+          // console.log('>>>>>>>>>>> skip round <<<<<<<<<<<<<');
           parentPort.postMessage({ action: 'force_reconnect' });
         } else {
           setTimeout(function () {
@@ -686,11 +686,11 @@ async function livePlaying(data) {
   ) {
     previousEventType = 'GP_WINNER';
     // console.log(`${tableId}-baccarat-result`)
-    console.log(`${tableId}-routlette-result`);
+    // console.log(`${tableId}-routlette-result`);
     // console.log(data)
     let winner = dataJson.winner;
     let score = dataJson.tableCards[0];
-    console.log(score, rotConfig[score]);
+    // console.log(score, rotConfig[score]);
     let playCount = predictStats.predict.length;
     let lastPlay = { ...predictStats.predict[playCount - 1] };
     predictStats.predict[playCount - 1] = { ...lastPlay, isResult: true, data };
@@ -749,7 +749,7 @@ async function livePlaying(data) {
       } else {
         statCount.oneZoneWrong++;
       }
-      console.log(status);
+      // console.log(status);
 
       if (dataJson.gameRound % 15 == 0 || dataJson.gameRound == 1) {
       } else {

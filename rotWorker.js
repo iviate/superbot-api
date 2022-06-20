@@ -200,7 +200,7 @@ function inititalInfo() {
       }
     })
     .catch((error) => {
-      console.log(error);
+      // console.log(error);
       if (isPlay == true) {
         isPlay = false;
         parentPort.postMessage({
@@ -239,7 +239,7 @@ async function rotPredictPlay() {
       botplay(response.data.info.detail);
     })
     .catch((error) => {
-      console.log(`table error ${workerData.id} ${error}`);
+      // console.log(`table error ${workerData.id} ${error}`);
     });
 }
 
@@ -633,7 +633,7 @@ function botplay(currentInfo) {
             }
           })
           .catch((error) => {
-            console.log(`current: ${error}`);
+            // console.log(`current: ${error}`);
             isPlay = false;
             parentPort.postMessage({
               action: 'played',

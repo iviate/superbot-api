@@ -89,7 +89,7 @@ function registerForEventListening() {
   tableId = workerData.table;
   username = workerData.username.username;
   password = workerData.username.pwd;
-  console.log(`start table ${tableId} - ${username}`);
+  // console.log(`start table ${tableId} - ${username}`);
   inititalInfo();
   // callback method is defined to receive data from main thread
   let cb = (err, result) => {
@@ -298,10 +298,10 @@ async function predictPlay() {
         reing = false;
         isReCookie = false;
       } catch (e) {
-        console.log(
-          `${filename}:${tableId}:predictPlay:recookie:falldown:error`,
-          e.message
-        );
+        // console.log(
+        //   `${filename}:${tableId}:predictPlay:recookie:falldown:error`,
+        //   e.message
+        // );
         cookie = null;
         isReCookie = true;
         reing = false;
@@ -382,7 +382,7 @@ async function livePlaying(data) {
   ) {
     previousEventType = 'GP_NEW_GAME_START';
     round = dataJson.gameRound;
-    console.log(`${tableId}-dgt-start`);
+    // console.log(`${tableId}-dgt-start`);
     //console.log(data)
     previousGameStartAt = dataJson.roundStartTime;
 
@@ -536,9 +536,9 @@ async function livePlaying(data) {
     };
     // console.log(bot, winner, lastPlay.bot, isPlay, playRound, round)
     if (bot != null) {
-      console.log(
-        `dt-result table ${tableId} winner ${winner} - ${lastPlay.bot}`
-      );
+      // console.log(
+      //   `dt-result table ${tableId} winner ${winner} - ${lastPlay.bot}`
+      // );
       let status = '';
       if (winner == 'TIE') {
         predictStats.tie++;
@@ -734,7 +734,7 @@ function botplay(currentInfo) {
             }
           })
           .catch((error) => {
-            console.log(`current: ${error}`);
+            // console.log(`current: ${error}`);
             isPlay = false;
             parentPort.postMessage({ action: 'played', status: 'FAILED' });
           });

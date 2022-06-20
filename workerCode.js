@@ -90,7 +90,7 @@ function registerForEventListening() {
   tableId = workerData.table;
   username = workerData.username.username;
   password = workerData.username.pwd;
-  console.log(`start table ${tableId} - ${username}-${password}`);
+  // console.log(`start table ${tableId} - ${username}-${password}`);
   inititalInfo();
   // callback method is defined to receive data from main thread
   let cb = (err, result) => {
@@ -123,7 +123,7 @@ function registerForEventListening() {
 async function inititalInfo() {
   let reing = false;
   while (cookie == null) {
-    console.log('workerCode:inititalInfo');
+    // console.log('workerCode:inititalInfo');
     if (reing) {
       continue;
     }
@@ -148,9 +148,9 @@ async function inititalInfo() {
       // console.log(res.data)
       isReCookie = false;
       reing = false;
-      console.log('workerCode:inititalInfo:completed');
+      // console.log('workerCode:inititalInfo:completed');
     } catch (e) {
-      console.log('workerCode:error:', e.message);
+      // console.log('workerCode:error:', e.message);
       cookie = null;
       isReCookie = true;
       reing = false;
@@ -303,10 +303,10 @@ async function predictPlay() {
         reing = false;
         isReCookie = false;
       } catch (e) {
-        console.log(
-          `${filename}:${tableId}:predictPlay:recookie:falldown:error`,
-          e.message
-        );
+        // console.log(
+        //   `${filename}:${tableId}:predictPlay:recookie:falldown:error`,
+        //   e.message
+        // );
         cookie = null;
         isReCookie = true;
         reing = false;
@@ -385,7 +385,7 @@ async function livePlaying(data) {
   try {
     dataJson = JSON.parse(data.message);
   } catch (e) {
-    console.log(data.message);
+    // console.log(data.message);
     return;
   }
   // console.log(dataJson)
@@ -395,7 +395,7 @@ async function livePlaying(data) {
   ) {
     previousEventType = 'GP_NEW_GAME_START';
     round = dataJson.gameRound;
-    console.log(`${tableId}-baccarat-start`);
+    // console.log(`${tableId}-baccarat-start`);
     //console.log(data)
     previousGameStartAt = dataJson.roundStartTime;
 
@@ -550,9 +550,9 @@ async function livePlaying(data) {
     };
     // console.log(bot, winner, lastPlay.bot, isPlay, playRound, round)
     if (bot != null) {
-      console.log(
-        `baccarat-result table ${tableId} winner ${winner} - ${lastPlay.bot}`
-      );
+      // console.log(
+      //   `baccarat-result table ${tableId} winner ${winner} - ${lastPlay.bot}`
+      // );
       let status = '';
       if (winner == 'TIE') {
         predictStats.tie++;
@@ -748,7 +748,7 @@ function botplay(currentInfo) {
             }
           })
           .catch((error) => {
-            console.log(`current: ${error}`);
+            // console.log(`current: ${error}`);
             isPlay = false;
             parentPort.postMessage({ action: 'played', status: 'FAILED' });
           });

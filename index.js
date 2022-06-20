@@ -90,7 +90,7 @@ myApp.use(cors());
 
 process.on('uncaughtException', function (err) {
   console.error(err);
-  console.log('...BOT DO NOT EXITING...');
+  // console.log('...BOT DO NOT EXITING...');
 });
 
 var http = require('http').Server(myApp);
@@ -126,7 +126,7 @@ io.on('connection', (socket) => {
   });
 
   socket.on('error', function (error) {
-    console.log(error);
+    // console.log(error);
     socket.close();
   });
 });
@@ -270,7 +270,7 @@ myApp.get('/stop_bot_table/:id', async function (request, response) {
       data: {},
     });
   } else if (rotWorkerDict[tableId] != undefined) {
-    console.log(rotWorkerDict[tableId]);
+    // console.log(rotWorkerDict[tableId]);
     rotWorkerDict[tableId].worker.postMessage({ action: 'stop' });
 
     delete rotWorkerDict[tableId];
@@ -332,7 +332,7 @@ myApp.get('/start_bot_table/:id', async function (request, response) {
 });
 
 myApp.post('/login', async function (request, response) {
-  console.log('login');
+  // console.log('login');
   const USERNAME = request.body.username;
   const PASSWORD = request.body.password;
   const WEB = request.body.web | 4;
@@ -424,7 +424,7 @@ myApp.post('/login', async function (request, response) {
           (async (USERNAME, PASSWORD, WEB) => {
             // console.log(USERNAME, PASSWORD)
 
-            console.log(`${webHostname} login ${USERNAME}`);
+            // console.log(`${webHostname} login ${USERNAME}`);
             // const browser = await puppeteer.launch({
             //   headless: true,
             //   devtools: false,
@@ -464,7 +464,7 @@ myApp.post('/login', async function (request, response) {
 
               // await browser.close();
             } catch (e) {
-              console.log(e);
+              // console.log(e);
               // await browser.close();
               response.json({
                 success: false,
@@ -480,7 +480,7 @@ myApp.post('/login', async function (request, response) {
       (async (USERNAME, PASSWORD, WEB) => {
         // console.log(USERNAME, PASSWORD)
 
-        console.log(`${webHostname} login ${USERNAME}`);
+        // console.log(`${webHostname} login ${USERNAME}`);
         try {
           const imbaToken = await loginImbaWithGetToken(USERNAME, PASSWORD);
 
@@ -521,7 +521,7 @@ myApp.post('/login', async function (request, response) {
           });
           // await browser.close();
         } catch (e) {
-          console.log(e);
+          // console.log(e);
           response.json({
             success: false,
             message: 'ข้อมูลไม่ถูกต้องกรุณาลองใหม่อีกครั้ง',
@@ -1029,9 +1029,9 @@ myApp.post('/bot/set_zero', async function (request, response) {
   const USERNAME = request.body.username;
   const zero_bet = request.body.zero_bet;
   const open_zero = request.body.open_zero;
-  console.log(
-    `set zero ${USERNAME} zero_bet ${zero_bet} open_zero ${open_zero}`
-  );
+  // console.log(
+  //   `set zero ${USERNAME} zero_bet ${zero_bet} open_zero ${open_zero}`
+  // );
   // console.log(USERNAME, is_opposite)
   db.user
     .findOne({
@@ -1094,7 +1094,7 @@ myApp.post('/bot/set_tie', async function (request, response) {
   const USERNAME = request.body.username;
   const b_tie_val = request.body.b_tie_val;
   const b_tie = request.body.b_tie;
-  console.log(`set tie ${USERNAME} b_tie_val ${b_tie_val} b_tie ${b_tie}`);
+  // console.log(`set tie ${USERNAME} b_tie_val ${b_tie_val} b_tie ${b_tie}`);
   // console.log(USERNAME, is_opposite)
   db.user
     .findOne({
@@ -1157,7 +1157,7 @@ myApp.post('/bot', async function (request, response) {
   // console.log(`zero_bet : ${request.body.zero_bet}`)
   // console.log('create bot', request.body.bet_limit)
   const USERNAME = request.body.username;
-  console.log(`create bot ${USERNAME}`);
+  // console.log(`create bot ${USERNAME}`);
   db.user
     .findOne({
       where: {
@@ -1481,13 +1481,13 @@ myApp.post('/rolling', async function (request, response) {
     let leftRolling = betAll + previous_turn - betRolling;
     let rollingAmount = (betRolling * base_rolling_percent) / 100;
     if (leftRolling < 0 || rollingAmount < 0 || betRolling < 0) {
-      console.log(
-        memberData[member.username].endTurn,
-        memberData[member.username].startTurn,
-        member.left_turn,
-        betAll,
-        betRolling
-      );
+      // console.log(
+      //   memberData[member.username].endTurn,
+      //   memberData[member.username].startTurn,
+      //   member.left_turn,
+      //   betAll,
+      //   betRolling
+      // );
     }
     memberData[member.username]['betall'] = betAll;
     memberData[member.username]['bet_rolling'] = betRolling;
@@ -1497,7 +1497,7 @@ myApp.post('/rolling', async function (request, response) {
     rollingTotal += rollingAmount;
     if (rollingAmount > 0) {
       // console.log(member.username, memberData[member.username])
-      console.log(rollingTotal);
+      // console.log(rollingTotal);
     }
 
     member.rolling += rollingAmount;
@@ -2084,7 +2084,7 @@ myApp.post('/transfer_wallet/ae', async function (request, response) {
       user.ufa_account,
       user.type_password
     );
-    console.log(`resultTransfer ${resultTransfer}`);
+    // console.log(`resultTransfer ${resultTransfer}`);
     response.json({
       success: true,
       error_code: null,
@@ -2560,10 +2560,10 @@ function createBotWorker(obj, playData, is_mock) {
     if (result.action == 'bet_success') {
       result.win_percent = win_percent;
       io.emit(`user${result.data.current.botObj.userId}`, result);
-      console.log(`bac bot ${result.data.current.botObj.userId} bet success`);
+      // console.log(`bac bot ${result.data.current.botObj.userId} bet success`);
     }
     if (result.action == 'bet_failed') {
-      console.log(`bac bot ${result.botObj.userId} bet failed`);
+      // console.log(`bac bot ${result.botObj.userId} bet failed`);
     }
     if (result.action == 'restart_result') {
       io.emit(`user${result.userId}`, result);
@@ -2623,7 +2623,7 @@ function createBotWorker(obj, playData, is_mock) {
           winner_result = 'WIN';
         }
       }
-      console.log('process result bac');
+      // console.log('process result bac');
       let userTransactionData = {
         value: result.betVal,
         user_bet: result.bet,
@@ -2660,22 +2660,22 @@ function createBotWorker(obj, playData, is_mock) {
         botTransaction: result.botTransaction,
         botObj: result.botObj,
       });
-      console.log(
-        result.isStop,
-        indexIsStop,
-        userWallet,
-        typeof parseFloat(result.botObj.init_wallet),
-        typeof Math.floor(
-          ((result.botObj.profit_threshold - result.botObj.init_wallet) * 94) /
-            100
-        ),
-        current_profit_threshold,
-        userWallet - result.botObj.profit_wallet,
-        result.botObj.loss_threshold
-      );
+      // console.log(
+      //   result.isStop,
+      //   indexIsStop,
+      //   userWallet,
+      //   typeof parseFloat(result.botObj.init_wallet),
+      //   typeof Math.floor(
+      //     ((result.botObj.profit_threshold - result.botObj.init_wallet) * 94) /
+      //       100
+      //   ),
+      //   current_profit_threshold,
+      //   userWallet - result.botObj.profit_wallet,
+      //   result.botObj.loss_threshold
+      // );
 
       if (indexIsStop) {
-        console.log(indexIsStop);
+        // console.log(indexIsStop);
         db.bot
           .findOne({
             where: {
@@ -2773,10 +2773,10 @@ function createRotBotWorker(obj, playData, is_mock) {
     if (result.action == 'bet_success') {
       // result.win_percent = win_percent
       io.emit(`user${result.data.current.botObj.userId}`, result);
-      console.log(`rot bot ${result.data.current.botObj.userId} bet success`);
+      // console.log(`rot bot ${result.data.current.botObj.userId} bet success`);
     }
     if (result.action == 'bet_failed') {
-      console.log(`rot bot ${result.botObj.userId} bet failed`);
+      // console.log(`rot bot ${result.botObj.userId} bet failed`);
     }
     // if (result.action == 'restart_result') {
     //     io.emit(`user${result.userId}`, result)
@@ -2923,7 +2923,7 @@ function createRotBotWorker(obj, playData, is_mock) {
           });
       }
 
-      console.log('process result rot is_mock', is_mock);
+      // console.log('process result rot is_mock', is_mock);
       if (result.is_mock) {
         let paid = result.betVal;
         if (winner_result == 'WIN') {
@@ -2932,11 +2932,11 @@ function createRotBotWorker(obj, playData, is_mock) {
           paid = 0;
         }
         var zerofilled = ('000' + result.botTransaction.round).slice(-3);
-        console.log(
-          `process result rot mock data`,
-          result.bet,
-          typeof result.bet
-        );
+        // console.log(
+        //   `process result rot mock data`,
+        //   result.bet,
+        //   typeof result.bet
+        // );
         let mock_transaction = {
           game_info: `${result.botTransaction.table_title} / ${result.botTransaction.shoe}-${zerofilled}`,
           user_id: result.botObj.userId,
@@ -2993,10 +2993,10 @@ function createDtWorker(obj, playData, is_mock) {
     if (result.action == 'bet_success') {
       result.win_percent = win_percent;
       io.emit(`user${result.data.current.botObj.userId}`, result);
-      console.log(`dt bot ${result.data.current.botObj.userId} bet success`);
+      // console.log(`dt bot ${result.data.current.botObj.userId} bet success`);
     }
     if (result.action == 'bet_failed') {
-      console.log(`dt bot ${result.botObj.userId} bet failed`);
+      // console.log(`dt bot ${result.botObj.userId} bet failed`);
     }
     if (result.action == 'restart_result') {
       io.emit(`user${result.userId}`, result);
@@ -3256,7 +3256,7 @@ function compareZONE(a, b) {
 }
 
 async function mainBody() {
-  console.log('Main Thread Started');
+  // console.log('Main Thread Started');
   // let response = await axios.get('https://truthbet.com/api/m/games', {
   //     headers: {
   //         Authorization: `Bearer ${token}`
@@ -3438,9 +3438,9 @@ function playBaccarat() {
       if (win_percent == 100) {
         win_percent = 92;
       }
-      console.log(
-        `table: ${current.table_id} percent: ${current.winner_percent} bot: ${current.bot}`
-      );
+      // console.log(
+      //   `table: ${current.table_id} percent: ${current.winner_percent} bot: ${current.bot}`
+      // );
       // console.log(`table: ${current.table_id} percent: ${win_percent} bot: ${current.bot}`)
       isPlay = true;
       // console.log('post play')
@@ -3494,9 +3494,9 @@ function playDragonTiger() {
       if (win_percent == 100) {
         win_percent = 92;
       }
-      console.log(
-        `table: ${current.table_id} percent: ${current.winner_percent} bot: ${current.bot}`
-      );
+      // console.log(
+      //   `table: ${current.table_id} percent: ${current.winner_percent} bot: ${current.bot}`
+      // );
       // console.log(`table: ${current.table_id} percent: ${win_percent} bot: ${current.bot}`)
       // console.log(dtWorkerDict[current.table_id])
       dtIsPlay = true;
@@ -3653,11 +3653,11 @@ function initiateWorker(table) {
       return console.error(err);
     }
     if (result.action == 'start') {
-      console.log('bac start');
+      // console.log('bac start');
       io.emit(`start`, result);
     }
     if (result.action == 'point') {
-      console.log('bac point');
+      // console.log('bac point');
       io.emit(`point`, result);
     }
     if (result.action == 'getCurrent') {
@@ -3667,7 +3667,7 @@ function initiateWorker(table) {
     if (result.action == 'played') {
       clearInterval(betInt);
       if (result.status == 'FAILED' || result.status == null) {
-        console.log('bet failed');
+        // console.log('bet failed');
         isPlay = false;
         isBet = false;
         currentList = [];
@@ -3804,11 +3804,11 @@ function initiateDtWorker(table) {
       return console.error(err);
     }
     if (result.action == 'start') {
-      console.log('dt start');
+      // console.log('dt start');
       io.emit(`start`, result);
     }
     if (result.action == 'point') {
-      console.log('dt point');
+      // console.log('dt point');
       io.emit(`point`, result);
     }
     if (result.action == 'getCurrent') {
@@ -3952,11 +3952,11 @@ function initiateRotWorker(table) {
       return console.error(err);
     }
     if (result.action == 'start') {
-      console.log('rot start');
+      // console.log('rot start');
       io.emit(`start`, result);
     }
     if (result.action == 'point') {
-      console.log('rot point');
+      // console.log('rot point');
       io.emit(`point`, result);
     }
     if (result.action == 'getCurrent') {

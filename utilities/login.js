@@ -60,7 +60,7 @@ async function loginImba(username, password) {
   const resLogin = await axios(config);
 
   if (resLogin.status !== 302) {
-    console.log('login imba not complete');
+    // console.log('login imba not complete');
 
     return false;
   }
@@ -96,7 +96,7 @@ async function getUsplaynetLoginInfo(username) {
   });
 
   if (vendorResponse.status === 302) {
-    console.log('cannot get online game login link');
+    // console.log('cannot get online game login link');
 
     return false;
   }
@@ -106,7 +106,7 @@ async function getUsplaynetLoginInfo(username) {
   const searchParams = loginURL.searchParams;
 
   if (!searchParams.has('userId') || !searchParams.has('tokenId')) {
-    console.log('cannot get online game login info');
+    // console.log('cannot get online game login info');
 
     return false;
   }
@@ -160,7 +160,7 @@ async function loginUsplaynet(username, { userId, tokenId }) {
   let locations = regexLocation.exec(resLogin.data);
 
   if (!locations) {
-    console.log('login usplaynet not complete');
+    // console.log('login usplaynet not complete');
 
     return false;
   }

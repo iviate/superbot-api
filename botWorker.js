@@ -75,7 +75,7 @@ async function checkAndReconnect() {
   let reing = false;
   let cTime = parseFloat(userSeTokenTime) || 0;
   let cookieAge = Math.round((moment() - cTime) / 1000);
-  console.log(cookieAge);
+  // console.log(cookieAge);
   if (cookieAge > 1600 || !userSeToken) {
     is_reconnect = true;
     is_connect = false;
@@ -84,8 +84,8 @@ async function checkAndReconnect() {
         if (reing) {
           continue;
         }
-        console.log('reconnect with time condition');
-        console.log(user.ufa_account, user.type_password, user.web);
+        // console.log('reconnect with time condition');
+        // console.log(user.ufa_account, user.type_password, user.web);
         reing = true;
         // let c = await utils.reCookie(user.ufa_account, user.type_password, user.web)
         let c = await reCookie(user.ufa_account, user.type_password);
@@ -338,7 +338,7 @@ async function getBetLimitCode(betSide, value) {
 }
 
 async function bet(data) {
-  console.log(`start baccarat success ${botObj.userId}`, data);
+  // console.log(`start baccarat success ${botObj.userId}`, data);
   table = data.table;
   // console.log(status, betFailed, botObj.bet_side, botObj.is_infinite)
   if (betFailed) {
@@ -459,7 +459,7 @@ async function bet(data) {
           bData.push({ categoryIdx: 2, categoryName: 'Tie', stake: b_tie_val });
         }
         let betLimiCode = await getBetLimitCode(botObj.bet_side, betVal);
-        console.log(botObj.userId, realBet, betVal, betLimiCode);
+        // console.log(botObj.userId, realBet, betVal, betLimiCode);
         var pData = qs.stringify({
           domainType: '1',
           tableID: data.table.toString(),
@@ -482,10 +482,10 @@ async function bet(data) {
         let res = null;
         try {
           res = await axios(config);
-          console.log(`betting baccarat success ${botObj.userId}`, e);
+          // console.log(`betting baccarat success ${botObj.userId}`, e);
         } catch (e) {
-          console.log(`error betting baccarat ${botObj.userId}`, e);
-          console.log('');
+          // console.log(`error betting baccarat ${botObj.userId}`, e);
+          // console.log('');
         }
 
         let message = {};
@@ -495,7 +495,7 @@ async function bet(data) {
             message = JSON.parse(res.data.message);
           } catch (e) {
             message = {};
-            console.log(res.data);
+            // console.log(res.data);
           }
 
           // console.log('convert message <<<<', message)
@@ -643,7 +643,7 @@ async function bet(data) {
         betting = false;
       }
     } catch (error) {
-      console.log(`bet_baccarat ${botObj.userId} main error `, error);
+      // console.log(`bet_baccarat ${botObj.userId} main error `, error);
     }
     betting = false;
   }
@@ -799,7 +799,7 @@ async function processResultBet(betStatus, botTransactionId, botTransaction) {
       },
     });
     let currentWallet = 0;
-    console.log(`bac ${botObj.userId} wallet ${currentWallet}`);
+    // console.log(`bac ${botObj.userId} wallet ${currentWallet}`);
 
     if (
       (betStatus == 'WIN' && current.is_opposite == false) ||

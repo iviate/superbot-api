@@ -147,7 +147,7 @@ function inititalInfo() {
       }
     })
     .catch((error) => {
-      console.log(error);
+      // console.log(error);
     });
 }
 
@@ -180,7 +180,7 @@ async function predictPlay() {
         isPlay = false;
         parentPort.postMessage({ action: 'played', status: 'FAILED' });
       }
-      console.log(`table error ${workerData.id} ${error}`);
+      // console.log(`table error ${workerData.id} ${error}`);
     });
 }
 
@@ -318,7 +318,7 @@ function botplay(currentInfo) {
             }
           })
           .catch((error) => {
-            console.log(`current: ${error}`);
+            // console.log(`current: ${error}`);
             isPlay = false;
             parentPort.postMessage({ action: 'played', status: 'FAILED' });
           });

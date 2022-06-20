@@ -69,7 +69,7 @@ async function checkAndReconnect() {
 
   let cTime = parseFloat(userSeTokenTime) || 0;
   let cookieAge = Math.round((moment() - cTime) / 1000);
-  console.log(cookieAge);
+  // console.log(cookieAge);
   if (cookieAge > 1600 || !userSeToken) {
     is_reconnect = true;
     is_connect = false;
@@ -79,8 +79,8 @@ async function checkAndReconnect() {
         if (reing) {
           continue;
         }
-        console.log('reconnect with time condition');
-        console.log(user.ufa_account, user.type_password, user.web);
+        // console.log('reconnect with time condition');
+        // console.log(user.ufa_account, user.type_password, user.web);
         reing = true;
         // let c = await utils.reCookie(user.ufa_account, user.type_password, user.web)
         let c = await reCookie(user.ufa_account, user.type_password);
@@ -106,8 +106,8 @@ async function checkAndReconnect() {
           if (reing) {
             continue;
           }
-          console.log('reconnect with logout condition');
-          console.log(user.ufa_account, user.type_password, user.web);
+          // console.log('reconnect with logout condition');
+          // console.log(user.ufa_account, user.type_password, user.web);
           reing = true;
           // let c = await utils.reCookie(user.ufa_account, user.type_password, user.web)
           let c = await reCookie(user.ufa_account, user.type_password);
@@ -210,7 +210,7 @@ function restartOnlyProfit() {
       }
     })
     .catch((error) => {
-      console.log(error);
+      // console.log(error);
       parentPort.postMessage({
         action: 'restart_result',
         data: { success: false, message: error },
@@ -370,7 +370,7 @@ async function bet(data) {
   } else {
     try {
       betting = true;
-      console.log(data);
+      // console.log(data);
       let betVal = getBetVal();
       // console.log(`betVal : ${betVal}`)
       if (betVal < botObj.init_bet) {
@@ -444,7 +444,7 @@ async function bet(data) {
         let bData = [
           { categoryIdx: categoryId, categoryName: realBet, stake: betVal },
         ];
-        console.log(bData);
+        // console.log(bData);
 
         let betLimiCode = await getBetLimitCode(botObj.bet_side, betVal);
         var pData = qs.stringify({
@@ -478,7 +478,7 @@ async function bet(data) {
             message = JSON.parse(res.data.message);
           } catch (e) {
             message = {};
-            console.log(res.data);
+            // console.log(res.data);
           }
           // console.log('convert message <<<<', message)
         }
@@ -624,7 +624,7 @@ async function bet(data) {
         betting = false;
       }
     } catch (error) {
-      console.log(`bet_baccarat ${botObj.userId} main error `, error);
+      // console.log(`bet_baccarat ${botObj.userId} main error `, error);
     }
     betting = false;
   }
@@ -795,9 +795,9 @@ async function processResultBet(betStatus, botTransactionId, botTransaction) {
       botProfit -= current.betVal;
     }
     currentWallet = botObj.init_wallet + botProfit;
-    console.log(
-      `dt ${botObj.userId}-${user.ufa_account} wallet ${currentWallet}`
-    );
+    // console.log(
+    //   `dt ${botObj.userId}-${user.ufa_account} wallet ${currentWallet}`
+    // );
 
     let cutProfit =
       botObj.init_wallet +
@@ -936,7 +936,7 @@ async function processResultBet(betStatus, botTransactionId, botTransaction) {
       }
     }
   } else {
-    console.log('process result mock');
+    // console.log('process result mock');
     db.user
       .findOne({
         where: {

@@ -96,7 +96,7 @@ function restartOnlyProfit() {
 
         })
         .catch(error => {
-            console.log(error)
+            // console.log(error)
             parentPort.postMessage({ action: 'restart_result', data: { success: false, message: error }, userId: botObj.userId })
         })
 }
@@ -569,7 +569,7 @@ async function processResultBet(betStatus, botTransactionId, botTransaction) {
 
             })
             .catch(error => {
-                console.log(error)
+                // console.log(error)
             })
     } else {
         db.user.findOne({
