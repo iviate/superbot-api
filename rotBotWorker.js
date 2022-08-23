@@ -1,7 +1,9 @@
 require('log-timestamp');
 const { parentPort, workerData } = require('worker_threads');
 const axios = require('./httpClient');
+const axiosNormal = require('axios');
 const { bot } = require('./app/models');
+const { AWS_BET_HOSTNAME } = require('./config/web.config.js');
 const { POINT_CONVERSION_COMPRESSED } = require('constants');
 const e = require('express');
 const db = require('./app/models');
@@ -740,29 +742,17 @@ async function bet(data) {
         // console.log(data)
         let betLimiCode = await getBetLimitCode(botObj.bet_side, betVal);
         // console.log('betLimitCode >> ', betLimiCode);
-        var pData = qs.stringify({
-          dealerDomain: '1',
-          tableID: data.table.toString(),
-          gameShoe: data.shoe.toString(),
-          gameRound: data.round.toString(),
-          data: JSON.stringify(bPayload),
-          betLimitID: betLimiCode, // 11901 20 - 5000, 110902 100 - 10000
-          f: '-1',
-          c: 'A',
-        });
-        var config = {
-          method: 'post',
-          url: 'https://bpcdf.semgbow777.com/player/update/addRouTransaction',
-          headers: {
-            Cookie: userSeToken,
-            'Content-Type': 'application/x-www-form-urlencoded',
-          },
-          data: pData,
-        };
 
         let res = null;
         try {
-          res = await axios(config);
+          res = await axiosNormal.post(`${AWS_BET_HOSTNAME}/bet-roulette`, {
+            cookie: userSeToken,
+            tableId: data.table.toString(),
+            gameShoe: data.shoe.toString(),
+            gameRound: data.round.toString(),
+            betLimitID: betLimiCode,
+            dtaaPayload: bPayload,
+          });
         } catch (e) {
           res = null;
         }
