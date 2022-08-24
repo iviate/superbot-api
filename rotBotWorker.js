@@ -746,12 +746,12 @@ async function bet(data) {
         let res = null;
         try {
           res = await axiosNormal.post(`${AWS_BET_HOSTNAME}/bet-roulette`, {
-            cookie: userSeToken,
-            tableId: data.table.toString(),
+            cookie: decodeURIComponent(userSeToken),
+            tableID: data.table.toString(),
             gameShoe: data.shoe.toString(),
             gameRound: data.round.toString(),
             betLimitID: betLimiCode,
-            dtaaPayload: bPayload,
+            dataPayload: bPayload,
           });
         } catch (e) {
           res = null;
