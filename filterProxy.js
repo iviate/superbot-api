@@ -80,7 +80,7 @@ async function bet(cookie, { tableId, shoe, round }) {
   });
   var config = {
     method: 'post',
-    url: 'https://bpcdf.semgbow777.com/player/update/addMyTransaction',
+    url: 'https://bpweb.siebamex777.com/player/update/addMyTransaction',
     headers: {
       Cookie: cookie,
       'Content-Type': 'application/x-www-form-urlencoded',
@@ -100,7 +100,7 @@ async function isProxyInWhiteList(cookie, proxyNumber) {
     const tableId = 2;
     // const res1 = await axios({
     //   method: 'post',
-    //   url: 'https://bpcdf.semgbow777.com/player/query/chooseSingleTableChannel',
+    //   url: 'https://bpweb.siebamex777.com/player/query/chooseSingleTableChannel',
     //   headers: {
     //     Cookie: cookie,
     //     'Content-Type': 'application/x-www-form-urlencoded',

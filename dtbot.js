@@ -135,7 +135,7 @@ async function inititalInfo() {
 
       await axios({
         method: 'post',
-        url: 'https://bpcdf.semgbow777.com/player/query/chooseSingleTableChannel',
+        url: 'https://bpweb.siebamex777.com/player/query/chooseSingleTableChannel',
         headers: {
           Cookie: cookie,
           'Content-Type': 'application/x-www-form-urlencoded',
@@ -221,7 +221,7 @@ async function predictPlay() {
         cookieTime = moment();
         await axios({
           method: 'post',
-          url: 'https://bpcdf.semgbow777.com/player/query/chooseSingleTableChannel',
+          url: 'https://bpweb.siebamex777.com/player/query/chooseSingleTableChannel',
           headers: {
             Cookie: cookie,
             'Content-Type': 'application/x-www-form-urlencoded',
@@ -247,7 +247,7 @@ async function predictPlay() {
   // console.log(`${filename}:${tableId}:predictPlay:query`);
   try {
     let balanceAPI =
-      'https://bpcdf.semgbow777.com/player/query/queryDealerEventV2';
+      'https://bpweb.siebamex777.com/player/query/queryDealerEventV2';
     const ps = new URLSearchParams();
     ps.append('domainType', 1);
     ps.append('queryTableID', tableId);
@@ -286,7 +286,7 @@ async function predictPlay() {
         cookieTime = moment();
         await axios({
           method: 'post',
-          url: 'https://bpcdf.semgbow777.com/player/query/chooseSingleTableChannel',
+          url: 'https://bpweb.siebamex777.com/player/query/chooseSingleTableChannel',
           headers: {
             Cookie: cookie,
             'Content-Type': 'application/x-www-form-urlencoded',

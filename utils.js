@@ -609,7 +609,8 @@ exports.getUserImbaWallet = async function getUserImbaWallet(
 
 exports.getUserWallet = async function getUserWallet(cookie) {
   let wallet = await (async (cookie) => {
-    let balanceAPI = 'https://bpcdf.semgbow777.com/player/query/queryBalancePC';
+    let balanceAPI =
+      'https://bpweb.siebamex777.com/player/query/queryBalancePC';
     const ps = new URLSearchParams();
     ps.append('dm', '1');
     ps.append('hallType', '1');
@@ -646,7 +647,7 @@ exports.getUserWallet = async function getUserWallet(cookie) {
 exports.getUserHistory = async function getUserHistory(cookie) {
   let history = await (async (cookie) => {
     let historyAPI =
-      'https://bpcdf.semgbow777.com/player/query/queryTxnHistory';
+      'https://bpweb.siebamex777.com/player/query/queryTxnHistory';
     let startTime = new Date();
     let endTime = new Date();
     startTime.setHours(0, 0, 0, 0);

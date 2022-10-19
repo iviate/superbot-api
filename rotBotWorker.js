@@ -752,7 +752,7 @@ async function bet(data) {
         });
         var config = {
           method: 'post',
-          url: 'https://bpcdf.semgbow777.com/player/update/addRouTransaction',
+          url: 'https://bpweb.siebamex777.com/player/update/addRouTransaction',
           headers: {
             Cookie: userSeToken,
             'Content-Type': 'application/x-www-form-urlencoded',
