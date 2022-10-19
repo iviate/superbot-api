@@ -12,6 +12,7 @@ const { reCookie, sleep } = require('./utilities');
 const path = require('path');
 const filename = path.basename(__filename);
 const qs = require('qs');
+const { chooseRouletteTable, queryRoulette } = require('./rouletteHelper');
 
 let interval;
 let isReCookie = false;
@@ -159,17 +160,7 @@ async function inititalInfo() {
       cookie = await reCookie(username, password);
       // console.log(cookie);
       cookieTime = moment();
-      await axios({
-        method: 'post',
-        url: 'https://bpweb.siebamex777.com/player/query/chooseSingleTableChannel',
-        headers: {
-          Cookie: cookie,
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        data: qs.stringify({
-          queryTableID: tableId,
-        }),
-      });
+      await chooseRouletteTable(tableId, cookie);
       reing = false;
       isReCookie = false;
       // console.log('rotbot:inititalInfo:completed');
@@ -248,17 +239,7 @@ async function predictPlay() {
         // console.log(`${filename}:${tableId}:predictPlay:recookie:new`);
         cookie = await reCookie(username, password);
         cookieTime = moment();
-        await axios({
-          method: 'post',
-          url: 'https://bpweb.siebamex777.com/player/query/chooseSingleTableChannel',
-          headers: {
-            Cookie: cookie,
-            'Content-Type': 'application/x-www-form-urlencoded',
-          },
-          data: qs.stringify({
-            queryTableID: tableId,
-          }),
-        });
+        await chooseRouletteTable(tableId, cookie);
         reing = false;
         isReCookie = false;
       } catch (e) {
@@ -274,21 +255,7 @@ async function predictPlay() {
   let res = null;
   // console.log(`${filename}:${tableId}:predictPlay:query`);
   try {
-    let balanceAPI =
-      'https://bpweb.siebamex777.com/player/query/queryDealerEventV2';
-    const ps = new URLSearchParams();
-    ps.append('domainType', 1);
-    ps.append('queryTableID', tableId);
-    ps.append('dealerEventStampTime', 0);
-
-    const config = {
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-        Cookie: cookie,
-      },
-    };
-
-    res = await axios.post(balanceAPI, ps, config);
+    res = await queryRoulette(tableId, cookie);
   } catch (e) {
     // console.log(`${filename}:${tableId}:query:error`, e.message);
     return;
@@ -313,17 +280,7 @@ async function predictPlay() {
         // cookie = await utils.reCookie(username, password, 4)
         cookie = await reCookie(username, password);
         cookieTime = moment();
-        await axios({
-          method: 'post',
-          url: 'https://bpweb.siebamex777.com/player/query/chooseSingleTableChannel',
-          headers: {
-            Cookie: cookie,
-            'Content-Type': 'application/x-www-form-urlencoded',
-          },
-          data: qs.stringify({
-            queryTableID: tableId,
-          }),
-        });
+        await chooseRouletteTable(tableId, cookie);
         reing = false;
         isReCookie = false;
       } catch (e) {
