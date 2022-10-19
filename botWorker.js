@@ -476,6 +476,7 @@ async function bet(data) {
           headers: {
             Cookie: userSeToken,
             'Content-Type': 'application/x-www-form-urlencoded',
+            'X-Requested-With': 'XMLHttpRequest',
           },
           data: pData,
         };
