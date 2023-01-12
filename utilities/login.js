@@ -130,7 +130,7 @@ async function loginUsplaynet(username, { userId, tokenId }) {
 
   const config = {
     method: 'post',
-    url: 'https://gci.usplaynet.com/player/login/apiLogin',
+    url: 'https://aws.ambbest.live/player/login/apiLogin',
     maxRedirects: 0,
     headers: {
       Connection: 'keep-alive',
@@ -180,7 +180,7 @@ async function loginSemgbowWithLoginLink(username, zeusLoginLink) {
   const zeusLoginParams = zeusLoginURL.searchParams.toString();
 
   const newZeusLoginURL = new URL(
-    `/api/player/MexAWS032/login?${zeusLoginParams}`,
+    `/api/player/MexAWS091/login?${zeusLoginParams}`,
     zeusLoginLink
   );
 
