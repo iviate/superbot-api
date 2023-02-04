@@ -4,7 +4,12 @@ const fs = require('fs')
 const hoursToSeconds = (hours) => hours * 60 * 60 * 1000
 
 module.exports = function logFile(name, tableId) {
-    const dir = './logs/' + (process.env.LOG_DIR || 'temp')
+    const dirLog = './logs'
+    if (!fs.existsSync(dirLog)) {
+        fs.mkdirSync(dirLog);
+    }
+
+    const dir = `${dirLog}/` + (process.env.LOG_DIR || 'temp')
     if (!fs.existsSync(dir)) {
         fs.mkdirSync(dir);
     }
