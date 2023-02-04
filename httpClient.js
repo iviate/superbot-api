@@ -41,6 +41,10 @@ httpClient.interceptors.response.use(
       }
     }
 
+    if (status === 402) {
+      console.log('PROXY PAYMENT REQUIRED')
+    }
+
     return Promise.reject(error);
   }
 );
