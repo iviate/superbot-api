@@ -1,5 +1,6 @@
 // import * as http from 'http';
 require('dotenv').config();
+require('./log-console.js')('index', 'main')
 
 require('log-timestamp');
 // module included to create worker threads
@@ -32,6 +33,7 @@ db.sequelize.sync({
 
 const env = require('./config/web.config.js');
 const { webHostname } = require('./config/web.config.js');
+
 
 let BOT_CODE = [
   'BAC',
@@ -2061,7 +2063,7 @@ myApp.get('/bot_transaction', function (request, response) {
   }
 });
 
-myApp.post('/withdraw_wallet', async function (request, response) {});
+myApp.post('/withdraw_wallet', async function (request, response) { });
 
 myApp.post('/transfer_wallet/ae', async function (request, response) {
   const username = request.body.username;
@@ -2637,7 +2639,7 @@ function createBotWorker(obj, playData, is_mock) {
         parseFloat(result.botObj.init_wallet) +
         Math.floor(
           ((result.botObj.profit_threshold - result.botObj.init_wallet) * 94) /
-            100
+          100
         );
       // console.log(userTransactionData)
       let indexIsStop =
@@ -2688,12 +2690,12 @@ function createBotWorker(obj, playData, is_mock) {
             res.turnover = result.turnover;
             res.stop_by =
               result.botObj.is_infinite == false &&
-              Math.floor((result.botObj.profit_threshold * 94) / 100) >=
+                Math.floor((result.botObj.profit_threshold * 94) / 100) >=
                 userWallet
                 ? 2
                 : result.isStop
-                ? 1
-                : 4;
+                  ? 1
+                  : 4;
             // userWallet - result.botObj.profit_wallet <= result.botObj.loss_threshold ? 3 :
             await res.save();
             if (
@@ -2845,7 +2847,7 @@ function createRotBotWorker(obj, playData, is_mock) {
         value: result.betVal,
         user_bet:
           result.botObj.bet_side == 14 ||
-          (result.botObj.bet_side == 15 && result.is_opposite)
+            (result.botObj.bet_side == 15 && result.is_opposite)
             ? JSON.stringify(result.bet)
             : result.bet,
         wallet: result.wallet,
@@ -2860,12 +2862,12 @@ function createRotBotWorker(obj, playData, is_mock) {
         result.isStop ||
         (result.botObj.is_infinite == false &&
           userWallet >=
-            result.botObj.init_wallet +
-              Math.floor(
-                ((result.botObj.profit_threshold - result.botObj.init_wallet) *
-                  94) /
-                  100
-              ));
+          result.botObj.init_wallet +
+          Math.floor(
+            ((result.botObj.profit_threshold - result.botObj.init_wallet) *
+              94) /
+            100
+          ));
       // || (userWallet - result.botObj.profit_wallet <= result.botObj.loss_threshold)
       // console.log(`isStop ${indexIsStop}`)
 
@@ -2903,12 +2905,12 @@ function createRotBotWorker(obj, playData, is_mock) {
             res.turnover = result.turnover;
             res.stop_by =
               result.botObj.is_infinite == false &&
-              Math.floor((result.botObj.profit_threshold * 94) / 100) >=
+                Math.floor((result.botObj.profit_threshold * 94) / 100) >=
                 userWallet
                 ? 2
                 : result.isStop
-                ? 1
-                : 4;
+                  ? 1
+                  : 4;
             // userWallet - result.botObj.profit_wallet <= result.botObj.loss_threshold ? 3 :
             await res.save();
             if (
@@ -2942,7 +2944,7 @@ function createRotBotWorker(obj, playData, is_mock) {
           user_id: result.botObj.userId,
           bet:
             result.botObj.bet_side == 14 ||
-            (result.botObj.bet_side == 15 && result.is_opposite)
+              (result.botObj.bet_side == 15 && result.is_opposite)
               ? JSON.stringify(result.bet)
               : result.bet,
           bet_credit_chip_amount: result.betVal,
@@ -3073,7 +3075,7 @@ function createDtWorker(obj, playData, is_mock) {
         parseFloat(result.botObj.init_wallet) +
         Math.floor(
           ((result.botObj.profit_threshold - result.botObj.init_wallet) * 94) /
-            100
+          100
         );
       let indexIsStop =
         result.isStop ||
@@ -3115,12 +3117,12 @@ function createDtWorker(obj, playData, is_mock) {
             res.turnover = result.turnover;
             res.stop_by =
               result.botObj.is_infinite == false &&
-              Math.floor((result.botObj.profit_threshold * 94) / 100) >=
+                Math.floor((result.botObj.profit_threshold * 94) / 100) >=
                 userWallet
                 ? 2
                 : result.isStop
-                ? 1
-                : 4;
+                  ? 1
+                  : 4;
             // userWallet - result.botObj.profit_wallet <= result.botObj.loss_threshold ? 3 :
             await res.save();
             if (

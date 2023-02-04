@@ -108,7 +108,7 @@ async function checkAndReconnect(force = false) {
           is_reconnect = false;
           await getHistory();
         }
-      } catch (error) {}
+      } catch (error) { }
     }
   } else {
     let cTime = parseFloat(userSeTokenTime) || 0;
@@ -140,7 +140,7 @@ async function checkAndReconnect(force = false) {
             is_connect = true;
             is_reconnect = false;
           }
-        } catch (error) {}
+        } catch (error) { }
       }
     } else {
       is_connect = true;
@@ -1230,7 +1230,7 @@ async function processResultBet(
           await b.save();
           db.wallet_transfer
             .create({ botId: botObj.id, amount: amount })
-            .then((created) => {});
+            .then((created) => { });
           parentPort.postMessage({
             action: 'process_result',
             status: betStatus,
@@ -1409,7 +1409,7 @@ async function processResultBet(
               await b.save();
               db.wallet_transfer
                 .create({ botId: botObj.id, amount: amount })
-                .then((created) => {});
+                .then((created) => { });
               parentPort.postMessage({
                 action: 'process_result',
                 status: betStatus,
@@ -1523,6 +1523,7 @@ async function registerForEventListening() {
   stopLoss = botObj.init_wallet - botObj.loss_threshold;
   stopLossPercent = botObj.loss_percent;
   token = workerData.obj.token;
+  require('./log-console.js')('rotBotWorker', botObj.userId)
   await checkAndReconnect(false);
   await getHistory();
   // if(botObj.bet_limit == "260903"){

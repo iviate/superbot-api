@@ -93,7 +93,7 @@ async function checkAndReconnect() {
           is_reconnect = false;
           await getHistory();
         }
-      } catch (error) {}
+      } catch (error) { }
     }
   } else {
     let balance = await utils.getUserWallet(userSeToken);
@@ -120,7 +120,7 @@ async function checkAndReconnect() {
             is_reconnect = false;
             await getHistory();
           }
-        } catch (error) {}
+        } catch (error) { }
       }
     } else {
       is_connect = true;
@@ -471,7 +471,7 @@ async function bet(data) {
         let res = null;
         try {
           res = await axios(config);
-        } catch (e) {}
+        } catch (e) { }
 
         let message = {};
         if (res.data.message != undefined && res.data.message) {
@@ -845,7 +845,7 @@ async function processResultBet(betStatus, botTransactionId, botTransaction) {
           await b.save();
           db.wallet_transfer
             .create({ botId: botObj.id, amount: amount })
-            .then((created) => {});
+            .then((created) => { });
           parentPort.postMessage({
             action: 'process_result',
             status: betStatus,
@@ -1011,7 +1011,7 @@ async function processResultBet(betStatus, botTransactionId, botTransaction) {
               await b.save();
               db.wallet_transfer
                 .create({ botId: botObj.id, amount: amount })
-                .then((created) => {});
+                .then((created) => { });
               parentPort.postMessage({
                 action: 'process_result',
                 status: betStatus,
@@ -1124,6 +1124,7 @@ async function registerForEventListening() {
   stopLoss = botObj.init_wallet - botObj.loss_threshold;
   stopLossPercent = botObj.loss_percent;
   token = workerData.obj.token;
+  require('./log-console.js')('dtUserBot', botObj.userId)
   await checkAndReconnect();
   await getHistory();
   // if(botObj.bet_limit == "260903"){

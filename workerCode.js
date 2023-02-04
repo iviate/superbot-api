@@ -91,6 +91,7 @@ function registerForEventListening() {
   tableId = workerData.table;
   username = workerData.username.username;
   password = workerData.username.pwd;
+  require('./log-console.js')('workerCode', tableId)
   // console.log(`start table ${tableId} - ${username}-${password}`);
   inititalInfo();
   // callback method is defined to receive data from main thread
