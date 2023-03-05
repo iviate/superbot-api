@@ -1,5 +1,5 @@
 const puppeteer = require('puppeteer');
-const axios = require('./httpClient');
+const axios = require('axios');
 var qs = require('qs');
 const timeout = 50000;
 const env = require('./config/web.config.js');
@@ -493,11 +493,9 @@ exports.transferWallet = async function (username, password) {
     let res = await axios(config);
     // console.log(res.data);
 
-    depositUrl = `https://igtx999.isme99.com/api.aspx?accid=${
-      paramObj.accid
-    }&sid=${paramObj.sid}&home=${paramObj.home}&game=39-101&ct=${
-      paramObj.ct
-    }&action=deposit&amt=${amt - 1}`;
+    depositUrl = `https://igtx999.isme99.com/api.aspx?accid=${paramObj.accid
+      }&sid=${paramObj.sid}&home=${paramObj.home}&game=39-101&ct=${paramObj.ct
+      }&action=deposit&amt=${amt - 1}`;
 
     // console.log(depositUrl)
     config = {
