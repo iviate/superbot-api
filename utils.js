@@ -1,5 +1,5 @@
 const puppeteer = require('puppeteer');
-const axios = require('axios');
+const axios = require('./httpClient');
 var qs = require('qs');
 const timeout = 50000;
 const env = require('./config/web.config.js');
@@ -659,16 +659,20 @@ exports.getUserHistory = async function getUserHistory(cookie) {
     ps.append('filterBacIns', false);
     ps.append('filterDra', false);
     ps.append('filterSic', false);
-    ps.append('filterFpc', true);
     ps.append('filterRou', false);
     ps.append('filterTpt', false);
     ps.append('filterRBSic', false);
     ps.append('filterTpa', false);
     ps.append('filterTpo', false);
+    ps.append('filterThl', false);
+    ps.append('filterTfpc', false);
+    ps.append('filterESic', false);
+    ps.append('filterFpc', true);
 
     const config = {
       headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
+        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+        'X-Requested-With': 'XMLHttpRequest',
         Cookie: cookie,
       },
     };
