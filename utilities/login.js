@@ -130,7 +130,7 @@ async function loginUsplaynet(username, { userId, tokenId }) {
 
   const config = {
     method: 'post',
-    url: 'https://aws.ambbest.live/player/login/apiLogin',
+    url: 'https://www.onlinegames22.com/player/login/apiLogin',
     maxRedirects: 0,
     headers: {
       Connection: 'keep-alive',
