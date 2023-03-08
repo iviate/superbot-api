@@ -74,7 +74,7 @@ async function getUsplaynetLoginInfo(username) {
   const vendorResponse = await axios({
     maxRedirects: 0,
     method: 'get',
-    url: `${webHostname}/member/gamelink?vendor=sexy&game_id=undefined&game_code=undefined&mobile=false`,
+    url: `${webHostname}/member/gamelink?vendor=SEX&game_id=undefined&game_code=undefined&type=casino&mobile=false`,
     headers: {
       // Host: 'imba66.com',
       'Sec-Ch-Ua':
@@ -121,7 +121,7 @@ async function loginUsplaynet(username, { userId, tokenId }) {
   const loginData = qs.stringify({
     userId,
     tokenId,
-    agentId: '2hilo',
+    agentId: 'ambnewsportbookthb',
     gameCode: 'MX-LIVE-001',
     platform: 'SEXYBCRT',
     gameType: 'LIVE',
@@ -180,7 +180,7 @@ async function loginSemgbowWithLoginLink(username, zeusLoginLink) {
   const zeusLoginParams = zeusLoginURL.searchParams.toString();
 
   const newZeusLoginURL = new URL(
-    `/api/player/MexAWS091/login?${zeusLoginParams}`,
+    `/api/player/MexAWCA/login?${zeusLoginParams}`,
     zeusLoginLink
   );
 
