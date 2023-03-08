@@ -1,4 +1,4 @@
-const axios = require('axios');
+const axios = require('./httpClient');
 
 function chooseBaccaratTable(tableId, cookie) {
   return axios({
