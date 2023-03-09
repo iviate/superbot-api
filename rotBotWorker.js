@@ -462,7 +462,7 @@ async function getBetLimitCode(betSide, value) {
       return '260908';
     }
   } else {
-    return '110909';
+    return '260901';
   }
 }
 
