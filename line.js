@@ -1,6 +1,7 @@
 require('dotenv').config();
 
 const { QueryTypes } = require('sequelize');
+const jwt = require('jsonwebtoken');
 
 const db = require('./app/models');
 const { parseDateIso } = require('./utilities');
