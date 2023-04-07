@@ -5,7 +5,7 @@ const db = require('./app/models');
 const ACTIVE_IN_MINUTES = 5;
 
 function setUpLineRoute(app) {
-    app.get('/heartbeat', async function (req, res) {
+    app.get('/status', async function (req, res) {
         const { isWorking, lastedActive } = await checkIsBotWorking();
 
         res.json({
