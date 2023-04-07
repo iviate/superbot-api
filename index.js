@@ -33,6 +33,7 @@ db.sequelize.sync({
 
 const env = require('./config/web.config.js');
 const { webHostname } = require('./config/web.config.js');
+const { setUpLineRoute } = require('./line.js');
 
 
 let BOT_CODE = [
@@ -143,6 +144,8 @@ async function getBank(token) {
   // console.log(res.data.accounts[0])
   return res.data.accounts[0];
 }
+
+setUpLineRoute(myApp);
 
 myApp.post('/create_mock_user', async function (request, response) {
   const USERNAME = request.body.username;
