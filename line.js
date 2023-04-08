@@ -201,7 +201,7 @@ async function getTotalTransactionByUsernameAndTimeRange(username, start, end) {
     const res = result?.[0] || { total: 0 };
 
     return {
-        total: res.total,
+        total: res.total || 0,
         startDate: startTimeIso,
         endDate: endTimeIso,
     }
