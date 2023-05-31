@@ -450,17 +450,14 @@ function getBetVal() {
 async function getBetLimitCode(betSide, value) {
   // console.log('getBetLimitCode <<< ', betSide, value)
   if (betSide != 14 && betSide != 15) {
-    if (value < 2000) {
+    if (value <= 50) {
       return '260901';
-    } else if (value < 10000) {
-      return '260917';
-    } else if (value < 50000) {
-      return '260905';
-    } else if (value <= 100000) {
-      return '260906';
-    } else if (value <= 200000) {
-      return '260908';
     }
+    if (value > 200) {
+      return '260905';
+    }
+
+    return '260917'
   } else {
     return '260901';
   }
