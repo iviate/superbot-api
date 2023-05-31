@@ -6,7 +6,7 @@ const jwt = require('jsonwebtoken');
 const db = require('./app/models');
 const { parseDateIso } = require('./utilities');
 
-const ACTIVE_IN_MINUTES = 5;
+const ACTIVE_IN_MINUTES = 10;
 
 const authenticateJwtToken = (req, res, next) => {
     const authHeader = req.headers.authorization;
