@@ -121,7 +121,7 @@ async function loginUsplaynet(username, { userId, tokenId }) {
   const loginData = qs.stringify({
     userId,
     tokenId,
-    agentId: 'ambnewsportbookthb',
+    agentId: 'ambnsb',
     gameCode: 'MX-LIVE-001',
     platform: 'SEXYBCRT',
     gameType: 'LIVE',
@@ -130,7 +130,7 @@ async function loginUsplaynet(username, { userId, tokenId }) {
 
   const config = {
     method: 'post',
-    url: 'https://www.onlinegames22.com/player/login/apiLogin',
+    url: 'https://aws.ambbest.live/player/login/apiLogin',
     maxRedirects: 0,
     headers: {
       Connection: 'keep-alive',
@@ -140,14 +140,14 @@ async function loginUsplaynet(username, { userId, tokenId }) {
       'sec-ch-ua-mobile': '?0',
       'sec-ch-ua-platform': '"macOS"',
       'Upgrade-Insecure-Requests': '1',
-      Origin: 'https://www.onlinegames22.com',
+      Origin: 'https://aws.ambbest.live',
       'Content-Type': 'application/x-www-form-urlencoded',
       Accept:
         'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
       'Sec-Fetch-Site': 'same-origin',
       'Sec-Fetch-Mode': 'navigate',
       'Sec-Fetch-Dest': 'document',
-      Referer: 'https://www.onlinegames22.com/player/login/apiLogin0/',
+      Referer: 'https://aws.ambbest.live/player/login/apiLogin0/',
       'Accept-Language': 'en-US,en;q=0.9',
     },
     data: loginData,
